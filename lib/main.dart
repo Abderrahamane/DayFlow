@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'pages/welcome_page.dart';
+import 'package:provider/provider.dart';
+import 'theme/app_theme.dart';
+import 'utils/routes.dart';
 
 void main() {
   runApp(const DayFlowApp());
@@ -10,11 +12,21 @@ class DayFlowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'DayFlow',
-      theme: ThemeData.light(),
-      home: const WelcomePage(),
+    return ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            title: 'DayFlow',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            initialRoute: Routes.welcome,
+            routes: Routes.routes,
+          );
+        },
+      ),
     );
   }
 }
