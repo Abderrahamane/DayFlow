@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import '../utils/routes.dart';
+import 'onboarding/onboarding_page.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -261,7 +261,12 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                   height: 56,
                   child: _PulsingButton(
                     onPressed: () {
-                      Routes.navigateToHome(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const OnboardingPage(),
+                        ),
+                      );
                     },
                   ),
                 ),
