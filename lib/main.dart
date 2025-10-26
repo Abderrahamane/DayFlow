@@ -1,6 +1,8 @@
+// lib/main.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'theme/app_theme.dart';
+import 'package:dayflow/theme/app_theme.dart';
 import 'utils/routes.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 
