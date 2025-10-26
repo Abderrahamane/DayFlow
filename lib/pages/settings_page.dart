@@ -1,7 +1,10 @@
+// lib/pages/settings_page.dart (UPDATED VERSION)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/theme/app_theme.dart';
+import 'package:dayflow/services/auth_service.dart';
+import 'package:dayflow/utils/routes.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -11,9 +14,11 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  // Mock user data (only used when logged in)
-  String userName = "Abderrahmane Houri";
-  String userEmail = "abderrahmane@dayflow.app";
+  final _authService = AuthService();
+
+  // User data
+  String userName = "";
+  String userEmail = "";
 
   // Language selection state
   String selectedLanguage = "English";
@@ -21,11 +26,44 @@ class _SettingsPageState extends State<SettingsPage> {
     "English",
     "Français",
     "العربية",
-    "Deutsch",
+    "Español",
   ];
 
-  // Login state - DEFAULT: false (no active account on first launch)
-  bool isLoggedIn = true;
+  // Login state
+  bool isLoggedIn = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final loggedIn = await _authService.isLoggedIn();
+
+    if (loggedIn) {
+      final user = await _authService.getCurrentUser();
+      if (user != null) {
+        setState(() {
+          isLoggedIn = true;
+          userName = user['name'] ?? '';
+          userEmail = user['email'] ?? '';
+          _isLoading = false;
+        });
+        return;
+      }
+    }
+
+    setState(() {
+      isLoggedIn = false;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +71,29 @@ class _SettingsPageState extends State<SettingsPage> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
 
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Settings'),
+          elevation: 0,
+        ),
+        body: Center(
+          child: CircularProgressIndicator(
+            color: theme.colorScheme.primary,
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Settings'),
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Profile Section (changes based on login state)
+            // Profile Section
             _buildProfileSection(context, isDarkMode),
 
             const SizedBox(height: 8),
@@ -56,7 +112,7 @@ class _SettingsPageState extends State<SettingsPage> {
             // Language Section
             _buildSection(
               context,
-              title: 'Language',
+              title: 'Language & Region',
               children: [
                 _buildLanguageSelector(context),
               ],
@@ -336,10 +392,7 @@ class _SettingsPageState extends State<SettingsPage> {
       trailing: Switch(
         value: isDarkMode,
         onChanged: (value) {
-          // Toggle theme using ThemeProvider
           Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-
-          // Show feedback
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Theme changed to ${value ? 'Dark' : 'Light'} Mode'),
@@ -399,12 +452,11 @@ class _SettingsPageState extends State<SettingsPage> {
     return Column(
       children: [
         if (isLoggedIn) ...[
-          // Logged In Options
           _buildPreferenceItem(
             context,
             icon: Icons.sync,
             title: 'Sync Status',
-            subtitle: 'Last synced 2 minutes ago',
+            subtitle: 'Last synced just now',
             trailing: Icon(
               Icons.check_circle,
               color: Colors.green,
@@ -449,34 +501,27 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
         ] else ...[
-          // Logged Out Options - Sign Up & Login buttons
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                // Sign Up Button
                 CustomButton(
                   text: 'Sign Up',
                   type: ButtonType.primary,
                   icon: Icons.person_add,
                   width: double.infinity,
                   onPressed: () {
-                    // Mock action - just print for now
-                    print('Sign Up button pressed');
-                    _showMockAuthDialog(context, 'Sign Up');
+                    Navigator.pushNamed(context, Routes.signup);
                   },
                 ),
                 const SizedBox(height: 12),
-                // Login Button
                 CustomButton(
                   text: 'Login',
                   type: ButtonType.outlined,
                   icon: Icons.login,
                   width: double.infinity,
                   onPressed: () {
-                    // Mock action - just print for now
-                    print('Login button pressed');
-                    _showMockAuthDialog(context, 'Login');
+                    Navigator.pushNamed(context, Routes.login);
                   },
                 ),
               ],
@@ -532,8 +577,8 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  // Helper Methods
   String _getInitials(String name) {
+    if (name.isEmpty) return '?';
     List<String> names = name.split(' ');
     if (names.length >= 2) {
       return '${names[0][0]}${names[1][0]}'.toUpperCase();
@@ -553,7 +598,6 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Handle bar
               Container(
                 width: 40,
                 height: 4,
@@ -563,7 +607,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Title
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
@@ -574,7 +617,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Language options
               ...languages.map((language) {
                 final isSelected = language == selectedLanguage;
                 return ListTile(
@@ -600,15 +642,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   )
                       : null,
                   onTap: () {
-                    // Update language state
                     setState(() {
                       selectedLanguage = language;
                     });
-
-                    // Close modal
                     Navigator.pop(context);
-
-                    // Show confirmation
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Language changed to $language'),
@@ -616,58 +653,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
-
-                    // Debug print
-                    print('Language changed to: $language');
                   },
                 );
               }).toList(),
               const SizedBox(height: 10),
             ],
           ),
-        );
-      },
-    );
-  }
-
-  void _showMockAuthDialog(BuildContext context, String action) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(action),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                action == 'Sign Up' ? Icons.person_add : Icons.login,
-                size: 64,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '$action functionality coming soon!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'This feature requires backend integration.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Got it'),
-            ),
-          ],
         );
       },
     );
@@ -694,7 +685,6 @@ class _SettingsPageState extends State<SettingsPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Handle bar
                 Center(
                   child: Container(
                     width: 40,
@@ -744,16 +734,25 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: CustomButton(
                         text: 'Save',
                         type: ButtonType.primary,
-                        onPressed: () {
-                          setState(() {
-                            userName = nameController.text;
-                            userEmail = emailController.text;
-                          });
+                        onPressed: () async {
+                          final result = await _authService.updateProfile(
+                            name: nameController.text,
+                            email: emailController.text,
+                          );
+
+                          if (result['success']) {
+                            setState(() {
+                              userName = nameController.text;
+                              userEmail = emailController.text;
+                            });
+                          }
+
+                          if (!mounted) return;
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Profile updated successfully'),
-                              duration: Duration(seconds: 2),
+                            SnackBar(
+                              content: Text(result['message']),
+                              backgroundColor: result['success'] ? Colors.green : Colors.red,
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
@@ -777,7 +776,7 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Logout'),
-          content: const Text('Are you sure you want to logout? Your data will remain synced.'),
+          content: const Text('Are you sure you want to logout?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -786,11 +785,13 @@ class _SettingsPageState extends State<SettingsPage> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await _authService.logout();
+                if (!mounted) return;
+                Navigator.pop(context);
                 setState(() {
                   isLoggedIn = false;
                 });
-                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Logged out successfully'),
