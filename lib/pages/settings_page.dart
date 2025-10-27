@@ -1,6 +1,7 @@
 // lib/pages/settings_page.dart (UPDATED VERSION)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/theme/app_theme.dart';
 import 'package:dayflow/services/auth_service.dart';
@@ -33,10 +34,16 @@ class _SettingsPageState extends State<SettingsPage> {
   bool isLoggedIn = false;
   bool _isLoading = true;
 
+  // Notification state
+  bool _notificationsEnabled = true;
+
+  static const String _keyNotificationsEnabled = 'notifications_enabled';
+
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _loadNotificationSettings();
   }
 
   Future<void> _loadUserData() async {
@@ -63,6 +70,35 @@ class _SettingsPageState extends State<SettingsPage> {
       isLoggedIn = false;
       _isLoading = false;
     });
+  }
+
+  Future<void> _loadNotificationSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? true;
+    });
+  }
+
+  Future<void> _toggleNotifications(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyNotificationsEnabled, value);
+
+    setState(() {
+      _notificationsEnabled = value;
+    });
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              value ? 'Notifications enabled' : 'Notifications turned off'
+          ),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: value ? Colors.green : Colors.orange,
+        ),
+      );
+    }
   }
 
   @override
@@ -128,15 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
               context,
               title: 'Preferences',
               children: [
-                _buildPreferenceItem(
-                  context,
-                  icon: Icons.notifications_outlined,
-                  title: 'Notifications',
-                  subtitle: 'Manage notification preferences',
-                  onTap: () {
-                    _showComingSoonDialog(context);
-                  },
-                ),
+                _buildNotificationsToggle(context),
                 _buildPreferenceItem(
                   context,
                   icon: Icons.lock_outline,
@@ -393,6 +421,48 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           );
         },
+        activeColor: theme.colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget _buildNotificationsToggle(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          _notificationsEnabled
+              ? Icons.notifications_active
+              : Icons.notifications_off,
+          color: theme.colorScheme.primary,
+          size: 22,
+        ),
+      ),
+      title: Text(
+        'Notifications',
+        style: theme.textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(
+        _notificationsEnabled
+            ? 'Receive task and reminder alerts'
+            : 'No notifications',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+        ),
+      ),
+      trailing: Switch(
+        value: _notificationsEnabled,
+        onChanged: _toggleNotifications,
         activeColor: theme.colorScheme.primary,
       ),
     );

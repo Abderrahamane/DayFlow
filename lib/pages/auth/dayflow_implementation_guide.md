@@ -202,7 +202,7 @@ Update UI to Logged Out State
 
 ---
 
-## 🚀 Testing Instructions
+## Testing Instructions
 
 ### Test Signup:
 1. Launch app → Welcome Page
