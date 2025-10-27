@@ -26,7 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
     "English",
     "Français",
     "العربية",
-    "Español",
+    "Deutsch",
   ];
 
   // Login state
@@ -73,10 +73,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Settings'),
-          elevation: 0,
-        ),
         body: Center(
           child: CircularProgressIndicator(
             color: theme.colorScheme.primary,
@@ -86,10 +82,6 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        elevation: 0,
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
