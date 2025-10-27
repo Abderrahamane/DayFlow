@@ -1,19 +1,12 @@
-// lib/main.dart (UPDATED with Firebase Auth)
+// lib/main.dart (UPDATED)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dayflow/theme/app_theme.dart';
-import 'package:dayflow/services/firebase_auth_service.dart';
+import 'package:dayflow/services/auth_service.dart';
 import 'utils/routes.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
-  // Ensure Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Firebase
-  await Firebase.initializeApp();
-
   runApp(const DayFlowApp());
 }
 
@@ -42,45 +35,39 @@ class DayFlowApp extends StatelessWidget {
 }
 
 // Check authentication status on app launch
-class AuthChecker extends StatelessWidget {
+class AuthChecker extends StatefulWidget {
   const AuthChecker({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        // Show loading splash while checking auth
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SplashScreen();
-        }
-
-        // User is logged in
-        if (snapshot.hasData && snapshot.data != null) {
-          // Navigate to home (using Future to avoid build-time navigation)
-          Future.microtask(() {
-            if (ModalRoute.of(context)?.settings.name != Routes.home) {
-              Navigator.pushReplacementNamed(context, Routes.home);
-            }
-          });
-          return const SplashScreen();
-        }
-
-        // User is not logged in
-        Future.microtask(() {
-          if (ModalRoute.of(context)?.settings.name != Routes.welcome) {
-            Navigator.pushReplacementNamed(context, Routes.welcome);
-          }
-        });
-        return const SplashScreen();
-      },
-    );
-  }
+  State<AuthChecker> createState() => _AuthCheckerState();
 }
 
-// Splash screen while checking auth
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+class _AuthCheckerState extends State<AuthChecker> {
+  final _authService = AuthService();
+  bool _isChecking = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthStatus();
+  }
+
+  Future<void> _checkAuthStatus() async {
+    // Add a small delay for splash effect
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final isLoggedIn = await _authService.isLoggedIn();
+
+    if (!mounted) return;
+
+    if (isLoggedIn) {
+      // User is logged in, go to home
+      Navigator.pushReplacementNamed(context, Routes.home);
+    } else {
+      // User is not logged in, go to welcome page
+      Navigator.pushReplacementNamed(context, Routes.welcome);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
