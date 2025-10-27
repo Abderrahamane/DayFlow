@@ -104,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
             // Language Section
             _buildSection(
               context,
-              title: 'Language & Region',
+              title: 'Language',
               children: [
                 _buildLanguageSelector(context),
               ],
