@@ -8,6 +8,8 @@ import '../pages/habits_page.dart';
 import '../pages/settings_page.dart';
 import '../pages/auth/login_page.dart';
 import '../pages/auth/signup_page.dart';
+import '../pages/auth/forgot_password_page.dart';
+import '../pages/auth/email_verification_page.dart';
 
 class Routes {
   static const String welcome = '/welcome';
@@ -19,6 +21,8 @@ class Routes {
   static const String settings = '/settings';
   static const String login = '/login';
   static const String signup = '/signup';
+  static const String forgotPassword = '/forgot-password';
+  static const String emailVerification = '/email-verification';
 
   static Map<String, WidgetBuilder> routes = {
     welcome: (context) => const WelcomePage(),
@@ -29,6 +33,8 @@ class Routes {
     settings: (context) => const SettingsPage(),
     login: (context) => const LoginPage(),
     signup: (context) => const SignupPage(),
+    forgotPassword: (context) => const ForgotPasswordPage(),
+    emailVerification: (context) => const EmailVerificationPage(),
   };
 
   static void navigateToHome(BuildContext context) {
@@ -36,7 +42,7 @@ class Routes {
   }
 
   static void navigateToWelcome(BuildContext context) {
-    print('Navigating to: ${Routes.welcome}');
+    print('Navigating to: $welcome');
     Navigator.pushReplacementNamed(context, welcome);
   }
 
@@ -46,5 +52,13 @@ class Routes {
 
   static void navigateToSignup(BuildContext context) {
     Navigator.pushNamed(context, signup);
+  }
+
+  static void navigateToForgotPassword(BuildContext context) {
+    Navigator.pushNamed(context, forgotPassword);
+  }
+
+  static void navigateToEmailVerification(BuildContext context) {
+    Navigator.pushReplacementNamed(context, emailVerification);
   }
 }

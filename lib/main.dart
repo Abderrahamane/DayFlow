@@ -1,17 +1,14 @@
-// lib/main.dart (UPDATED)
+// lib/main.dart (Updated with Email Verification)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dayflow/theme/app_theme.dart';
-import 'package:dayflow/services/auth_service.dart';
 import 'utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
   runApp(const DayFlowApp());
 }
 
@@ -39,40 +36,63 @@ class DayFlowApp extends StatelessWidget {
   }
 }
 
-// Check authentication status on app launch
-class AuthChecker extends StatefulWidget {
+class AuthChecker extends StatelessWidget {
   const AuthChecker({Key? key}) : super(key: key);
 
   @override
-  State<AuthChecker> createState() => _AuthCheckerState();
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        // Show loading splash while checking auth
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SplashScreen();
+        }
+
+        // Check if user is logged in
+        if (snapshot.hasData && snapshot.data != null) {
+          final user = snapshot.data!;
+
+          // Check if email is verified
+          if (!user.emailVerified) {
+            // User logged in but email not verified
+            Future.microtask(() {
+              final currentRoute = ModalRoute.of(context)?.settings.name;
+              if (currentRoute != Routes.emailVerification) {
+                Navigator.pushReplacementNamed(
+                  context,
+                  Routes.emailVerification,
+                );
+              }
+            });
+            return const SplashScreen();
+          }
+
+          // User logged in and verified - go to home
+          Future.microtask(() {
+            final currentRoute = ModalRoute.of(context)?.settings.name;
+            if (currentRoute != Routes.home) {
+              Navigator.pushReplacementNamed(context, Routes.home);
+            }
+          });
+          return const SplashScreen();
+        }
+
+        // No user logged in - go to welcome
+        Future.microtask(() {
+          final currentRoute = ModalRoute.of(context)?.settings.name;
+          if (currentRoute != Routes.welcome) {
+            Navigator.pushReplacementNamed(context, Routes.welcome);
+          }
+        });
+        return const SplashScreen();
+      },
+    );
+  }
 }
 
-class _AuthCheckerState extends State<AuthChecker> {
-  final _authService = AuthService();
-  bool _isChecking = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkAuthStatus();
-  }
-
-  Future<void> _checkAuthStatus() async {
-    // Add a small delay for splash effect
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    final isLoggedIn = await _authService.isLoggedIn();
-
-    if (!mounted) return;
-
-    if (isLoggedIn) {
-      // User is logged in, go to home
-      Navigator.pushReplacementNamed(context, Routes.home);
-    } else {
-      // User is not logged in, go to welcome page
-      Navigator.pushReplacementNamed(context, Routes.welcome);
-    }
-  }
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +103,6 @@ class _AuthCheckerState extends State<AuthChecker> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // App logo
             Container(
               width: 120,
               height: 120,

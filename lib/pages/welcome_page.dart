@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'onboarding/onboarding_page.dart';
+import 'package:dayflow/utils/routes.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -276,13 +277,12 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
             const SizedBox(height: 16),
 
             // Animated Sign In Link
+            // Animated Sign In Link
             FadeTransition(
               opacity: _buttonOpacity,
               child: TextButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Sign in coming soon!')),
-                  );
+                  Navigator.pushNamed(context, Routes.login);
                 },
                 child: const Text(
                   'Already have an account? Sign In',

@@ -1,7 +1,7 @@
 // lib/pages/auth/signup_page.dart
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
-import 'package:dayflow/services/auth_service.dart';
+import 'package:dayflow/services/firebase_auth_service.dart';
 import 'package:dayflow/utils/routes.dart';
 
 class SignupPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _authService = AuthService();
+  final _authService = FirebaseAuthService();
 
   bool _isLoading = false;
   bool _acceptedTerms = false;
@@ -67,13 +67,14 @@ class _SignupPageState extends State<SignupPage> {
             content: Text(result['message']),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
           ),
         );
 
-        // Navigate to home
+        // Navigate to email verification page
         await Future.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
-        Routes.navigateToHome(context);
+        Navigator.pushReplacementNamed(context, Routes.emailVerification);
       } else {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -85,6 +86,7 @@ class _SignupPageState extends State<SignupPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
@@ -104,7 +106,6 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: SafeArea(

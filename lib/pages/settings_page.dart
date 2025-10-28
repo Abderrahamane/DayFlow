@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/theme/app_theme.dart';
-import 'package:dayflow/services/auth_service.dart';
+// import 'package:dayflow/services/auth_service.dart';
+import 'package:dayflow/services/firebase_auth_service.dart';
 import 'package:dayflow/utils/routes.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -15,7 +16,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final _authService = AuthService();
+  // final _authService = AuthService();
+  final _authService = FirebaseAuthService();
 
   // User data
   String userName = "";
@@ -51,25 +53,53 @@ class _SettingsPageState extends State<SettingsPage> {
       _isLoading = true;
     });
 
-    final loggedIn = await _authService.isLoggedIn();
+    try {
+      final loggedIn = _authService.isLoggedIn();
 
-    if (loggedIn) {
-      final user = await _authService.getCurrentUser();
-      if (user != null) {
-        setState(() {
-          isLoggedIn = true;
-          userName = user['name'] ?? '';
-          userEmail = user['email'] ?? '';
-          _isLoading = false;
-        });
-        return;
+      if (loggedIn) {
+        // Get the current Firebase user directly
+        final currentUser = _authService.currentUser;
+
+        if (currentUser != null) {
+          // Try to get data from Firestore
+          try {
+            final userData = await _authService.getCurrentUserData();
+
+            if (userData != null) {
+              setState(() {
+                isLoggedIn = true;
+                userName = userData['name'] ?? currentUser.displayName ?? 'User';
+                userEmail = userData['email'] ?? currentUser.email ?? '';
+                _isLoading = false;
+              });
+              return;
+            }
+          } catch (e) {
+            print('Firestore fetch failed, using Firebase Auth data: $e');
+          }
+
+          // Fallback to Firebase Auth data if Firestore fails
+          setState(() {
+            isLoggedIn = true;
+            userName = currentUser.displayName ?? 'User';
+            userEmail = currentUser.email ?? '';
+            _isLoading = false;
+          });
+          return;
+        }
       }
-    }
 
-    setState(() {
-      isLoggedIn = false;
-      _isLoading = false;
-    });
+      setState(() {
+        isLoggedIn = false;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        isLoggedIn = false;
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _loadNotificationSettings() async {
@@ -532,7 +562,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: 'Change Password',
             subtitle: 'Update your password',
             onTap: () {
-              _showComingSoonDialog(context);
+              _showChangePasswordDialog(context);
             },
           ),
           Divider(height: 1, indent: 72),
@@ -868,6 +898,176 @@ class _SettingsPageState extends State<SettingsPage> {
               child: const Text('Logout'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context) {
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    bool isLoading = false;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Change Password',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Current Password
+                      CustomInput(
+                        label: 'Current Password',
+                        hint: 'Enter current password',
+                        controller: currentPasswordController,
+                        type: InputType.password,
+                        prefixIcon: Icons.lock_outline,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter current password';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // New Password
+                      CustomInput(
+                        label: 'New Password',
+                        hint: 'Enter new password',
+                        controller: newPasswordController,
+                        type: InputType.password,
+                        prefixIcon: Icons.lock_outline,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter new password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          if (value == currentPasswordController.text) {
+                            return 'New password must be different';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Confirm New Password
+                      CustomInput(
+                        label: 'Confirm New Password',
+                        hint: 'Re-enter new password',
+                        controller: confirmPasswordController,
+                        type: InputType.password,
+                        prefixIcon: Icons.lock_outline,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm new password';
+                          }
+                          if (value != newPasswordController.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomButton(
+                              text: 'Cancel',
+                              type: ButtonType.outlined,
+                              onPressed: isLoading ? null : () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: CustomButton(
+                              text: 'Change',
+                              type: ButtonType.primary,
+                              isLoading: isLoading,
+                              onPressed: isLoading ? null : () async {
+                                if (!formKey.currentState!.validate()) {
+                                  return;
+                                }
+
+                                setModalState(() {
+                                  isLoading = true;
+                                });
+
+                                final result = await _authService.changePassword(
+                                  currentPassword: currentPasswordController.text,
+                                  newPassword: newPasswordController.text,
+                                );
+
+                                setModalState(() {
+                                  isLoading = false;
+                                });
+
+                                if (!context.mounted) return;
+
+                                Navigator.pop(context);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(result['message']),
+                                    backgroundColor: result['success']
+                                        ? Colors.green
+                                        : Colors.red,
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
