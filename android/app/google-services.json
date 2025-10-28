@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "618409045853",
+    "project_id": "dayflowbabo",
+    "storage_bucket": "dayflowbabo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618409045853:android:f33de66b95e09c125902b4",
+        "android_client_info": {
+          "package_name": "com.example.dayflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeDx7Upk85BCcKNrlG2zBRzU49-8V9wMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

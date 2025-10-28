@@ -1,7 +1,11 @@
+// lib/pages/auth/login_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
-import 'package:dayflow/services/auth_service.dart';
+import 'package:dayflow/services/firebase_auth_service.dart';
 import 'package:dayflow/utils/routes.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -14,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
+  final _authService = FirebaseAuthService();
 
   bool _isLoading = false;
 
@@ -52,21 +56,28 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
 
-        // Navigate to home
+        // Navigate to home (auth state will handle email verification check)
         await Future.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
         Routes.navigateToHome(context);
       } else {
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result['message']),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        // Check if email verification is required
+        if (result['requiresVerification'] == true) {
+          // Navigate to email verification page
+          Navigator.pushReplacementNamed(context, Routes.emailVerification);
+        } else {
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['message']),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('An error occurred: $e'),
@@ -86,7 +97,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       body: SafeArea(
@@ -206,12 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Password reset coming soon!'),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
+                        Navigator.pushNamed(context, Routes.forgotPassword);
                       },
                       child: Text(
                         'Forgot Password?',
@@ -255,6 +260,49 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   const SizedBox(height: 24),
+
+                  // Google Sign-In button
+                  if (kIsWeb || Platform.isAndroid || Platform.isIOS)
+                    CustomButton(
+                      text: 'Continue with Google',
+                      type: ButtonType.outlined,
+                      size: ButtonSize.large,
+                      icon: Icons.g_mobiledata,
+                      onPressed: () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+
+                        final result = await _authService.signInWithGoogle();
+
+                        if (!mounted) return;
+
+                        setState(() {
+                          _isLoading = false;
+                        });
+
+                        if (result['success']) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result['message']),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                          Routes.navigateToHome(context);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result['message']),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+
+                  const SizedBox(height: 16),
 
                   // Sign up link
                   Row(
