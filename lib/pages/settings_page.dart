@@ -200,20 +200,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 _buildNotificationsToggle(context, l10n),
                 _buildPreferenceItem(
                   context,
-                  icon: Icons.lock_outline,
-                  title: l10n.privacy,
-                  subtitle: l10n.privacySettings,
-                  onTap: () {
-                    _showComingSoonDialog(context, l10n);
-                  },
-                ),
-                _buildPreferenceItem(
-                  context,
                   icon: Icons.backup_outlined,
                   title: l10n.backupAndSync,
                   subtitle: l10n.cloudBackup,
                   onTap: () {
-                    _showComingSoonDialog(context, l10n);
+                    Navigator.pushNamed(context, Routes.privacyBackup);
                   },
                 ),
               ],
@@ -241,7 +232,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: l10n.helpAndSupport,
                   subtitle: l10n.getHelp,
                   onTap: () {
-                    _showComingSoonDialog(context, l10n);
+                    Navigator.pushNamed(context, Routes.helpSupport);
                   },
                 ),
                 _buildPreferenceItem(
@@ -250,7 +241,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: l10n.termsAndPrivacy,
                   subtitle: l10n.legalInfo,
                   onTap: () {
-                    _showComingSoonDialog(context, l10n);
+                    Navigator.pushNamed(context, Routes.termsPrivacy);
                   },
                 ),
               ],
