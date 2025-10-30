@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
 import 'package:dayflow/utils/routes.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 
 class EmailVerificationPage extends StatefulWidget {
   const EmailVerificationPage({Key? key}) : super(key: key);
@@ -129,6 +130,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final userEmail = _authService.currentUser?.email ?? '';
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -170,7 +172,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
               // Title
               Text(
-                'Verify Your Email',
+                l10n.verifyYourEmail,
                 style: theme.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -204,7 +206,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               const SizedBox(height: 12),
 
               Text(
-                'Please check your inbox and click the verification link to continue.',
+                l10n.checkInboxAndClick,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -236,7 +238,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Checking verification status...',
+                        l10n.checkingVerificationStatus,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w500,
@@ -252,7 +254,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               // Resend email button
               CustomButton(
                 text: _canResend
-                    ? 'Resend Verification Email'
+                    ? l10n.resendVerificationEmail
                     : 'Resend in ${_resendCooldown}s',
                 type: _canResend ? ButtonType.secondary : ButtonType.outlined,
                 size: ButtonSize.large,
@@ -265,7 +267,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
               // Logout button
               CustomButton(
-                text: 'Use Different Account',
+                text: l10n.useDifferentAccount,
                 type: ButtonType.outlined,
                 size: ButtonSize.large,
                 icon: Icons.logout,
@@ -292,7 +294,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Didn\'t receive the email?',
+                          l10n.didntReceiveEmail,
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -301,9 +303,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '• Check your spam or junk folder\n'
-                          '• Make sure the email address is correct\n'
-                          '• Wait a few minutes and try resending',
+                      l10n.checkSpamFolder,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),

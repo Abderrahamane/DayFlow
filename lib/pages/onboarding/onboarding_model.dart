@@ -1,8 +1,10 @@
+// lib/pages/onboarding/onboarding_model.dart (LOCALIZED)
 import 'package:flutter/material.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 
 class OnboardingSlide {
-  final String title;
-  final String description;
+  final String Function(BuildContext) title;
+  final String Function(BuildContext) description;
   final IconData icon;
   final Color color;
   final List<IconData> decorativeIcons;
@@ -20,9 +22,8 @@ class OnboardingData {
   static List<OnboardingSlide> getSlides() {
     return [
       OnboardingSlide(
-        title: 'Organize Your Tasks',
-        description:
-        'Create, manage, and prioritize your daily tasks with ease. Never miss a deadline again.',
+        title: (context) => AppLocalizations.of(context).organizeYourTasks,
+        description: (context) => AppLocalizations.of(context).organizeTasksDesc,
         icon: Icons.check_circle,
         color: const Color(0xFF6366F1), // Indigo
         decorativeIcons: [
@@ -32,9 +33,8 @@ class OnboardingData {
         ],
       ),
       OnboardingSlide(
-        title: 'Capture Your Ideas',
-        description:
-        'Jot down notes, thoughts, and ideas instantly. Keep everything organized in one place.',
+        title: (context) => AppLocalizations.of(context).captureYourIdeas,
+        description: (context) => AppLocalizations.of(context).captureIdeasDesc,
         icon: Icons.note_outlined,
         color: const Color(0xFF8B5CF6), // Purple
         decorativeIcons: [
@@ -44,9 +44,8 @@ class OnboardingData {
         ],
       ),
       OnboardingSlide(
-        title: 'Set Smart Reminders',
-        description:
-        'Get timely notifications for important tasks. Stay on top of your schedule effortlessly.',
+        title: (context) => AppLocalizations.of(context).setSmartReminders,
+        description: (context) => AppLocalizations.of(context).setRemindersDesc,
         icon: Icons.alarm,
         color: const Color(0xFF06B6D4), // Cyan
         decorativeIcons: [
@@ -56,9 +55,8 @@ class OnboardingData {
         ],
       ),
       OnboardingSlide(
-        title: 'Track Your Habits',
-        description:
-        'Build better habits with daily tracking. Monitor your progress and achieve your goals.',
+        title: (context) => AppLocalizations.of(context).trackYourHabits,
+        description: (context) => AppLocalizations.of(context).trackHabitsDesc,
         icon: Icons.track_changes,
         color: const Color(0xFF10B981), // Green
         decorativeIcons: [
