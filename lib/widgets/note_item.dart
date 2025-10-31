@@ -307,6 +307,3 @@ class NoteItemCompact extends StatelessWidget {
     );
   }
 }
-
-
-

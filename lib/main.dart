@@ -5,16 +5,10 @@ import 'package:dayflow/theme/app_theme.dart';
 import 'utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-
- // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp();
   runApp(const DayFlowApp());
 }
 
@@ -54,7 +48,6 @@ class AuthChecker extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SplashScreen();
         }
-
 
         // Check if user is logged in
         if (snapshot.hasData && snapshot.data != null) {
