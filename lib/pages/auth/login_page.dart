@@ -1,8 +1,9 @@
-// lib/pages/auth/login_page.dart
+// lib/pages/auth/login_page.dart (LOCALIZED)
 
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 import 'package:dayflow/utils/routes.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -47,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
 
       if (result['success']) {
-        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result['message']),
@@ -56,17 +56,13 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
 
-        // Navigate to home (auth state will handle email verification check)
         await Future.delayed(const Duration(milliseconds: 500));
         if (!mounted) return;
         Routes.navigateToHome(context);
       } else {
-        // Check if email verification is required
         if (result['requiresVerification'] == true) {
-          // Navigate to email verification page
           Navigator.pushReplacementNamed(context, Routes.emailVerification);
         } else {
-          // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(result['message']),
@@ -97,6 +93,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -110,7 +107,6 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   const SizedBox(height: 40),
 
-                  // Back button
                   Align(
                     alignment: Alignment.centerLeft,
                     child: CustomIconButton(
@@ -123,7 +119,6 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 20),
 
-                  // App logo/icon
                   Center(
                     child: Container(
                       width: 100,
@@ -149,9 +144,8 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 32),
 
-                  // Title
                   Text(
-                    'Welcome Back!',
+                    l10n.welcomeBack,
                     style: theme.textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -160,9 +154,8 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 8),
 
-                  // Subtitle
                   Text(
-                    'Sign in to continue to DayFlow',
+                    l10n.signInToContinue,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -171,19 +164,18 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 48),
 
-                  // Email input
                   CustomInput(
-                    label: 'Email',
-                    hint: 'Enter your email',
+                    label: l10n.email,
+                    hint: l10n.enterEmail,
                     controller: _emailController,
                     type: InputType.email,
                     prefixIcon: Icons.email_outlined,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
+                        return l10n.pleaseEnterEmail;
                       }
                       if (!value.contains('@')) {
-                        return 'Please enter a valid email';
+                        return l10n.pleaseEnterValidEmail;
                       }
                       return null;
                     },
@@ -191,19 +183,18 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 20),
 
-                  // Password input
                   CustomInput(
-                    label: 'Password',
-                    hint: 'Enter your password',
+                    label: l10n.password,
+                    hint: l10n.enterPassword,
                     controller: _passwordController,
                     type: InputType.password,
                     prefixIcon: Icons.lock_outline,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
+                        return l10n.pleaseEnterPassword;
                       }
                       if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return l10n.passwordTooShort;
                       }
                       return null;
                     },
@@ -211,7 +202,6 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 12),
 
-                  // Forgot password link
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -219,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushNamed(context, Routes.forgotPassword);
                       },
                       child: Text(
-                        'Forgot Password?',
+                        l10n.forgotPassword,
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -230,9 +220,8 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 32),
 
-                  // Login button
                   CustomButton(
-                    text: 'Login',
+                    text: l10n.login,
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.login,
@@ -242,14 +231,13 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 24),
 
-                  // Divider
                   Row(
                     children: [
                       Expanded(child: Divider(color: theme.colorScheme.onSurface.withOpacity(0.2))),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          'OR',
+                          l10n.or,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
@@ -261,10 +249,9 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 24),
 
-                  // Google Sign-In button
                   if (kIsWeb || Platform.isAndroid || Platform.isIOS)
                     CustomButton(
-                      text: 'Continue with Google',
+                      text: l10n.continueWithGoogle,
                       type: ButtonType.outlined,
                       size: ButtonSize.large,
                       icon: Icons.g_mobiledata,
@@ -304,12 +291,11 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 16),
 
-                  // Sign up link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Don\'t have an account? ',
+                        l10n.dontHaveAccount,
                         style: theme.textTheme.bodyMedium,
                       ),
                       TextButton(
@@ -322,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          'Sign Up',
+                          l10n.signup,
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,

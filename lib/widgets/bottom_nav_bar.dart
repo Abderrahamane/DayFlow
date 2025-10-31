@@ -1,4 +1,6 @@
+// lib/widgets/bottom_nav_bar.dart (WITH LOCALIZATION)
 import 'package:flutter/material.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 import '../pages/todo_page.dart';
 import '../pages/notes_page.dart';
 import '../pages/reminders_page.dart';
@@ -17,15 +19,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  // Page titles for AppBar
-  final List<String> _pageTitles = [
-    'Tasks',
-    'Notes',
-    'Reminders',
-    'Habits',
-    'Settings',
-  ];
-
   // Pages corresponding to bottom nav items
   final List<Widget> _pages = [
     const TodoPage(),
@@ -41,39 +34,66 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     });
   }
 
+  // Get page title based on current index - localized
+  String _getPageTitle(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    switch (_currentIndex) {
+      case 0:
+        return l10n.tasks;
+      case 1:
+        return l10n.notes;
+      case 2:
+        return l10n.reminders;
+      case 3:
+        return l10n.habits;
+      case 4:
+        return l10n.settings;
+      default:
+        return l10n.tasks;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(_pageTitles[_currentIndex]),
+        title: Text(_getPageTitle(context)),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          tooltip: 'Open menu',
+          tooltip: l10n.openMenu,
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: Implement search functionality
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Search feature coming soon!')),
+                SnackBar(
+                  content: Text(l10n.comingSoon),
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
               );
             },
-            tooltip: 'Search',
+            tooltip: l10n.search,
           ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
             onPressed: () {
-              // TODO: Implement notifications
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No new notifications')),
+                SnackBar(
+                  content: Text(l10n.noNotifications),
+                  duration: const Duration(seconds: 2),
+                  behavior: SnackBarBehavior.floating,
+                ),
               );
             },
-            tooltip: 'Notifications',
+            tooltip: l10n.notifications,
           ),
         ],
       ),
@@ -85,31 +105,31 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.check_circle_outline),
-            activeIcon: Icon(Icons.check_circle),
-            label: 'Tasks',
+            icon: const Icon(Icons.check_circle_outline),
+            activeIcon: const Icon(Icons.check_circle),
+            label: l10n.tasks,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.note_outlined),
-            activeIcon: Icon(Icons.note),
-            label: 'Notes',
+            icon: const Icon(Icons.note_outlined),
+            activeIcon: const Icon(Icons.note),
+            label: l10n.notes,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.alarm_outlined),
-            activeIcon: Icon(Icons.alarm),
-            label: 'Reminders',
+            icon: const Icon(Icons.alarm_outlined),
+            activeIcon: const Icon(Icons.alarm),
+            label: l10n.reminders,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.track_changes_outlined),
-            activeIcon: Icon(Icons.track_changes),
-            label: 'Habits',
+            icon: const Icon(Icons.track_changes_outlined),
+            activeIcon: const Icon(Icons.track_changes),
+            label: l10n.habits,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: const Icon(Icons.settings_outlined),
+            activeIcon: const Icon(Icons.settings),
+            label: l10n.settings,
           ),
         ],
       ),

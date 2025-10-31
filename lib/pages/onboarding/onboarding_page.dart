@@ -1,4 +1,7 @@
+// lib/pages/onboarding/onboarding_page.dart (LOCALIZED)
+
 import 'package:flutter/material.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 import '../../utils/routes.dart';
 import 'onboarding_model.dart';
 import 'onboarding_slide_widget.dart';
@@ -38,7 +41,6 @@ class _OnboardingPageState extends State<OnboardingPage>
     setState(() {
       _currentPage = page;
     });
-    // Reset and replay button animation
     _buttonAnimationController.reset();
     _buttonAnimationController.forward();
   }
@@ -65,10 +67,11 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: Stack(
         children: [
-          // PageView with slides
           PageView.builder(
             controller: _pageController,
             onPageChanged: _onPageChanged,
@@ -81,7 +84,6 @@ class _OnboardingPageState extends State<OnboardingPage>
             },
           ),
 
-          // Top Skip Button
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -89,6 +91,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                 alignment: Alignment.topRight,
                 child: _currentPage < _slides.length - 1
                     ? _AnimatedSkipButton(
+                  text: l10n.skip,
                   onPressed: _skipOnboarding,
                   controller: _buttonAnimationController,
                 )
@@ -97,14 +100,12 @@ class _OnboardingPageState extends State<OnboardingPage>
             ),
           ),
 
-          // Bottom Navigation Controls
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // Page Indicators
                   _PageIndicators(
                     currentPage: _currentPage,
                     totalPages: _slides.length,
@@ -112,9 +113,11 @@ class _OnboardingPageState extends State<OnboardingPage>
 
                   const SizedBox(height: 32),
 
-                  // Navigation Button
                   _AnimatedNavigationButton(
                     isLastPage: _currentPage == _slides.length - 1,
+                    buttonText: _currentPage == _slides.length - 1
+                        ? l10n.getStarted
+                        : l10n.next,
                     onPressed: _nextPage,
                     color: _slides[_currentPage].color,
                     controller: _buttonAnimationController,
@@ -129,12 +132,13 @@ class _OnboardingPageState extends State<OnboardingPage>
   }
 }
 
-// Animated Skip Button
 class _AnimatedSkipButton extends StatelessWidget {
+  final String text;
   final VoidCallback onPressed;
   final AnimationController controller;
 
   const _AnimatedSkipButton({
+    required this.text,
     required this.onPressed,
     required this.controller,
   });
@@ -169,9 +173,9 @@ class _AnimatedSkipButton extends StatelessWidget {
                 vertical: 10,
               ),
             ),
-            child: const Text(
-              'Skip',
-              style: TextStyle(
+            child: Text(
+              text,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -183,7 +187,6 @@ class _AnimatedSkipButton extends StatelessWidget {
   }
 }
 
-// Page Indicators with animation
 class _PageIndicators extends StatelessWidget {
   final int currentPage;
   final int totalPages;
@@ -226,15 +229,16 @@ class _PageIndicators extends StatelessWidget {
   }
 }
 
-// Animated Navigation Button
 class _AnimatedNavigationButton extends StatefulWidget {
   final bool isLastPage;
+  final String buttonText;
   final VoidCallback onPressed;
   final Color color;
   final AnimationController controller;
 
   const _AnimatedNavigationButton({
     required this.isLastPage,
+    required this.buttonText,
     required this.onPressed,
     required this.color,
     required this.controller,
@@ -307,7 +311,7 @@ class _AnimatedNavigationButtonState extends State<_AnimatedNavigationButton>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        widget.isLastPage ? 'Get Started' : 'Next',
+                        widget.buttonText,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

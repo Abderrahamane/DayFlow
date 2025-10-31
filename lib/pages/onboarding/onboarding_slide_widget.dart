@@ -1,3 +1,5 @@
+// lib/pages/onboarding/onboarding_slide_widget.dart (LOCALIZED)
+
 import 'package:flutter/material.dart';
 import 'onboarding_model.dart';
 
@@ -103,7 +105,6 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
             children: [
               const Spacer(),
 
-              // Decorative floating icons
               SizedBox(
                 height: 100,
                 child: Stack(
@@ -123,7 +124,6 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
 
               const SizedBox(height: 40),
 
-              // Main Icon
               AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
@@ -158,16 +158,14 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
 
               const SizedBox(height: 60),
 
-              // Content
               SlideTransition(
                 position: _contentSlideAnimation,
                 child: FadeTransition(
                   opacity: _contentOpacityAnimation,
                   child: Column(
                     children: [
-                      // Title
                       Text(
-                        widget.slide.title,
+                        widget.slide.title(context),
                         style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -179,9 +177,8 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
 
                       const SizedBox(height: 20),
 
-                      // Description
                       Text(
-                        widget.slide.description,
+                        widget.slide.description(context),
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.9),
@@ -203,7 +200,6 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
   }
 }
 
-// Floating decorative icon widget
 class _FloatingIcon extends StatelessWidget {
   final IconData icon;
   final AnimationController controller;
