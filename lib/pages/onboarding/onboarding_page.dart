@@ -5,6 +5,7 @@ import 'package:dayflow/utils/app_localizations.dart';
 import '../../utils/routes.dart';
 import 'onboarding_model.dart';
 import 'onboarding_slide_widget.dart';
+import 'question_flow_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -62,7 +63,12 @@ class _OnboardingPageState extends State<OnboardingPage>
   }
 
   void _completeOnboarding() {
-    Routes.navigateToHome(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const QuestionFlowPage(),
+      ),
+    );
   }
 
   @override
