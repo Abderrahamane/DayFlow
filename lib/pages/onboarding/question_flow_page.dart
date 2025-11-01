@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/routes.dart';
+import '../../utils/app_localizations.dart';
 import 'question_flow_widgets/robot_character.dart';
 import 'question_flow_widgets/speech_bubble.dart';
 import 'question_flow_widgets/answer_button.dart';
@@ -29,72 +30,74 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
 
-  final List<QuestionData> _questions = [
-    QuestionData(
-      question: "What's your biggest productivity challenge?",
-      answers: [
-        "📋 Too many tasks to manage",
-        "🎯 Staying focused",
-        "⏰ Time management",
-        "🧠 Remembering everything",
-      ],
-      allowMultiple: true,
-      responses: [
-        "Got it, noted! 📝",
-        "You're my kind of planner!",
-        "That tells me a lot!",
-        "Wow, you've got range! 🎯",
-      ],
-    ),
-    QuestionData(
-      question: "When do you work best?",
-      answers: [
-        "🌅 Early morning",
-        "☀️ Afternoon",
-        "🌆 Evening",
-        "🌙 Late night",
-      ],
-      allowMultiple: true,
-      responses: [
-        "Interesting choice! ⏰",
-        "I can work with that!",
-        "Nice, flexibility is key! 🌟",
-        "You're versatile! Love it!",
-      ],
-    ),
-    QuestionData(
-      question: "What's your main goal with DayFlow?",
-      answers: [
-        "✨ Get organized",
-        "💪 Build better habits",
-        "✅ Track all my tasks",
-        "💡 Remember everything",
-      ],
-      allowMultiple: true,
-      responses: [
-        "You're going to love DayFlow for that! 🚀",
-        "Perfect! We've got you covered!",
-        "That's exactly what we do best! ⭐",
-        "Ambitious! I like it! 💯",
-      ],
-    ),
-    QuestionData(
-      question: "How do you prefer to plan?",
-      answers: [
-        "📅 Day by day",
-        "📆 Week ahead",
-        "🗓️ Monthly view",
-        "🌊 Go with the flow",
-      ],
-      allowMultiple: true,
-      responses: [
-        "Smart approach! 🎯",
-        "I see your planning style!",
-        "Mix and match, nice! 🌈",
-        "You're adaptable! Perfect! ✨",
-      ],
-    ),
-  ];
+  List<QuestionData> _getQuestions(AppLocalizations l10n) {
+    return [
+      QuestionData(
+        question: l10n.translate('qf_biggest_challenge'),
+        answers: [
+          l10n.translate('qf_too_many_tasks'),
+          l10n.translate('qf_staying_focused'),
+          l10n.translate('qf_time_management'),
+          l10n.translate('qf_remembering_everything'),
+        ],
+        allowMultiple: true,
+        responses: [
+          l10n.translate('qf_response_1'),
+          l10n.translate('qf_response_2'),
+          l10n.translate('qf_response_3'),
+          l10n.translate('qf_response_4'),
+        ],
+      ),
+      QuestionData(
+        question: l10n.translate('qf_when_work_best'),
+        answers: [
+          l10n.translate('qf_early_morning'),
+          l10n.translate('qf_afternoon'),
+          l10n.translate('qf_evening'),
+          l10n.translate('qf_late_night'),
+        ],
+        allowMultiple: true,
+        responses: [
+          l10n.translate('qf_response_5'),
+          l10n.translate('qf_response_6'),
+          l10n.translate('qf_response_7'),
+          l10n.translate('qf_response_8'),
+        ],
+      ),
+      QuestionData(
+        question: l10n.translate('qf_main_goal'),
+        answers: [
+          l10n.translate('qf_get_organized'),
+          l10n.translate('qf_build_habits'),
+          l10n.translate('qf_track_tasks'),
+          l10n.translate('qf_remember_all'),
+        ],
+        allowMultiple: true,
+        responses: [
+          l10n.translate('qf_response_9'),
+          l10n.translate('qf_response_10'),
+          l10n.translate('qf_response_11'),
+          l10n.translate('qf_response_12'),
+        ],
+      ),
+      QuestionData(
+        question: l10n.translate('qf_prefer_plan'),
+        answers: [
+          l10n.translate('qf_day_by_day'),
+          l10n.translate('qf_week_ahead'),
+          l10n.translate('qf_monthly_view'),
+          l10n.translate('qf_go_with_flow'),
+        ],
+        allowMultiple: true,
+        responses: [
+          l10n.translate('qf_response_13'),
+          l10n.translate('qf_response_14'),
+          l10n.translate('qf_response_15'),
+          l10n.translate('qf_response_16'),
+        ],
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -125,8 +128,9 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
     // Initial greeting
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         setState(() {
-          _robotMessage = "Hi there! Let's get to know you! 👋";
+          _robotMessage = l10n.translate('qf_greeting');
           _robotGesture = RobotGesture.wave;
         });
       }
@@ -139,7 +143,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
     super.dispose();
   }
 
-  void _toggleAnswer(String answer) {
+  void _toggleAnswer(String answer, List<QuestionData> questions) {
     if (_isTransitioning) return;
 
     setState(() {
@@ -148,7 +152,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
       if (currentAnswers.contains(answer)) {
         currentAnswers.remove(answer);
       } else {
-        if (!_questions[_currentQuestionIndex].allowMultiple) {
+        if (!questions[_currentQuestionIndex].allowMultiple) {
           currentAnswers.clear();
         }
         currentAnswers.add(answer);
@@ -157,7 +161,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
       // Robot takes notes and responds
       if (currentAnswers.isNotEmpty) {
         _robotGesture = RobotGesture.takeNotes;
-        final responses = _questions[_currentQuestionIndex].responses;
+        final responses = questions[_currentQuestionIndex].responses;
 
         if (currentAnswers.length > 1) {
           _robotMessage = responses.last; // Special message for multiple selections
@@ -168,7 +172,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
     });
   }
 
-  Future<void> _nextQuestion() async {
+  Future<void> _nextQuestion(List<QuestionData> questions) async {
     if (_isTransitioning) return;
     if (_selectedAnswers[_currentQuestionIndex].isEmpty) return;
 
@@ -180,7 +184,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
     await _pageTransitionController.reverse();
     await Future.delayed(const Duration(milliseconds: 100));
 
-    if (_currentQuestionIndex < _questions.length - 1) {
+    if (_currentQuestionIndex < questions.length - 1) {
       setState(() {
         _currentQuestionIndex++;
         _isTransitioning = false;
@@ -193,9 +197,10 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
       // Robot greets new question
       Future.delayed(const Duration(milliseconds: 300), () {
         if (mounted) {
+          final l10n = AppLocalizations.of(context);
           setState(() {
             _robotGesture = RobotGesture.wave;
-            _robotMessage = "Next question! 🎯";
+            _robotMessage = l10n.translate('qf_next_question');
           });
         }
       });
@@ -205,9 +210,10 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
   }
 
   Future<void> _completeQuestionFlow() async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       _robotGesture = RobotGesture.celebrate;
-      _robotMessage = "Perfect! You're all set! 🎉";
+      _robotMessage = l10n.translate('qf_completion');
     });
 
     await Future.delayed(const Duration(milliseconds: 800));
@@ -240,7 +246,9 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
 
   @override
   Widget build(BuildContext context) {
-    final question = _questions[_currentQuestionIndex];
+    final l10n = AppLocalizations.of(context);
+    final questions = _getQuestions(l10n);
+    final question = questions[_currentQuestionIndex];
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasSelection = _selectedAnswers[_currentQuestionIndex].isNotEmpty;
 
@@ -261,7 +269,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
                   padding: const EdgeInsets.only(top: 24, bottom: 8),
                   child: ProgressDotsWidget(
                     currentIndex: _currentQuestionIndex,
-                    totalQuestions: _questions.length,
+                    totalQuestions: questions.length,
                   ),
                 ),
 
@@ -324,7 +332,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
                                     child: AnswerButton(
                                       text: answer,
                                       isSelected: isSelected,
-                                      onTap: () => _toggleAnswer(answer),
+                                      onTap: () => _toggleAnswer(answer, questions),
                                       delay: index * 100,
                                       isDisabled: _isTransitioning,
                                     ),
@@ -351,8 +359,8 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
               right: 24,
               bottom: 24,
               child: _NextButton(
-                onPressed: _nextQuestion,
-                isLastQuestion: _currentQuestionIndex == _questions.length - 1,
+                onPressed: () => _nextQuestion(questions),
+                isLastQuestion: _currentQuestionIndex == questions.length - 1,
               ),
             ),
         ],
@@ -461,6 +469,7 @@ class _NextButtonState extends State<_NextButton>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return ScaleTransition(
       scale: _scaleAnimation,
@@ -492,7 +501,7 @@ class _NextButtonState extends State<_NextButton>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.isLastQuestion ? "Finish" : "Next",
+                    widget.isLastQuestion ? l10n.translate('qf_finish') : l10n.next,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
