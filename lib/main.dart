@@ -1,4 +1,5 @@
 // lib/main.dart (UPDATED WITH LOCALIZATION)
+import 'package:dayflow/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Initialize Language Provider and load saved language
   final languageProvider = LanguageProvider();
