@@ -1,14 +1,23 @@
-// lib/services/task_service.dart
+// lib/services/task_service.dart (UPDATED)
 import 'package:flutter/foundation.dart';
 import '../models/task_model.dart';
+import 'habit_service.dart';
 
 class TaskService extends ChangeNotifier {
   final List<Task> _tasks = [];
   TaskFilter _currentFilter = TaskFilter.all;
   TaskSort _currentSort = TaskSort.dateCreated;
 
+  // Add reference to HabitService for syncing
+  HabitService? _habitService;
+
   TaskService() {
     _loadMockData();
+  }
+
+  // Method to link with HabitService
+  void linkHabitService(HabitService habitService) {
+    _habitService = habitService;
   }
 
   List<Task> get tasks => _getFilteredAndSortedTasks();
@@ -112,6 +121,27 @@ class TaskService extends ChangeNotifier {
         priority: TaskPriority.medium,
         tags: ['personal'],
       ),
+      // Add some habit-linked tasks
+      Task(
+        id: '9',
+        title: 'Read Flutter Documentation',
+        description: 'Study new widget patterns',
+        isCompleted: false,
+        createdAt: now,
+        dueDate: now,
+        priority: TaskPriority.medium,
+        tags: ['reading', 'documentation'],
+      ),
+      Task(
+        id: '10',
+        title: 'Morning Gym Session',
+        description: '45 min workout',
+        isCompleted: false,
+        createdAt: now,
+        dueDate: now,
+        priority: TaskPriority.high,
+        tags: ['workout', 'exercise'],
+      ),
     ]);
     notifyListeners();
   }
@@ -175,7 +205,14 @@ class TaskService extends ChangeNotifier {
     await Future.delayed(const Duration(milliseconds: 200));
     final index = _tasks.indexWhere((t) => t.id == task.id);
     if (index != -1) {
+      final oldTask = _tasks[index];
       _tasks[index] = task;
+
+      // 🔥 CRITICAL: Sync with Habits when task is completed
+      if (!oldTask.isCompleted && task.isCompleted) {
+        _habitService?.checkTaskCompletion(task);
+      }
+
       notifyListeners();
     }
   }
