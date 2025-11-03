@@ -1,3 +1,4 @@
+// lib/widgets/note_item.dart
 // Note display widget
 
 import 'package:flutter/material.dart';

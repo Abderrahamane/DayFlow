@@ -191,6 +191,80 @@ class AppLocalizations {
   String get statisticsComingSoon => translate('statistics_coming_soon');
   String get openMenu => translate('open_menu');
   String get search => translate('search');
+
+  // Help & Support
+  String get howCanWeHelp => translate('how_can_we_help');
+  String get findAnswers => translate('find_answers');
+  String get contactUs => translate('contact_us');
+  String get emailSupport => translate('email_support');
+  String get liveChat => translate('live_chat');
+  String get chatWithTeam => translate('chat_with_team');
+  String get reportProblem => translate('report_problem');
+  String get letUsKnow => translate('let_us_know');
+  String get faq => translate('faq');
+  String get resources => translate('resources');
+  String get userGuide => translate('user_guide');
+  String get learnHowToUse => translate('learn_how_to_use');
+  String get videoTutorials => translate('video_tutorials');
+  String get watchGuides => translate('watch_guides');
+  String get tipsTricks => translate('tips_tricks');
+  String get getMostOut => translate('get_most_out');
+  String get problemType => translate('problem_type');
+  String get description => translate('description');
+  String get describeIssue => translate('describe_issue');
+  String get submit => translate('submit');
+  String get problemReportSubmitted => translate('problem_report_submitted');
+  String get faqCreateTask => translate('faq_create_task');
+  String get faqCreateTaskAnswer => translate('faq_create_task_answer');
+  String get faqDarkMode => translate('faq_dark_mode');
+  String get faqDarkModeAnswer => translate('faq_dark_mode_answer');
+  String get faqSyncData => translate('faq_sync_data');
+  String get faqSyncDataAnswer => translate('faq_sync_data_answer');
+  String get faqSetReminders => translate('faq_set_reminders');
+  String get faqSetRemindersAnswer => translate('faq_set_reminders_answer');
+  String get faqBackupData => translate('faq_backup_data');
+  String get faqBackupDataAnswer => translate('faq_backup_data_answer');
+  String get faqExportData => translate('faq_export_data');
+  String get faqExportDataAnswer => translate('faq_export_data_answer');
+
+  // Backup
+  String get backupStatus => translate('backup_status');
+  String get lastBackup => translate('last_backup');
+  String get noBackupsYet => translate('no_backups_yet');
+  String get quickActions => translate('quick_actions');
+  String get backupNow => translate('backup_now');
+  String get restoreBackup => translate('restore_backup');
+  String get syncWithCloud => translate('sync_with_cloud');
+  String get backupSettings => translate('backup_settings');
+  String get autoBackup => translate('auto_backup');
+  String get autoBackupDaily => translate('auto_backup_daily');
+  String get cloudSync => translate('cloud_sync');
+  String get syncAcrossDevices => translate('sync_across_devices');
+  String get encryptData => translate('encrypt_data');
+  String get secureBackups => translate('secure_backups');
+  String get clearCache => translate('clear_cache');
+  String get freeUpStorage => translate('free_up_storage');
+  String get deleteAllData => translate('delete_all_data');
+  String get permanentlyRemove => translate('permanently_remove');
+  String get processing => translate('processing');
+  String get backupCompleted => translate('backup_completed');
+  String get backupRestored => translate('backup_restored');
+  String get syncedCloud => translate('synced_cloud');
+  String get restoreConfirm => translate('restore_confirm');
+  String get deleteDataConfirm => translate('delete_data_confirm');
+  String get clearCacheConfirm => translate('clear_cache_confirm');
+  String get cacheCleared => translate('cache_cleared');
+  String get allDataDeleted => translate('all_data_deleted');
+  String get deleteAll => translate('delete_all');
+  String get clear => translate('clear');
+  String get restore => translate('restore');
+
+// Terms & Privacy
+  String get termsOfService => translate('terms_of_service');
+  String get privacyPolicyTitle => translate('privacy_policy_title');
+  String get lastUpdated => translate('last_updated');
+  String get byUsingDayflow => translate('by_using_dayflow');
+
 }
 
 // English Translations
@@ -347,6 +421,121 @@ const Map<String, String> _enTranslations = {
   'customize_experience': 'Customize your experience',
   'open_menu': 'Open menu',
   'search': 'Search',
+
+  'how_can_we_help': 'How can we help you?',
+  'find_answers': 'Find answers or reach out to our support team',
+  'contact_us': 'Contact Us',
+  'email_support': 'Email Support',
+  'live_chat': 'Live Chat',
+  'chat_with_team': 'Chat with our team',
+  'report_problem': 'Report a Problem',
+  'let_us_know': 'Let us know what went wrong',
+  'faq': 'Frequently Asked Questions',
+  'resources': 'Resources',
+  'user_guide': 'User Guide',
+  'learn_how_to_use': 'Learn how to use DayFlow',
+  'video_tutorials': 'Video Tutorials',
+  'watch_guides': 'Watch step-by-step guides',
+  'tips_tricks': 'Tips & Tricks',
+  'get_most_out': 'Get the most out of DayFlow',
+  'problem_type': 'Problem Type',
+  'description': 'Description',
+  'describe_issue': 'Describe the issue in detail',
+  'submit': 'Submit',
+  'problem_report_submitted': "✓ Problem report submitted. We'll review it soon!",
+  'backup_status': 'Backup Status',
+  'last_backup': 'Last backup',
+  'no_backups_yet': 'No backups yet',
+  'quick_actions': 'Quick Actions',
+  'backup_now': 'Backup Now',
+  'restore_backup': 'Restore Backup',
+  'sync_with_cloud': 'Sync with Cloud',
+  'backup_settings': 'Backup Settings',
+  'auto_backup': 'Auto Backup',
+  'auto_backup_daily': 'Automatically backup data daily',
+  'cloud_sync': 'Cloud Sync',
+  'sync_across_devices': 'Sync data across devices',
+  'encrypt_data': 'Encrypt Data',
+  'secure_backups': 'Secure your backups',
+  'clear_cache': 'Clear Cache',
+  'free_up_storage': 'Free up storage space',
+  'delete_all_data': 'Delete All Data',
+  'permanently_remove': 'Permanently remove all data',
+  'processing': 'Processing...',
+  'backup_completed': '✓ Backup completed successfully',
+  'backup_restored': '✓ Backup restored successfully',
+  'synced_cloud': '✓ Synced with cloud successfully',
+  'restore_confirm': 'This will restore your data from the last backup. Current data will be replaced. Continue?',
+  'delete_data_confirm': '⚠️ This will permanently delete all your data including tasks, notes, and settings. This action cannot be undone!',
+  'clear_cache_confirm': 'This will clear temporary files and free up storage space. Continue?',
+  'cache_cleared': '✓ Cache cleared successfully',
+  'all_data_deleted': 'All data deleted',
+  'delete_all': 'Delete All',
+  'clear': 'Clear',
+  'restore': 'Restore',
+  'terms_of_service': 'Terms of Service',
+  'privacy_policy_title': 'Privacy Policy',
+  'last_updated': 'Last updated',
+  'by_using_dayflow': 'By using DayFlow, you agree to these Terms of Service and Privacy Policy.',
+  'faq_create_task': 'How do I create a new task?',
+  'faq_create_task_answer': 'Tap the + button on the Tasks page, enter your task details, and tap Save. You can set priorities, due dates, and categories.',
+  'faq_dark_mode': 'How do I enable dark mode?',
+  'faq_dark_mode_answer': 'Go to Settings → Appearance, then toggle the Theme switch to enable dark mode.',
+  'faq_sync_data': 'Can I sync my data across devices?',
+  'faq_sync_data_answer': 'Yes! Sign in with your account and enable Cloud Sync in Settings → Backup & Sync.',
+  'faq_set_reminders': 'How do I set reminders?',
+  'faq_set_reminders_answer': 'Open a task or create a new one, tap on "Set Reminder", choose your date and time, and save.',
+  'faq_backup_data': 'How do I backup my data?',
+  'faq_backup_data_answer': 'Go to Settings → Backup & Sync, then tap "Backup Now". You can also enable Auto Backup.',
+  'faq_export_data': 'Can I export my data?',
+  'faq_export_data_answer': 'For now this is not possible, maybe in the future yes.',
+
+  // Question Flow
+  'qf_biggest_challenge': "What's your biggest productivity challenge?",
+  'qf_too_many_tasks': '📋 Too many tasks to manage',
+  'qf_staying_focused': '🎯 Staying focused',
+  'qf_time_management': '⏰ Time management',
+  'qf_remembering_everything': '🧠 Remembering everything',
+
+  'qf_when_work_best': 'When do you work best?',
+  'qf_early_morning': '🌅 Early morning',
+  'qf_afternoon': '☀️ Afternoon',
+  'qf_evening': '🌆 Evening',
+  'qf_late_night': '🌙 Late night',
+
+  'qf_main_goal': "What's your main goal with DayFlow?",
+  'qf_get_organized': '✨ Get organized',
+  'qf_build_habits': '💪 Build better habits',
+  'qf_track_tasks': '✅ Track all my tasks',
+  'qf_remember_all': '💡 Remember everything',
+
+  'qf_prefer_plan': 'How do you prefer to plan?',
+  'qf_day_by_day': '📅 Day by day',
+  'qf_week_ahead': '📆 Week ahead',
+  'qf_monthly_view': '🗓️ Monthly view',
+  'qf_go_with_flow': '🌊 Go with the flow',
+
+  'qf_response_1': 'Got it, noted! 📝',
+  'qf_response_2': "You're my kind of planner!",
+  'qf_response_3': 'That tells me a lot!',
+  'qf_response_4': "Wow, you've got range! 🎯",
+  'qf_response_5': 'Interesting choice! ⏰',
+  'qf_response_6': 'I can work with that!',
+  'qf_response_7': 'Nice, flexibility is key! 🌟',
+  'qf_response_8': "You're versatile! Love it!",
+  'qf_response_9': "You're going to love DayFlow for that! 🚀",
+  'qf_response_10': "Perfect! We've got you covered!",
+  'qf_response_11': "That's exactly what we do best! ⭐",
+  'qf_response_12': 'Ambitious! I like it! 💯',
+  'qf_response_13': 'Smart approach! 🎯',
+  'qf_response_14': 'I see your planning style!',
+  'qf_response_15': 'Mix and match, nice! 🌈',
+  'qf_response_16': "You're adaptable! Perfect! ✨",
+
+  'qf_greeting': "Hi there! Let's get to know you! 👋",
+  'qf_next_question': 'Next question! 🎯',
+  'qf_completion': "Perfect! You're all set! 🎉",
+  'qf_finish': 'Finish',
 };
 
 // French Translations
@@ -503,6 +692,121 @@ const Map<String, String> _frTranslations = {
   'customize_experience': 'Personnalisez votre expérience',
   'open_menu': 'Ouvrir le menu',
   'search': 'Rechercher',
+
+  'how_can_we_help': 'Comment pouvons-nous vous aider?',
+  'find_answers': 'Trouvez des réponses ou contactez notre équipe',
+  'contact_us': 'Nous contacter',
+  'email_support': 'Support par email',
+  'live_chat': 'Chat en direct',
+  'chat_with_team': 'Discutez avec notre équipe',
+  'report_problem': 'Signaler un problème',
+  'let_us_know': 'Dites-nous ce qui n\'a pas fonctionné',
+  'faq': 'Questions fréquemment posées',
+  'resources': 'Ressources',
+  'user_guide': 'Guide utilisateur',
+  'learn_how_to_use': 'Apprenez à utiliser DayFlow',
+  'video_tutorials': 'Tutoriels vidéo',
+  'watch_guides': 'Regardez des guides étape par étape',
+  'tips_tricks': 'Astuces et conseils',
+  'get_most_out': 'Tirez le meilleur parti de DayFlow',
+  'problem_type': 'Type de problème',
+  'description': 'Description',
+  'describe_issue': 'Décrivez le problème en détail',
+  'submit': 'Soumettre',
+  'problem_report_submitted': '✓ Rapport de problème soumis. Nous l\'examinerons bientôt!',
+  'backup_status': 'État de la sauvegarde',
+  'last_backup': 'Dernière sauvegarde',
+  'no_backups_yet': 'Pas encore de sauvegardes',
+  'quick_actions': 'Actions rapides',
+  'backup_now': 'Sauvegarder maintenant',
+  'restore_backup': 'Restaurer la sauvegarde',
+  'sync_with_cloud': 'Synchroniser avec le cloud',
+  'backup_settings': 'Paramètres de sauvegarde',
+  'auto_backup': 'Sauvegarde automatique',
+  'auto_backup_daily': 'Sauvegarder automatiquement les données quotidiennement',
+  'cloud_sync': 'Synchronisation cloud',
+  'sync_across_devices': 'Synchroniser les données sur tous les appareils',
+  'encrypt_data': 'Chiffrer les données',
+  'secure_backups': 'Sécurisez vos sauvegardes',
+  'clear_cache': 'Vider le cache',
+  'free_up_storage': 'Libérer de l\'espace',
+  'delete_all_data': 'Supprimer toutes les données',
+  'permanently_remove': 'Supprimer définitivement toutes les données',
+  'processing': 'Traitement...',
+  'backup_completed': '✓ Sauvegarde terminée avec succès',
+  'backup_restored': '✓ Sauvegarde restaurée avec succès',
+  'synced_cloud': '✓ Synchronisé avec le cloud avec succès',
+  'restore_confirm': 'Cela restaurera vos données à partir de la dernière sauvegarde. Les données actuelles seront remplacées. Continuer?',
+  'delete_data_confirm': '⚠️ Cela supprimera définitivement toutes vos données, y compris les tâches, notes et paramètres. Cette action est irréversible!',
+  'clear_cache_confirm': 'Cela effacera les fichiers temporaires et libérera de l\'espace. Continuer?',
+  'cache_cleared': '✓ Cache vidé avec succès',
+  'all_data_deleted': 'Toutes les données supprimées',
+  'delete_all': 'Tout supprimer',
+  'clear': 'Effacer',
+  'restore': 'Restaurer',
+  'terms_of_service': 'Conditions d\'utilisation',
+  'privacy_policy_title': 'Politique de confidentialité',
+  'last_updated': 'Dernière mise à jour',
+  'by_using_dayflow': 'En utilisant DayFlow, vous acceptez ces Conditions d\'utilisation et cette Politique de confidentialité.',
+  'faq_create_task': 'Comment créer une nouvelle tâche?',
+  'faq_create_task_answer': 'Appuyez sur le bouton + dans la page Tâches, entrez les détails de votre tâche et appuyez sur Enregistrer. Vous pouvez définir des priorités, des dates d\'échéance et des catégories.',
+  'faq_dark_mode': 'Comment activer le mode sombre?',
+  'faq_dark_mode_answer': 'Allez dans Paramètres → Apparence, puis basculez l\'interrupteur Thème pour activer le mode sombre.',
+  'faq_sync_data': 'Puis-je synchroniser mes données sur plusieurs appareils?',
+  'faq_sync_data_answer': 'Oui! Connectez-vous avec votre compte et activez la Synchronisation Cloud dans Paramètres → Sauvegarde et Synchronisation.',
+  'faq_set_reminders': 'Comment définir des rappels?',
+  'faq_set_reminders_answer': 'Ouvrez une tâche ou créez-en une nouvelle, appuyez sur "Définir un rappel", choisissez votre date et heure, et enregistrez.',
+  'faq_backup_data': 'Comment sauvegarder mes données?',
+  'faq_backup_data_answer': 'Allez dans Paramètres → Sauvegarde et Synchronisation, puis appuyez sur "Sauvegarder maintenant". Vous pouvez également activer la Sauvegarde automatique.',
+  'faq_export_data': 'Puis-je exporter mes données?',
+  'faq_export_data_answer': 'Pour l\'instant, ce n\'est pas possible, peut-être à l\'avenir.',
+
+  // Question Flow
+  'qf_biggest_challenge': 'Quel est votre plus grand défi de productivité?',
+  'qf_too_many_tasks': '📋 Trop de tâches à gérer',
+  'qf_staying_focused': '🎯 Rester concentré',
+  'qf_time_management': '⏰ Gestion du temps',
+  'qf_remembering_everything': '🧠 Tout se rappeler',
+
+  'qf_when_work_best': 'Quand travaillez-vous le mieux?',
+  'qf_early_morning': '🌅 Tôt le matin',
+  'qf_afternoon': '☀️ Après-midi',
+  'qf_evening': '🌆 Soirée',
+  'qf_late_night': '🌙 Tard le soir',
+
+  'qf_main_goal': 'Quel est votre objectif principal avec DayFlow?',
+  'qf_get_organized': '✨ M\'organiser',
+  'qf_build_habits': '💪 Développer de meilleures habitudes',
+  'qf_track_tasks': '✅ Suivre toutes mes tâches',
+  'qf_remember_all': '💡 Tout mémoriser',
+
+  'qf_prefer_plan': 'Comment préférez-vous planifier?',
+  'qf_day_by_day': '📅 Jour par jour',
+  'qf_week_ahead': '📆 Une semaine à l\'avance',
+  'qf_monthly_view': '🗓️ Vue mensuelle',
+  'qf_go_with_flow': '🌊 Au fil de l\'eau',
+
+  'qf_response_1': 'Compris, noté! 📝',
+  'qf_response_2': 'Vous êtes mon genre de planificateur!',
+  'qf_response_3': 'Ça m\'en dit beaucoup!',
+  'qf_response_4': 'Wow, vous avez de la portée! 🎯',
+  'qf_response_5': 'Choix intéressant! ⏰',
+  'qf_response_6': 'Je peux travailler avec ça!',
+  'qf_response_7': 'Super, la flexibilité est la clé! 🌟',
+  'qf_response_8': 'Vous êtes polyvalent! J\'adore!',
+  'qf_response_9': 'Vous allez adorer DayFlow pour ça! 🚀',
+  'qf_response_10': 'Parfait! Nous vous couvrons!',
+  'qf_response_11': 'C\'est exactement ce qu\'on fait de mieux! ⭐',
+  'qf_response_12': 'Ambitieux! J\'aime ça! 💯',
+  'qf_response_13': 'Approche intelligente! 🎯',
+  'qf_response_14': 'Je vois votre style de planification!',
+  'qf_response_15': 'Mélangez et assortissez, super! 🌈',
+  'qf_response_16': 'Vous êtes adaptable! Parfait! ✨',
+
+  'qf_greeting': 'Salut! Faisons connaissance! 👋',
+  'qf_next_question': 'Question suivante! 🎯',
+  'qf_completion': 'Parfait! Vous êtes prêt! 🎉',
+  'qf_finish': 'Terminer',
 };
 
 // Arabic Translations
@@ -659,6 +963,121 @@ const Map<String, String> _arTranslations = {
   'customize_experience': 'خصص تجربتك',
   'open_menu': 'فتح القائمة',
   'search': 'بحث',
+
+  'how_can_we_help': 'كيف يمكننا مساعدتك؟',
+  'find_answers': 'ابحث عن إجابات أو تواصل مع فريق الدعم',
+  'contact_us': 'اتصل بنا',
+  'email_support': 'دعم البريد الإلكتروني',
+  'live_chat': 'دردشة مباشرة',
+  'chat_with_team': 'تحدث مع فريقنا',
+  'report_problem': 'الإبلاغ عن مشكلة',
+  'let_us_know': 'أخبرنا بما حدث من خطأ',
+  'faq': 'الأسئلة الشائعة',
+  'resources': 'الموارد',
+  'user_guide': 'دليل المستخدم',
+  'learn_how_to_use': 'تعلم كيفية استخدام ديفلو',
+  'video_tutorials': 'دروس فيديو',
+  'watch_guides': 'شاهد أدلة خطوة بخطوة',
+  'tips_tricks': 'نصائح وحيل',
+  'get_most_out': 'احصل على أقصى استفادة من ديفلو',
+  'problem_type': 'نوع المشكلة',
+  'description': 'الوصف',
+  'describe_issue': 'صف المشكلة بالتفصيل',
+  'submit': 'إرسال',
+  'problem_report_submitted': '✓ تم إرسال تقرير المشكلة. سنراجعه قريباً!',
+  'backup_status': 'حالة النسخ الاحتياطي',
+  'last_backup': 'آخر نسخة احتياطية',
+  'no_backups_yet': 'لا توجد نسخ احتياطية بعد',
+  'quick_actions': 'إجراءات سريعة',
+  'backup_now': 'نسخ احتياطي الآن',
+  'restore_backup': 'استعادة النسخة الاحتياطية',
+  'sync_with_cloud': 'مزامنة مع السحابة',
+  'backup_settings': 'إعدادات النسخ الاحتياطي',
+  'auto_backup': 'نسخ احتياطي تلقائي',
+  'auto_backup_daily': 'نسخ احتياطي تلقائي للبيانات يومياً',
+  'cloud_sync': 'مزامنة السحابة',
+  'sync_across_devices': 'مزامنة البيانات عبر الأجهزة',
+  'encrypt_data': 'تشفير البيانات',
+  'secure_backups': 'تأمين النسخ الاحتياطية',
+  'clear_cache': 'مسح ذاكرة التخزين المؤقت',
+  'free_up_storage': 'تحرير مساحة التخزين',
+  'delete_all_data': 'حذف جميع البيانات',
+  'permanently_remove': 'إزالة جميع البيانات نهائياً',
+  'processing': 'جاري المعالجة...',
+  'backup_completed': '✓ اكتمل النسخ الاحتياطي بنجاح',
+  'backup_restored': '✓ تمت استعادة النسخة الاحتياطية بنجاح',
+  'synced_cloud': '✓ تمت المزامنة مع السحابة بنجاح',
+  'restore_confirm': 'سيؤدي هذا إلى استعادة بياناتك من آخر نسخة احتياطية. سيتم استبدال البيانات الحالية. هل تريد المتابعة؟',
+  'delete_data_confirm': '⚠️ سيؤدي هذا إلى حذف جميع بياناتك نهائياً بما في ذلك المهام والملاحظات والإعدادات. لا يمكن التراجع عن هذا الإجراء!',
+  'clear_cache_confirm': 'سيؤدي هذا إلى مسح الملفات المؤقتة وتحرير مساحة التخزين. هل تريد المتابعة؟',
+  'cache_cleared': '✓ تم مسح ذاكرة التخزين المؤقت بنجاح',
+  'all_data_deleted': 'تم حذف جميع البيانات',
+  'delete_all': 'حذف الكل',
+  'clear': 'مسح',
+  'restore': 'استعادة',
+  'terms_of_service': 'شروط الخدمة',
+  'privacy_policy_title': 'سياسة الخصوصية',
+  'last_updated': 'آخر تحديث',
+  'by_using_dayflow': 'باستخدام ديفلو، فإنك توافق على شروط الخدمة وسياسة الخصوصية هذه.',
+  'faq_create_task': 'كيف أنشئ مهمة جديدة؟',
+  'faq_create_task_answer': 'اضغط على زر + في صفحة المهام، أدخل تفاصيل مهمتك، واضغط على حفظ. يمكنك تعيين الأولويات وتواريخ الاستحقاق والفئات.',
+  'faq_dark_mode': 'كيف أفعّل الوضع الداكن؟',
+  'faq_dark_mode_answer': 'انتقل إلى الإعدادات ← المظهر، ثم قم بتبديل مفتاح السمة لتفعيل الوضع الداكن.',
+  'faq_sync_data': 'هل يمكنني مزامنة بياناتي عبر الأجهزة؟',
+  'faq_sync_data_answer': 'نعم! سجل الدخول بحسابك وفعّل مزامنة السحابة في الإعدادات ← النسخ الاحتياطي والمزامنة.',
+  'faq_set_reminders': 'كيف أضبط التذكيرات؟',
+  'faq_set_reminders_answer': 'افتح مهمة أو أنشئ واحدة جديدة، اضغط على "تعيين تذكير"، اختر التاريخ والوقت، واحفظ.',
+  'faq_backup_data': 'كيف أنسخ بياناتي احتياطياً؟',
+  'faq_backup_data_answer': 'انتقل إلى الإعدادات ← النسخ الاحتياطي والمزامنة، ثم اضغط على "نسخ احتياطي الآن". يمكنك أيضاً تفعيل النسخ الاحتياطي التلقائي.',
+  'faq_export_data': 'هل يمكنني تصدير بياناتي؟',
+  'faq_export_data_answer': 'في الوقت الحالي هذا غير ممكن، ربما في المستقبل نعم.',
+
+  // Question Flow
+  'qf_biggest_challenge': 'ما هو أكبر تحدي إنتاجية تواجهه?',
+  'qf_too_many_tasks': '📋 مهام كثيرة جداً',
+  'qf_staying_focused': '🎯 الحفاظ على التركيز',
+  'qf_time_management': '⏰ إدارة الوقت',
+  'qf_remembering_everything': '🧠 تذكر كل شيء',
+
+  'qf_when_work_best': 'متى تعمل بشكل أفضل?',
+  'qf_early_morning': '🌅 الصباح الباكر',
+  'qf_afternoon': '☀️ بعد الظهر',
+  'qf_evening': '🌆 المساء',
+  'qf_late_night': '🌙 في وقت متأخر من الليل',
+
+  'qf_main_goal': 'ما هو هدفك الرئيسي مع ديفلو?',
+  'qf_get_organized': '✨ التنظيم',
+  'qf_build_habits': '💪 بناء عادات أفضل',
+  'qf_track_tasks': '✅ تتبع جميع مهامي',
+  'qf_remember_all': '💡 تذكر كل شيء',
+
+  'qf_prefer_plan': 'كيف تفضل التخطيط?',
+  'qf_day_by_day': '📅 يوماً بيوم',
+  'qf_week_ahead': '📆 أسبوع مقدماً',
+  'qf_monthly_view': '🗓️ عرض شهري',
+  'qf_go_with_flow': '🌊 المضي مع التدفق',
+
+  'qf_response_1': 'فهمت، مسجل! 📝',
+  'qf_response_2': 'أنت من نوع المخططين الذي أحبه!',
+  'qf_response_3': 'هذا يخبرني الكثير!',
+  'qf_response_4': 'رائع، لديك نطاق واسع! 🎯',
+  'qf_response_5': 'اختيار مثير للاهتمام! ⏰',
+  'qf_response_6': 'يمكنني العمل مع ذلك!',
+  'qf_response_7': 'رائع، المرونة هي المفتاح! 🌟',
+  'qf_response_8': 'أنت متعدد الاستخدامات! أحب ذلك!',
+  'qf_response_9': 'ستحب ديفلو لهذا! 🚀',
+  'qf_response_10': 'مثالي! نحن نغطيك!',
+  'qf_response_11': 'هذا بالضبط ما نقوم به بشكل أفضل! ⭐',
+  'qf_response_12': 'طموح! أحب ذلك! 💯',
+  'qf_response_13': 'نهج ذكي! 🎯',
+  'qf_response_14': 'أرى أسلوب التخطيط الخاص بك!',
+  'qf_response_15': 'مزج ومطابقة، رائع! 🌈',
+  'qf_response_16': 'أنت قابل للتكيف! مثالي! ✨',
+
+  'qf_greeting': 'مرحباً! دعنا نتعرف عليك! 👋',
+  'qf_next_question': 'السؤال التالي! 🎯',
+  'qf_completion': 'مثالي! أنت جاهز! 🎉',
+  'qf_finish': 'إنهاء',
 };
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

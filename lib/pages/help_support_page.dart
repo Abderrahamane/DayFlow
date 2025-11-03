@@ -32,14 +32,14 @@ class HelpSupportPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'How can we help you?',
+                    l10n.howCanWeHelp,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Find answers or reach out to our support team',
+                    l10n.findAnswers,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
@@ -52,12 +52,12 @@ class HelpSupportPage extends StatelessWidget {
             // Contact Options
             _buildSection(
               context,
-              title: 'Contact Us',
+              title: l10n.contactUs,
               children: [
                 _buildContactOption(
                   context,
                   icon: Icons.email_outlined,
-                  title: 'Email Support',
+                  title: l10n.emailSupport,
                   subtitle: 'support@dayflow.app',
                   onTap: () => _launchEmail(context),
                 ),
@@ -65,8 +65,8 @@ class HelpSupportPage extends StatelessWidget {
                 _buildContactOption(
                   context,
                   icon: Icons.chat_bubble_outline,
-                  title: 'Live Chat',
-                  subtitle: 'Chat with our team',
+                  title: l10n.liveChat,
+                  subtitle: l10n.chatWithTeam,
                   onTap: () {
                     _showComingSoon(context);
                   },
@@ -75,8 +75,8 @@ class HelpSupportPage extends StatelessWidget {
                 _buildContactOption(
                   context,
                   icon: Icons.bug_report_outlined,
-                  title: 'Report a Problem',
-                  subtitle: 'Let us know what went wrong',
+                  title: l10n.reportProblem,
+                  subtitle: l10n.letUsKnow,
                   onTap: () => _showReportDialog(context),
                 ),
               ],
@@ -87,43 +87,37 @@ class HelpSupportPage extends StatelessWidget {
             // FAQ Section
             _buildSection(
               context,
-              title: 'Frequently Asked Questions',
+              title: l10n.faq,
               children: [
                 _buildFAQItem(
                   context,
-                  question: 'How do I create a new task?',
-                  answer:
-                  'Tap the + button on the Tasks page, enter your task details, and tap Save. You can set priorities, due dates, and categories.',
+                  question: l10n.faqCreateTask,
+                  answer: l10n.faqCreateTaskAnswer,
                 ),
                 _buildFAQItem(
                   context,
-                  question: 'How do I enable dark mode?',
-                  answer:
-                  'Go to Settings → Appearance, then toggle the Theme switch to enable dark mode.',
+                  question: l10n.faqDarkMode,
+                  answer: l10n.faqDarkModeAnswer,
                 ),
                 _buildFAQItem(
                   context,
-                  question: 'Can I sync my data across devices?',
-                  answer:
-                  'Yes! Sign in with your account and enable Cloud Sync in Settings → Backup & Sync.',
+                  question: l10n.faqSyncData,
+                  answer: l10n.faqSyncDataAnswer,
                 ),
                 _buildFAQItem(
                   context,
-                  question: 'How do I set reminders?',
-                  answer:
-                  'Open a task or create a new one, tap on "Set Reminder", choose your date and time, and save.',
+                  question: l10n.faqSetReminders,
+                  answer: l10n.faqSetRemindersAnswer,
                 ),
                 _buildFAQItem(
                   context,
-                  question: 'How do I backup my data?',
-                  answer:
-                  'Go to Settings → Backup & Sync, then tap "Backup Now". You can also enable Auto Backup.',
+                  question: l10n.faqBackupData,
+                  answer: l10n.faqBackupDataAnswer,
                 ),
                 _buildFAQItem(
                   context,
-                  question: 'Can I export my data?',
-                  answer:
-                  'For Now this is not possible, maybe in the future yes.',
+                  question: l10n.faqExportData,
+                  answer: l10n.faqExportDataAnswer,
                 ),
               ],
             ),
@@ -133,13 +127,13 @@ class HelpSupportPage extends StatelessWidget {
             // Resources
             _buildSection(
               context,
-              title: 'Resources',
+              title: l10n.resources,
               children: [
                 _buildResourceItem(
                   context,
                   icon: Icons.menu_book,
-                  title: 'User Guide',
-                  subtitle: 'Learn how to use DayFlow',
+                  title: l10n.userGuide,
+                  subtitle: l10n.learnHowToUse,
                   onTap: () {
                     _showComingSoon(context);
                   },
@@ -148,8 +142,8 @@ class HelpSupportPage extends StatelessWidget {
                 _buildResourceItem(
                   context,
                   icon: Icons.video_library,
-                  title: 'Video Tutorials',
-                  subtitle: 'Watch step-by-step guides',
+                  title: l10n.videoTutorials,
+                  subtitle: l10n.watchGuides,
                   onTap: () {
                     _showComingSoon(context);
                   },
@@ -158,8 +152,8 @@ class HelpSupportPage extends StatelessWidget {
                 _buildResourceItem(
                   context,
                   icon: Icons.tips_and_updates,
-                  title: 'Tips & Tricks',
-                  subtitle: 'Get the most out of DayFlow',
+                  title: l10n.tipsTricks,
+                  subtitle: l10n.getMostOut,
                   onTap: () {
                     _showComingSoon(context);
                   },
@@ -283,7 +277,6 @@ class HelpSupportPage extends StatelessWidget {
         required VoidCallback onTap,
       }) {
     final theme = Theme.of(context);
-
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       leading: Container(
@@ -325,6 +318,7 @@ class HelpSupportPage extends StatelessWidget {
       path: 'support@dayflow.app',
       query: 'subject=DayFlow Support Request&body=Hi DayFlow Team,\n\n',
     );
+    final l10n = AppLocalizations.of(context);
 
     try {
       if (await canLaunchUrl(emailUri)) {
@@ -354,6 +348,7 @@ class HelpSupportPage extends StatelessWidget {
   void _showReportDialog(BuildContext context) {
     final problemController = TextEditingController();
     final descriptionController = TextEditingController();
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
@@ -364,15 +359,15 @@ class HelpSupportPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               CustomInput(
-                label: 'Problem Type',
+                label: l10n.problemType,
                 hint: 'e.g., Bug, Feature Request, Other',
                 controller: problemController,
                 prefixIcon: Icons.category,
               ),
               const SizedBox(height: 16),
               CustomInput(
-                label: 'Description',
-                hint: 'Describe the issue in detail',
+                label: l10n.description,
+                hint: l10n.describeIssue,
                 controller: descriptionController,
                 type: InputType.multiline,
                 maxLines: 5,
@@ -380,6 +375,7 @@ class HelpSupportPage extends StatelessWidget {
             ],
           ),
         ),
+
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -396,7 +392,8 @@ class HelpSupportPage extends StatelessWidget {
                 ),
               );
             },
-            child: const Text('Submit'),
+
+            child: Text(l10n.submit),
           ),
         ],
       ),

@@ -182,7 +182,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Backup Status',
+                    l10n.backupStatus,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -190,8 +190,8 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                   const SizedBox(height: 8),
                   Text(
                     _lastBackup != null
-                        ? 'Last backup: ${_formatDate(_lastBackup!)}'
-                        : 'No backups yet',
+                        ? l10n.lastBackup + ': ${_formatDate(_lastBackup!)}'
+                        : l10n.noBackupsYet,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -203,14 +203,14 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
             // Quick Actions
             _buildSection(
               context,
-              title: 'Quick Actions',
+              title: l10n.quickActions,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
                       CustomButton(
-                        text: 'Backup Now',
+                        text: l10n.backupNow,
                         type: ButtonType.primary,
                         icon: Icons.backup,
                         width: double.infinity,
@@ -218,7 +218,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                       ),
                       const SizedBox(height: 12),
                       CustomButton(
-                        text: 'Restore Backup',
+                        text: l10n.restoreBackup,
                         type: ButtonType.outlined,
                         icon: Icons.restore,
                         width: double.infinity,
@@ -226,7 +226,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                       ),
                       const SizedBox(height: 12),
                       CustomButton(
-                        text: 'Sync with Cloud',
+                        text: l10n.syncWithCloud,
                         type: ButtonType.outlined,
                         icon: Icons.cloud_sync,
                         width: double.infinity,
@@ -243,7 +243,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
             // Backup Settings
             _buildSection(
               context,
-              title: 'Backup Settings',
+              title: l10n.backupSettings,
               children: [
                 SwitchListTile(
                   contentPadding: const EdgeInsets.symmetric(
@@ -263,8 +263,8 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                       size: 22,
                     ),
                   ),
-                  title: const Text('Auto Backup'),
-                  subtitle: const Text('Automatically backup data daily'),
+                  title: Text(l10n.autoBackup),
+                  subtitle: Text(l10n.autoBackupDaily),
                   value: _autoBackup,
                   onChanged: (value) {
                     setState(() {
@@ -292,8 +292,8 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                       size: 22,
                     ),
                   ),
-                  title: const Text('Cloud Sync'),
-                  subtitle: const Text('Sync data across devices'),
+                  title: Text(l10n.cloudSync),
+                  subtitle: Text(l10n.syncAcrossDevices),
                   value: _cloudSync,
                   onChanged: (value) {
                     setState(() {
@@ -321,8 +321,8 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                       size: 22,
                     ),
                   ),
-                  title: const Text('Encrypt Data'),
-                  subtitle: const Text('Secure your backups'),
+                  title: Text(l10n.encryptData),
+                  subtitle: Text(l10n.secureBackups),
                   value: _encryptData,
                   onChanged: (value) {
                     setState(() {
@@ -339,13 +339,13 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
             // Privacy Settings
             _buildSection(
               context,
-              title: 'Privacy',
+              title: l10n.privacy,
               children: [
                 _buildListItem(
                   context,
                   icon: Icons.delete_outline,
-                  title: 'Clear Cache',
-                  subtitle: 'Free up storage space',
+                  title: l10n.clearCache,
+                  subtitle: l10n.freeUpStorage,
                   onTap: () {
                     _showClearCacheDialog(context);
                   },
@@ -354,8 +354,8 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                 _buildListItem(
                   context,
                   icon: Icons.delete_forever,
-                  title: 'Delete All Data',
-                  subtitle: 'Permanently remove all data',
+                  title: l10n.deleteAllData,
+                  subtitle: l10n.permanentlyRemove,
                   isDangerous: true,
                   onTap: () {
                     _showDeleteDataDialog(context);
@@ -467,15 +467,16 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
   }
 
   void _showClearCacheDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear Cache'),
-        content: const Text('This will clear temporary files and free up storage space. Continue?'),
+        title: Text(l10n.clearCache),
+        content: Text(l10n.clearCacheConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -488,7 +489,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                 ),
               );
             },
-            child: const Text('Clear'),
+            child: Text(l10n.clear),
           ),
         ],
       ),
@@ -496,17 +497,19 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
   }
 
   void _showDeleteDataDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete All Data'),
-        content: const Text(
-          '⚠️ This will permanently delete all your data including tasks, notes, and settings. This action cannot be undone!',
+        title: Text(l10n.deleteAllData),
+        content: Text(
+          l10n.deleteDataConfirm,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -520,7 +523,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
               );
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete All'),
+            child: Text(l10n.allDataDeleted),
           ),
         ],
       ),
