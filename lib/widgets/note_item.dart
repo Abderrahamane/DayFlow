@@ -1,33 +1,15 @@
 // Note display widget
 
 import 'package:flutter/material.dart';
+import '/models/note_model.dart';
 
 class NoteItem extends StatelessWidget {
-  final String title;
-  final String content;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final Color? color;
-  final List<String>? tags;
-  final bool isPinned;
-  final VoidCallback? onTap;
-  final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
-  final VoidCallback? onPin;
+
+  final Note note; 
 
   const NoteItem({
     super.key,
-    required this.title,
-    required this.content,
-    this.createdAt,
-    this.updatedAt,
-    this.color,
-    this.tags,
-    this.isPinned = false,
-    this.onTap,
-    this.onEdit,
-    this.onDelete,
-    this.onPin,
+    required this.note
   });
 
   String _formatDate(DateTime date) {
@@ -54,7 +36,7 @@ class NoteItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final noteColor = color ?? theme.colorScheme.primary.withOpacity(0.1);
+    final noteColor = note.color ?? theme.colorScheme.primary.withOpacity(0.1);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
@@ -63,7 +45,7 @@ class NoteItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border(
           left: BorderSide(
-            color: color ?? theme.colorScheme.primary,
+            color: note.color ?? theme.colorScheme.primary,
             width: 4,
           ),
         ),
@@ -78,7 +60,7 @@ class NoteItem extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: note.onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -90,7 +72,7 @@ class NoteItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Pin indicator
-                    if (isPinned) ...[
+                    if (note.isPinned) ...[
                       Icon(
                         Icons.push_pin,
                         size: 18,
@@ -102,7 +84,7 @@ class NoteItem extends StatelessWidget {
                     // Title
                     Expanded(
                       child: Text(
-                        title,
+                        note.title,
                         style: theme.textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -112,7 +94,7 @@ class NoteItem extends StatelessWidget {
                     ),
 
                     // Menu button
-                    if (onEdit != null || onDelete != null || onPin != null)
+                    if (note.onEdit != null || note.onDelete != null || note.onPin != null)
                       PopupMenuButton<String>(
                         icon: Icon(
                           Icons.more_vert,
@@ -124,30 +106,30 @@ class NoteItem extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         onSelected: (value) {
-                          if (value == 'pin' && onPin != null) {
-                            onPin!();
-                          } else if (value == 'edit' && onEdit != null) {
-                            onEdit!();
-                          } else if (value == 'delete' && onDelete != null) {
-                            onDelete!();
+                          if (value == 'pin' && note.onPin != null) {
+                            note.onPin!();
+                          } else if (value == 'edit' && note.onEdit != null) {
+                            note.onEdit!();
+                          } else if (value == 'delete' && note.onDelete != null) {
+                            note.onDelete!();
                           }
                         },
                         itemBuilder: (context) => [
-                          if (onPin != null)
+                          if (note.onPin != null)
                             PopupMenuItem(
                               value: 'pin',
                               child: Row(
                                 children: [
                                   Icon(
-                                    isPinned ? Icons.push_pin_outlined : Icons.push_pin,
+                                    note.isPinned ? Icons.push_pin_outlined : Icons.push_pin,
                                     size: 20,
                                   ),
                                   const SizedBox(width: 12),
-                                  Text(isPinned ? 'Unpin' : 'Pin'),
+                                  Text(note.isPinned ? 'Unpin' : 'Pin'),
                                 ],
                               ),
                             ),
-                          if (onEdit != null)
+                          if (note.onEdit != null)
                             const PopupMenuItem(
                               value: 'edit',
                               child: Row(
@@ -158,7 +140,7 @@ class NoteItem extends StatelessWidget {
                                 ],
                               ),
                             ),
-                          if (onDelete != null)
+                          if (note.onDelete != null)
                             const PopupMenuItem(
                               value: 'delete',
                               child: Row(
@@ -178,7 +160,7 @@ class NoteItem extends StatelessWidget {
 
                 // Content preview
                 Text(
-                  content,
+                  note.content,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
                   ),
@@ -192,12 +174,12 @@ class NoteItem extends StatelessWidget {
                 Row(
                   children: [
                     // Tags
-                    if (tags != null && tags!.isNotEmpty)
+                    if (note.tags != null && note.tags!.isNotEmpty)
                       Expanded(
                         child: Wrap(
                           spacing: 6,
                           runSpacing: 6,
-                          children: tags!.take(3).map((tag) {
+                          children: note.tags!.take(3).map((tag) {
                             return Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8,
@@ -212,7 +194,7 @@ class NoteItem extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: color ?? theme.colorScheme.primary,
+                                  color: note.color ?? theme.colorScheme.primary,
                                 ),
                               ),
                             );
@@ -221,9 +203,9 @@ class NoteItem extends StatelessWidget {
                       ),
 
                     // Date
-                    if (updatedAt != null || createdAt != null)
+                    if (note.updatedAt != null || note.createdAt != null)
                       Text(
-                        _formatDate(updatedAt ?? createdAt!),
+                        _formatDate(note.updatedAt ?? note.createdAt!),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.textTheme.bodyMedium?.color
                               ?.withOpacity(0.5),
@@ -242,37 +224,32 @@ class NoteItem extends StatelessWidget {
 
 // Compact Note Item for grid view
 class NoteItemCompact extends StatelessWidget {
-  final String title;
-  final String content;
-  final Color? color;
-  final VoidCallback? onTap;
+  final Note note ; 
+  
 
-  const NoteItemCompact({
-    super.key,
-    required this.title,
-    required this.content,
-    this.color,
-    this.onTap,
+  NoteItemCompact({
+    super.key, required this.note,
+
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final noteColor = color ?? theme.colorScheme.primary.withOpacity(0.1);
+    final noteColor = note.color ?? theme.colorScheme.primary.withOpacity(0.1);
 
     return Container(
       decoration: BoxDecoration(
         color: noteColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color ?? theme.colorScheme.primary.withOpacity(0.3),
+          color: note.color ?? theme.colorScheme.primary.withOpacity(0.3),
           width: 1,
         ),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: note.onTap,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -280,7 +257,7 @@ class NoteItemCompact extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  note.title,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -290,7 +267,7 @@ class NoteItemCompact extends StatelessWidget {
                 const SizedBox(height: 8),
                 Expanded(
                   child: Text(
-                    content,
+                    note.content,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.textTheme.bodyMedium?.color
                           ?.withOpacity(0.7),
@@ -307,3 +284,6 @@ class NoteItemCompact extends StatelessWidget {
     );
   }
 }
+
+
+
