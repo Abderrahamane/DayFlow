@@ -10,6 +10,8 @@ import 'package:dayflow/services/firebase_auth_service.dart';
 import 'utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dayflow/services/task_service.dart';
+import 'package:dayflow/services/habit_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +39,27 @@ class DayFlowApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: languageProvider),
+
+        // NEW: create both services
+        ChangeNotifierProvider<TaskService>(
+          create: (_) {
+            final taskService = TaskService();
+            final habitService = HabitService();
+            taskService.linkHabitService(habitService);
+            return taskService;
+          },
+        ),
+
+        // Provide the same habitService instance
+        ChangeNotifierProxyProvider<TaskService, HabitService>(
+          create: (_) => HabitService(),
+          update: (_, taskService, habitService) {
+            // ensure both remain linked
+            habitService ??= HabitService();
+            taskService.linkHabitService(habitService);
+            return habitService;
+          },
+        ),
       ],
       child: Consumer2<ThemeProvider, LanguageProvider>(
         builder: (context, themeProvider, langProvider, _) {

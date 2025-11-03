@@ -10,10 +10,7 @@ class HabitsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => HabitService(),
-      child: const _HabitsPageContent(),
-    );
+    return const _HabitsPageContent();
   }
 }
 

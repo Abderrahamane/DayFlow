@@ -1,19 +1,20 @@
 // lib/pages/habit_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/habit_model.dart';
+import '../models/habit_model.dart' as habit_model;
 import '../services/habit_service.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class HabitDetailPage extends StatelessWidget {
   final String habitId;
 
   const HabitDetailPage({super.key, required this.habitId});
 
-  Color _getFlutterColor(habit_model.Color color) {
+  Color _getFlutterColor(Color color) {
     return Color(color.value);
   }
 
-  void _showDeleteDialog(BuildContext context, Habit habit) {
+  void _showDeleteDialog(BuildContext context, habit_model.Habit habit) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -355,7 +356,7 @@ class _Section extends StatelessWidget {
 }
 
 class _MonthlyCalendar extends StatelessWidget {
-  final Habit habit;
+  final habit_model.Habit habit;
   final Color color;
 
   const _MonthlyCalendar({
@@ -406,7 +407,7 @@ class _MonthlyCalendar extends StatelessWidget {
 
             final day = index - startWeekday + 2;
             final date = DateTime(now.year, now.month, day);
-            final dateKey = Habit._getDateKey(date);
+            final dateKey = habit_model.Habit.getDateKey(date);
             final isCompleted = habit.completionHistory[dateKey] ?? false;
             final isToday = day == now.day;
 

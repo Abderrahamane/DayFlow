@@ -1,4 +1,7 @@
 // lib/models/habit_model.dart
+import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+
 class Habit {
   final String id;
   final String name;
@@ -52,7 +55,7 @@ class Habit {
 
   // Check if completed today
   bool get isCompletedToday {
-    final today = _getDateKey(DateTime.now());
+    final today = getDateKey(DateTime.now());
     return completionHistory[today] ?? false;
   }
 
@@ -62,7 +65,7 @@ class Habit {
     DateTime date = DateTime.now();
 
     while (true) {
-      final dateKey = _getDateKey(date);
+      final dateKey = getDateKey(date);
       if (completionHistory[dateKey] == true) {
         streak++;
         date = date.subtract(const Duration(days: 1));
@@ -106,7 +109,7 @@ class Habit {
 
     for (int i = 0; i < days; i++) {
       final date = now.subtract(Duration(days: i));
-      final dateKey = _getDateKey(date);
+      final dateKey = getDateKey(date);
       if (completionHistory[dateKey] == true) {
         completed++;
       }
@@ -123,7 +126,7 @@ class Habit {
 
     for (int i = 0; i < 7; i++) {
       final date = startOfWeek.add(Duration(days: i));
-      final dateKey = _getDateKey(date);
+      final dateKey = getDateKey(date);
       if (completionHistory[dateKey] == true) {
         count++;
       }
@@ -138,9 +141,8 @@ class Habit {
   }
 
   // Helper to get date key
-  static String _getDateKey(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-  }
+  static String getDateKey(DateTime date) => DateFormat('yyyy-MM-dd').format(date);
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -193,8 +195,3 @@ enum HabitFrequency {
   }
 }
 
-// For color in model
-class Color {
-  final int value;
-  const Color(this.value);
-}

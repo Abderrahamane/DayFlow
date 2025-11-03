@@ -28,7 +28,7 @@ class HabitService extends ChangeNotifier {
     // Simulate 30 days of history with varying completion
     for (int i = 0; i < 30; i++) {
       final date = now.subtract(Duration(days: i));
-      final dateKey = Habit._getDateKey(date);
+      final dateKey = Habit.getDateKey(date);
 
       // Reading: high consistency (80%)
       readingHistory[dateKey] = i % 5 != 0;
@@ -117,7 +117,7 @@ class HabitService extends ChangeNotifier {
     if (index == -1) return;
 
     final habit = _habits[index];
-    final today = Habit._getDateKey(DateTime.now());
+    final today = Habit.getDateKey(DateTime.now());
     final newHistory = Map<String, bool>.from(habit.completionHistory);
 
     newHistory[today] = !(habit.isCompletedToday);
@@ -131,7 +131,7 @@ class HabitService extends ChangeNotifier {
     if (!task.isCompleted || task.tags == null || task.tags!.isEmpty) return;
 
     bool updated = false;
-    final today = Habit._getDateKey(DateTime.now());
+    final today = Habit.getDateKey(DateTime.now());
 
     for (int i = 0; i < _habits.length; i++) {
       final habit = _habits[i];

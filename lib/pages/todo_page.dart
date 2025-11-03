@@ -13,10 +13,7 @@ class TodoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => TaskService(),
-      child: const _TodoPageContent(),
-    );
+    return const _TodoPageContent();
   }
 }
 

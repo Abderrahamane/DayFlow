@@ -14,7 +14,7 @@ class HabitCard extends StatelessWidget {
     required this.onToggle,
   });
 
-  Color _getFlutterColor(habit_model.Color color) {
+  Color _getFlutterColor(Color color) {
     return Color(color.value);
   }
 
@@ -188,7 +188,7 @@ class _WeeklyProgress extends StatelessWidget {
     return Row(
       children: List.generate(7, (index) {
         final date = startOfWeek.add(Duration(days: index));
-        final dateKey = Habit._getDateKey(date);
+        final dateKey = Habit.getDateKey(date);
         final isCompleted = habit.completionHistory[dateKey] ?? false;
         final isToday = date.day == now.day &&
             date.month == now.month &&
