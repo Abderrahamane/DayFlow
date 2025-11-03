@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import "/widgets/custom_card.dart"; // Make sure this path is correct
 
 import 'package:flutter/material.dart';
-import "/widgets/custom_card.dart"; // Make sure this path is correct
 
 class HabitsPage extends StatefulWidget {
   const HabitsPage({super.key});
