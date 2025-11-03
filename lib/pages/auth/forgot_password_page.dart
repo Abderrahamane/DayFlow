@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -83,6 +84,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -128,7 +130,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 // Title
                 Text(
-                  _emailSent ? 'Check Your Email' : 'Forgot Password?',
+                  _emailSent ? l10n.checkYourEmail : l10n.forgotPassword,
                   style: theme.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -155,8 +157,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   Form(
                     key: _formKey,
                     child: CustomInput(
-                      label: 'Email',
-                      hint: 'Enter your email',
+                      label: l10n.email,
+                      hint: l10n.enterEmail,
                       controller: _emailController,
                       type: InputType.email,
                       prefixIcon: Icons.email_outlined,
@@ -176,7 +178,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                   // Send reset link button
                   CustomButton(
-                    text: 'Send Reset Link',
+                    text: l10n.sendResetLink,
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.send,
@@ -186,7 +188,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ] else ...[
                   // Success actions
                   CustomButton(
-                    text: 'Resend Email',
+                    text: l10n.resendEmail,
                     type: ButtonType.secondary,
                     size: ButtonSize.large,
                     icon: Icons.refresh,
@@ -203,7 +205,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 16),
 
                   CustomButton(
-                    text: 'Back to Login',
+                    text: l10n.backToLogin,
                     type: ButtonType.outlined,
                     size: ButtonSize.large,
                     icon: Icons.arrow_back,
@@ -223,7 +225,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        'Remember your password? Login',
+                        l10n.rememberPassword,
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -252,14 +254,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Didn\'t receive the email?',
+                          l10n.didntReceiveEmail,
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Check your spam folder or try resending the email.',
+                          l10n.checkSpamFolder,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.6),
                           ),

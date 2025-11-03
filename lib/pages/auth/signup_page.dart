@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 import 'package:dayflow/utils/routes.dart';
 
 class SignupPage extends StatefulWidget {
@@ -106,6 +107,7 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -160,7 +162,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Title
                   Text(
-                    'Create Account',
+                    l10n.createAccount,
                     style: theme.textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -171,7 +173,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Subtitle
                   Text(
-                    'Sign up to get started with DayFlow',
+                    l10n.signUpToGetStarted,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -182,17 +184,17 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Name input
                   CustomInput(
-                    label: 'Full Name',
-                    hint: 'Enter your full name',
+                    label: l10n.fullName,
+                    hint: l10n.pleaseEnterName,
                     controller: _nameController,
                     type: InputType.text,
                     prefixIcon: Icons.person_outline,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
+                        return l10n.pleaseEnterName;
                       }
                       if (value.length < 3) {
-                        return 'Name must be at least 3 characters';
+                        return l10n.nameTooShort;
                       }
                       return null;
                     },
@@ -202,8 +204,8 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Email input
                   CustomInput(
-                    label: 'Email',
-                    hint: 'Enter your email',
+                    label: l10n.email,
+                    hint: l10n.enterEmail,
                     controller: _emailController,
                     type: InputType.email,
                     prefixIcon: Icons.email_outlined,
@@ -212,7 +214,7 @@ class _SignupPageState extends State<SignupPage> {
                         return 'Please enter your email';
                       }
                       if (!value.contains('@')) {
-                        return 'Please enter a valid email';
+                        return l10n.pleaseEnterEmail;
                       }
                       return null;
                     },
@@ -222,17 +224,17 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Password input
                   CustomInput(
-                    label: 'Password',
-                    hint: 'Enter your password',
+                    label: l10n.password,
+                    hint: l10n.enterPassword,
                     controller: _passwordController,
                     type: InputType.password,
                     prefixIcon: Icons.lock_outline,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
+                        return l10n.pleaseEnterPassword;
                       }
                       if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return l10n.passwordTooShort;
                       }
                       return null;
                     },
@@ -242,17 +244,17 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Confirm password input
                   CustomInput(
-                    label: 'Confirm Password',
-                    hint: 'Re-enter your password',
+                    label: l10n.confirmPassword,
+                    hint: l10n.reEnterPassword,
                     controller: _confirmPasswordController,
                     type: InputType.password,
                     prefixIcon: Icons.lock_outline,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please confirm your password';
+                        return l10n.pleaseConfirmPassword;
                       }
                       if (value != _passwordController.text) {
-                        return 'Passwords do not match';
+                        return l10n.passwordsDoNotMatch;
                       }
                       return null;
                     },
@@ -285,7 +287,7 @@ class _SignupPageState extends State<SignupPage> {
                               children: [
                                 const TextSpan(text: 'I agree to the '),
                                 TextSpan(
-                                  text: 'Terms & Conditions',
+                                  text: l10n.termsConditions,
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,
@@ -293,7 +295,7 @@ class _SignupPageState extends State<SignupPage> {
                                 ),
                                 const TextSpan(text: ' and '),
                                 TextSpan(
-                                  text: 'Privacy Policy',
+                                  text: l10n.privacyPolicy,
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,
@@ -311,7 +313,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Sign up button
                   CustomButton(
-                    text: 'Sign Up',
+                    text: l10n.signup,
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.person_add,
@@ -328,7 +330,7 @@ class _SignupPageState extends State<SignupPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          'OR',
+                          l10n.or,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
@@ -345,7 +347,7 @@ class _SignupPageState extends State<SignupPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Already have an account? ',
+                        l10n.alreadyHaveAccount,
                         style: theme.textTheme.bodyMedium,
                       ),
                       TextButton(
@@ -358,7 +360,7 @@ class _SignupPageState extends State<SignupPage> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          'Login',
+                          l10n.login,
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,

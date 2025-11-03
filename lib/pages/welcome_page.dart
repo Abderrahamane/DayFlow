@@ -1,5 +1,8 @@
+// lib/pages/welcome_page.dart (LOCALIZED)
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:dayflow/utils/app_localizations.dart';
 import 'onboarding/onboarding_page.dart';
 import 'package:dayflow/utils/routes.dart';
 
@@ -28,25 +31,21 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
   void initState() {
     super.initState();
 
-    // Gradient animation controller (continuous)
     _gradientController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat();
 
-    // Content animation controller
     _contentController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
 
-    // Button animation controller (delayed)
     _buttonController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
 
-    // Logo animations (0-400ms)
     _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _contentController,
@@ -61,7 +60,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
       ),
     );
 
-    // Title animations (200-600ms)
     _titleSlide = Tween<Offset>(
       begin: const Offset(0, 0.5),
       end: Offset.zero,
@@ -79,7 +77,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
       ),
     );
 
-    // Tagline animation (400-800ms)
     _taglineOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _contentController,
@@ -87,7 +84,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
       ),
     );
 
-    // Features animation (600-1200ms)
     _featuresOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _contentController,
@@ -95,7 +91,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
       ),
     );
 
-    // Button animations
     _buttonSlide = Tween<Offset>(
       begin: const Offset(0, 0.5),
       end: Offset.zero,
@@ -113,7 +108,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
       ),
     );
 
-    // Start animations
     _contentController.forward();
     Future.delayed(const Duration(milliseconds: 1200), () {
       if (mounted) _buttonController.forward();
@@ -130,6 +124,8 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: AnimatedBuilder(
         animation: _gradientController,
@@ -154,10 +150,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
             ),
             child: Stack(
               children: [
-                // Animated background shapes
                 ..._buildBackgroundShapes(),
-
-                // Main content
                 SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
@@ -173,7 +166,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
           children: [
             const Spacer(),
 
-            // Animated Logo
             AnimatedBuilder(
               animation: _contentController,
               builder: (context, child) {
@@ -190,14 +182,13 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
             const SizedBox(height: 32),
 
-            // Animated App Name
             SlideTransition(
               position: _titleSlide,
               child: FadeTransition(
                 opacity: _titleOpacity,
-                child: const Text(
-                  'DayFlow',
-                  style: TextStyle(
+                child: Text(
+                  l10n.appName,
+                  style: const TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -209,11 +200,10 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
             const SizedBox(height: 12),
 
-            // Animated Tagline
             FadeTransition(
               opacity: _taglineOpacity,
               child: Text(
-                'Your Smart Daily Planner',
+                l10n.yourSmartDailyPlanner,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.white.withOpacity(0.9),
@@ -224,26 +214,25 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
             const SizedBox(height: 48),
 
-            // Animated Features List
             FadeTransition(
               opacity: _featuresOpacity,
               child: Column(
                 children: [
                   _AnimatedFeatureItem(
                     icon: Icons.check_circle_outline,
-                    text: 'Organize your tasks efficiently',
+                    text: l10n.organizeTasks,
                     delay: 0,
                   ),
                   const SizedBox(height: 16),
                   _AnimatedFeatureItem(
                     icon: Icons.note_outlined,
-                    text: 'Capture ideas instantly',
+                    text: l10n.captureIdeas,
                     delay: 100,
                   ),
                   const SizedBox(height: 16),
                   _AnimatedFeatureItem(
                     icon: Icons.alarm_outlined,
-                    text: 'Never miss important reminders',
+                    text: l10n.neverMissReminders,
                     delay: 200,
                   ),
                 ],
@@ -252,7 +241,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
             const Spacer(),
 
-            // Animated Get Started Button
             SlideTransition(
               position: _buttonSlide,
               child: FadeTransition(
@@ -261,6 +249,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                   width: double.infinity,
                   height: 56,
                   child: _PulsingButton(
+                    text: l10n.getStarted,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -276,17 +265,15 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
             const SizedBox(height: 16),
 
-            // Animated Sign In Link
-            // Animated Sign In Link
             FadeTransition(
               opacity: _buttonOpacity,
               child: TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.login);
                 },
-                child: const Text(
-                  'Already have an account? Sign In',
-                  style: TextStyle(
+                child: Text(
+                  l10n.alreadyHaveAccount,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                   ),
@@ -331,7 +318,6 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
   }
 }
 
-// Animated Logo Widget
 class _AnimatedLogo extends StatefulWidget {
   @override
   State<_AnimatedLogo> createState() => _AnimatedLogoState();
@@ -393,7 +379,6 @@ class _AnimatedLogoState extends State<_AnimatedLogo> with SingleTickerProviderS
   }
 }
 
-// Animated Feature Item
 class _AnimatedFeatureItem extends StatefulWidget {
   final IconData icon;
   final String text;
@@ -483,11 +468,11 @@ class _AnimatedFeatureItemState extends State<_AnimatedFeatureItem> with SingleT
   }
 }
 
-// Pulsing Button Widget
 class _PulsingButton extends StatefulWidget {
+  final String text;
   final VoidCallback onPressed;
 
-  const _PulsingButton({required this.onPressed});
+  const _PulsingButton({required this.text, required this.onPressed});
 
   @override
   State<_PulsingButton> createState() => _PulsingButtonState();
@@ -539,9 +524,9 @@ class _PulsingButtonState extends State<_PulsingButton> with SingleTickerProvide
                 elevation: _isPressed ? 2 : 8,
                 shadowColor: Colors.black.withOpacity(0.3),
               ),
-              child: const Text(
-                'Get Started',
-                style: TextStyle(
+              child: Text(
+                widget.text,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),

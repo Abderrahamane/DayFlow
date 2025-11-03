@@ -1,7 +1,9 @@
+// lib/widgets/app_drawer.dart (WITH LOCALIZATION)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
 import '../utils/routes.dart';
+import '../utils/app_localizations.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -10,6 +12,7 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context);
 
     return Drawer(
       child: SafeArea(
@@ -45,9 +48,9 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'DayFlow',
-                    style: TextStyle(
+                  Text(
+                    l10n.appName,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -55,7 +58,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Your Smart Daily Planner',
+                    l10n.yourSmartDailyPlanner,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white.withOpacity(0.9),
@@ -72,8 +75,8 @@ class AppDrawer extends StatelessWidget {
                 children: [
                   _DrawerItem(
                     icon: Icons.check_circle_outline,
-                    title: 'Tasks',
-                    subtitle: 'Manage your to-dos',
+                    title: l10n.tasks,
+                    subtitle: l10n.manageTodos,
                     onTap: () {
                       Navigator.pop(context);
                       // Navigate to tasks if needed
@@ -81,48 +84,48 @@ class AppDrawer extends StatelessWidget {
                   ),
                   _DrawerItem(
                     icon: Icons.note_outlined,
-                    title: 'Notes',
-                    subtitle: 'Quick ideas and thoughts',
+                    title: l10n.notes,
+                    subtitle: l10n.quickIdeas,
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   _DrawerItem(
                     icon: Icons.alarm_outlined,
-                    title: 'Reminders',
-                    subtitle: 'Never miss important tasks',
+                    title: l10n.reminders,
+                    subtitle: l10n.neverMissTasks,
                     onTap: () {
                       Navigator.pop(context);
                     },
                   ),
                   _DrawerItem(
                     icon: Icons.track_changes,
-                    title: 'Habits',
-                    subtitle: 'Track your daily habits',
+                    title: l10n.habits,
+                    subtitle: l10n.trackDailyHabits,
                     onTap: () {
                       Navigator.pop(context);
                       // TODO: Navigate to habits page
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Habits page coming soon!')),
+                        SnackBar(content: Text(l10n.habitsPageComingSoon)),
                       );
                     },
                   ),
                   const Divider(height: 32, indent: 16, endIndent: 16),
                   _DrawerItem(
                     icon: Icons.bar_chart_rounded,
-                    title: 'Statistics',
-                    subtitle: 'View your progress',
+                    title: l10n.statistics,
+                    subtitle: l10n.viewProgress,
                     onTap: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Statistics coming soon!')),
+                        SnackBar(content: Text(l10n.statisticsComingSoon)),
                       );
                     },
                   ),
                   _DrawerItem(
                     icon: Icons.settings_outlined,
-                    title: 'Settings',
-                    subtitle: 'Customize your experience',
+                    title: l10n.settings,
+                    subtitle: l10n.customizeExperience,
                     onTap: () {
                       Navigator.pop(context);
                     },
@@ -144,7 +147,7 @@ class AppDrawer extends StatelessWidget {
                       isDark ? Icons.dark_mode : Icons.light_mode,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: const Text('Theme'),
+                    title: Text(l10n.theme),
                     trailing: Switch(
                       value: isDark,
                       onChanged: (value) {
@@ -161,7 +164,7 @@ class AppDrawer extends StatelessWidget {
                         _showLogoutDialog(context);
                       },
                       icon: const Icon(Icons.logout),
-                      label: const Text('Logout'),
+                      label: Text(l10n.logout),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
@@ -177,15 +180,17 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text(l10n.logout),
+        content: Text(l10n.areYouSureLogout),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -193,7 +198,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.pop(context); // Close drawer
               Routes.navigateToWelcome(context);
             },
-            child: const Text('Logout'),
+            child: Text(l10n.logout),
           ),
         ],
       ),

@@ -7,27 +7,24 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  flutter:
+  flutter_localizations:
     sdk: flutter
+  intl: 0.20.2
+  provider: ^6.1.1
+  shared_preferences: ^2.2.2
+  country_flags: ^3.0.0
+  url_launcher: ^6.2.0  # For email functionality
 
-  # Firebase core (required for any Firebase service)
-  firebase_core: ^3.8.0
-
-  # Firebase Authentication
-  firebase_auth: ^5.3.2
-
-  # Cloud Firestore
-  cloud_firestore: ^5.6.0
-
-  # Shared Preferences
-  shared_preferences: ^2.3.3
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  google_sign_in: ^6.2.1
 
   # State Management
-  provider: ^6.1.5+1
 
   # UI Components
   cupertino_icons: ^1.0.6
-  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:

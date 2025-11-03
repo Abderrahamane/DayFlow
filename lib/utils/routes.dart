@@ -10,6 +10,9 @@ import '../pages/auth/login_page.dart';
 import '../pages/auth/signup_page.dart';
 import '../pages/auth/forgot_password_page.dart';
 import '../pages/auth/email_verification_page.dart';
+import '../pages/privacy_backup_page.dart';
+import '../pages/help_support_page.dart';
+import '../pages/terms_privacy_page.dart';
 
 class Routes {
   static const String welcome = '/welcome';
@@ -23,6 +26,9 @@ class Routes {
   static const String signup = '/signup';
   static const String forgotPassword = '/forgot-password';
   static const String emailVerification = '/email-verification';
+  static const String privacyBackup = '/privacy-backup';
+  static const String helpSupport = '/help-support';
+  static const String termsPrivacy = '/terms-privacy';
 
   static Map<String, WidgetBuilder> routes = {
     welcome: (context) => const WelcomePage(),
@@ -35,6 +41,9 @@ class Routes {
     signup: (context) => const SignupPage(),
     forgotPassword: (context) => const ForgotPasswordPage(),
     emailVerification: (context) => const EmailVerificationPage(),
+    privacyBackup: (context) => const PrivacyBackupPage(),
+    helpSupport: (context) => const HelpSupportPage(),
+    termsPrivacy: (context) => const TermsPrivacyPage(),
   };
 
   static void navigateToHome(BuildContext context) {
@@ -60,5 +69,17 @@ class Routes {
 
   static void navigateToEmailVerification(BuildContext context) {
     Navigator.pushReplacementNamed(context, emailVerification);
+  }
+
+  static void navigateToPrivacyBackup(BuildContext context) {
+    Navigator.pushNamed(context, privacyBackup);
+  }
+
+  static void navigateToHelpSupport(BuildContext context) {
+    Navigator.pushNamed(context, helpSupport);
+  }
+
+  static void navigateToTermsPrivacy(BuildContext context) {
+    Navigator.pushNamed(context, termsPrivacy);
   }
 }

@@ -1,12 +1,15 @@
-// lib/pages/settings_page.dart (UPDATED VERSION)
+// lib/pages/settings_page.dart (LOCALIZED VERSION)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/theme/app_theme.dart';
-// import 'package:dayflow/services/auth_service.dart';
+import 'package:dayflow/providers/language_provider.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
 import 'package:dayflow/utils/routes.dart';
+import 'package:country_flags/country_flags.dart';
+
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -16,30 +19,31 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  // final _authService = AuthService();
   final _authService = FirebaseAuthService();
 
-  // User data
   String userName = "";
   String userEmail = "";
-
-  // Language selection state
-  String selectedLanguage = "English";
-  final List<String> languages = [
-    "English",
-    "Français",
-    "العربية",
-    "Deutsch",
-  ];
-
-  // Login state
   bool isLoggedIn = false;
   bool _isLoading = true;
-
-  // Notification state
   bool _notificationsEnabled = true;
 
   static const String _keyNotificationsEnabled = 'notifications_enabled';
+
+  // Language options with codes
+  final Map<String, Map<String, String>> languages = {
+    'English': {
+      'code': 'en',
+      'country': 'GB', // UK ISO code
+    },
+    'Français': {
+      'code': 'fr',
+      'country': 'FR', // France ISO code
+    },
+    'العربية': {
+      'code': 'ar',
+      'country': 'DZ', // Algeria ISO code
+    },
+  };
 
   @override
   void initState() {
@@ -57,11 +61,9 @@ class _SettingsPageState extends State<SettingsPage> {
       final loggedIn = _authService.isLoggedIn();
 
       if (loggedIn) {
-        // Get the current Firebase user directly
         final currentUser = _authService.currentUser;
 
         if (currentUser != null) {
-          // Try to get data from Firestore
           try {
             final userData = await _authService.getCurrentUserData();
 
@@ -75,10 +77,9 @@ class _SettingsPageState extends State<SettingsPage> {
               return;
             }
           } catch (e) {
-            print('Firestore fetch failed, using Firebase Auth data: $e');
+            print('Firestore fetch failed: $e');
           }
 
-          // Fallback to Firebase Auth data if Firestore fails
           setState(() {
             isLoggedIn = true;
             userName = currentUser.displayName ?? 'User';
@@ -94,7 +95,6 @@ class _SettingsPageState extends State<SettingsPage> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading user data: $e');
       setState(() {
         isLoggedIn = false;
         _isLoading = false;
@@ -118,10 +118,11 @@ class _SettingsPageState extends State<SettingsPage> {
     });
 
     if (mounted) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              value ? 'Notifications enabled' : 'Notifications turned off'
+              value ? l10n.notificationsEnabled : l10n.notificationsDisabled
           ),
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
@@ -135,6 +136,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final l10n = AppLocalizations.of(context);
     final isDarkMode = themeProvider.isDarkMode;
 
     if (_isLoading) {
@@ -152,16 +155,16 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           children: [
             // Profile Section
-            _buildProfileSection(context, isDarkMode),
+            _buildProfileSection(context, isDarkMode, l10n),
 
             const SizedBox(height: 8),
 
             // Appearance Section
             _buildSection(
               context,
-              title: 'Appearance',
+              title: l10n.appearance,
               children: [
-                _buildThemeToggle(context, themeProvider),
+                _buildThemeToggle(context, themeProvider, l10n),
               ],
             ),
 
@@ -170,9 +173,9 @@ class _SettingsPageState extends State<SettingsPage> {
             // Language Section
             _buildSection(
               context,
-              title: 'Language',
+              title: l10n.language,
               children: [
-                _buildLanguageSelector(context),
+                _buildLanguageSelector(context, languageProvider, l10n),
               ],
             ),
 
@@ -181,9 +184,9 @@ class _SettingsPageState extends State<SettingsPage> {
             // Account Section
             _buildSection(
               context,
-              title: 'Account',
+              title: l10n.account,
               children: [
-                _buildAccountOptions(context),
+                _buildAccountOptions(context, l10n),
               ],
             ),
 
@@ -192,25 +195,16 @@ class _SettingsPageState extends State<SettingsPage> {
             // Preferences Section
             _buildSection(
               context,
-              title: 'Preferences',
+              title: l10n.preferences,
               children: [
-                _buildNotificationsToggle(context),
-                _buildPreferenceItem(
-                  context,
-                  icon: Icons.lock_outline,
-                  title: 'Privacy',
-                  subtitle: 'Control your privacy settings',
-                  onTap: () {
-                    _showComingSoonDialog(context);
-                  },
-                ),
+                _buildNotificationsToggle(context, l10n),
                 _buildPreferenceItem(
                   context,
                   icon: Icons.backup_outlined,
-                  title: 'Backup & Sync',
-                  subtitle: 'Cloud backup settings',
+                  title: l10n.backupAndSync,
+                  subtitle: l10n.cloudBackup,
                   onTap: () {
-                    _showComingSoonDialog(context);
+                    Navigator.pushNamed(context, Routes.privacyBackup);
                   },
                 ),
               ],
@@ -221,33 +215,33 @@ class _SettingsPageState extends State<SettingsPage> {
             // About Section
             _buildSection(
               context,
-              title: 'About',
+              title: l10n.about,
               children: [
                 _buildPreferenceItem(
                   context,
                   icon: Icons.info_outline,
-                  title: 'About DayFlow',
-                  subtitle: 'Version 1.0.0',
+                  title: l10n.aboutDayFlow,
+                  subtitle: l10n.version,
                   onTap: () {
-                    _showAboutDialog(context);
+                    _showAboutDialog(context, l10n);
                   },
                 ),
                 _buildPreferenceItem(
                   context,
                   icon: Icons.help_outline,
-                  title: 'Help & Support',
-                  subtitle: 'Get help with DayFlow',
+                  title: l10n.helpAndSupport,
+                  subtitle: l10n.getHelp,
                   onTap: () {
-                    _showComingSoonDialog(context);
+                    Navigator.pushNamed(context, Routes.helpSupport);
                   },
                 ),
                 _buildPreferenceItem(
                   context,
                   icon: Icons.description_outlined,
-                  title: 'Terms & Privacy Policy',
-                  subtitle: 'Legal information',
+                  title: l10n.termsAndPrivacy,
+                  subtitle: l10n.legalInfo,
                   onTap: () {
-                    _showComingSoonDialog(context);
+                    Navigator.pushNamed(context, Routes.termsPrivacy);
                   },
                 ),
               ],
@@ -260,20 +254,19 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildProfileSection(BuildContext context, bool isDarkMode) {
+  Widget _buildProfileSection(BuildContext context, bool isDarkMode, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
     return CustomCard(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
-      child: isLoggedIn ? _buildLoggedInProfile(theme) : _buildLoggedOutProfile(theme),
+      child: isLoggedIn ? _buildLoggedInProfile(theme, l10n) : _buildLoggedOutProfile(theme, l10n),
     );
   }
 
-  Widget _buildLoggedInProfile(ThemeData theme) {
+  Widget _buildLoggedInProfile(ThemeData theme, AppLocalizations l10n) {
     return Column(
       children: [
-        // Avatar
         Container(
           width: 80,
           height: 80,
@@ -298,47 +291,37 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
-
         const SizedBox(height: 16),
-
-        // User Name
         Text(
           userName,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
-
         const SizedBox(height: 4),
-
-        // User Email
         Text(
           userEmail,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
-
         const SizedBox(height: 20),
-
-        // Edit Profile Button
         CustomButton(
-          text: 'Edit Profile',
+          text: l10n.editProfile,
           type: ButtonType.outlined,
           size: ButtonSize.small,
           icon: Icons.edit_outlined,
           onPressed: () {
-            _showEditProfileDialog(context);
+            _showEditProfileDialog(context, l10n);
           },
         ),
       ],
     );
   }
 
-  Widget _buildLoggedOutProfile(ThemeData theme) {
+  Widget _buildLoggedOutProfile(ThemeData theme, AppLocalizations l10n) {
     return Column(
       children: [
-        // Empty account icon
         Container(
           width: 80,
           height: 80,
@@ -352,22 +335,16 @@ class _SettingsPageState extends State<SettingsPage> {
             color: theme.colorScheme.primary.withOpacity(0.6),
           ),
         ),
-
         const SizedBox(height: 16),
-
-        // Title
         Text(
-          'Sign in to continue',
+          l10n.signIn,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
-
         const SizedBox(height: 8),
-
-        // Subtitle
         Text(
-          'Access your tasks, notes, and reminders\nacross all your devices',
+          l10n.signInToContinueDesc,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.6),
@@ -408,7 +385,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildThemeToggle(BuildContext context, ThemeProvider themeProvider) {
+  Widget _buildThemeToggle(BuildContext context, ThemeProvider themeProvider, AppLocalizations l10n) {
     final theme = Theme.of(context);
     final isDarkMode = themeProvider.isDarkMode;
 
@@ -428,13 +405,13 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       title: Text(
-        'Theme',
+        l10n.theme,
         style: theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
         ),
       ),
       subtitle: Text(
-        isDarkMode ? 'Dark Mode' : 'Light Mode',
+        isDarkMode ? l10n.darkMode : l10n.lightMode,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurface.withOpacity(0.6),
         ),
@@ -442,10 +419,10 @@ class _SettingsPageState extends State<SettingsPage> {
       trailing: Switch(
         value: isDarkMode,
         onChanged: (value) {
-          Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+          themeProvider.toggleTheme();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Theme changed to ${value ? 'Dark' : 'Light'} Mode'),
+              content: Text('${l10n.themeChanged} ${value ? l10n.darkMode : l10n.lightMode}'),
               duration: const Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
             ),
@@ -456,7 +433,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildNotificationsToggle(BuildContext context) {
+  Widget _buildNotificationsToggle(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
     return ListTile(
@@ -477,15 +454,15 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       title: Text(
-        'Notifications',
+        l10n.notifications,
         style: theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
         ),
       ),
       subtitle: Text(
         _notificationsEnabled
-            ? 'Receive task and reminder alerts'
-            : 'No notifications',
+            ? l10n.receiveTaskAlerts
+            : l10n.noNotifications,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurface.withOpacity(0.6),
         ),
@@ -498,8 +475,17 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildLanguageSelector(BuildContext context) {
+  Widget _buildLanguageSelector(BuildContext context, LanguageProvider languageProvider, AppLocalizations l10n) {
     final theme = Theme.of(context);
+
+    // Get current language country code
+    String currentCountry = 'GB'; // Default
+    for (var entry in languages.entries) {
+      if (entry.value['code'] == languageProvider.locale.languageCode) {
+        currentCountry = entry.value['country']!;
+        break;
+      }
+    }
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -510,20 +496,23 @@ class _SettingsPageState extends State<SettingsPage> {
           color: theme.colorScheme.primary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(
-          Icons.language,
-          color: theme.colorScheme.primary,
-          size: 22,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: CountryFlag.fromCountryCode(
+            currentCountry,
+            width: 32,
+            height: 24,
+          ),
         ),
       ),
       title: Text(
-        'Language',
+        l10n.language,
         style: theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
         ),
       ),
       subtitle: Text(
-        selectedLanguage,
+        languageProvider.languageName,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurface.withOpacity(0.6),
         ),
@@ -533,12 +522,12 @@ class _SettingsPageState extends State<SettingsPage> {
         color: theme.colorScheme.onSurface.withOpacity(0.4),
       ),
       onTap: () {
-        _showLanguageSelector(context);
+        _showLanguageSelector(context, languageProvider, l10n);
       },
     );
   }
 
-  Widget _buildAccountOptions(BuildContext context) {
+  Widget _buildAccountOptions(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
     return Column(
@@ -547,25 +536,25 @@ class _SettingsPageState extends State<SettingsPage> {
           _buildPreferenceItem(
             context,
             icon: Icons.sync,
-            title: 'Sync Status',
-            subtitle: 'Last synced just now',
-            trailing: Icon(
+            title: l10n.syncStatus,
+            subtitle: l10n.lastSynced,
+            trailing: const Icon(
               Icons.check_circle,
               color: Colors.green,
               size: 20,
             ),
           ),
-          Divider(height: 1, indent: 72),
+          const Divider(height: 1, indent: 72),
           _buildPreferenceItem(
             context,
             icon: Icons.security,
-            title: 'Change Password',
-            subtitle: 'Update your password',
+            title: l10n.changePassword,
+            subtitle: l10n.updatePassword,
             onTap: () {
-              _showChangePasswordDialog(context);
+              _showChangePasswordDialog(context, l10n);
             },
           ),
-          Divider(height: 1, indent: 72),
+          const Divider(height: 1, indent: 72),
           ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             leading: Container(
@@ -575,21 +564,21 @@ class _SettingsPageState extends State<SettingsPage> {
                 color: Colors.red.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.logout,
                 color: Colors.red,
                 size: 22,
               ),
             ),
             title: Text(
-              'Logout',
+              l10n.logout,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.red,
               ),
             ),
             onTap: () {
-              _showLogoutDialog(context);
+              _showLogoutDialog(context, l10n);
             },
           ),
         ] else ...[
@@ -598,7 +587,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
               children: [
                 CustomButton(
-                  text: 'Sign Up',
+                  text: l10n.signup,
                   type: ButtonType.primary,
                   icon: Icons.person_add,
                   width: double.infinity,
@@ -608,7 +597,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 12),
                 CustomButton(
-                  text: 'Login',
+                  text: l10n.login,
                   type: ButtonType.outlined,
                   icon: Icons.login,
                   width: double.infinity,
@@ -678,7 +667,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return name.substring(0, 1).toUpperCase();
   }
 
-  void _showLanguageSelector(BuildContext context) {
+  void _showLanguageSelector(BuildContext context, LanguageProvider languageProvider, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -702,24 +691,46 @@ class _SettingsPageState extends State<SettingsPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Select Language',
+                  l10n.selectLanguage,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              ...languages.map((language) {
-                final isSelected = language == selectedLanguage;
+              ...languages.entries.map((entry) {
+                final languageName = entry.key;
+                final languageCode = entry.value['code']!;
+                final countryCode = entry.value['country']!;
+                final isSelected = languageProvider.locale.languageCode == languageCode;
+
                 return ListTile(
-                  leading: Icon(
-                    Icons.language,
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  leading: Container(
+                    width: 56,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.grey.shade300,
+                        width: 2,
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: CountryFlag.fromCountryCode(
+                        countryCode,
+                        width: 52,
+                        height: 36,
+                      ),
+                    ),
                   ),
                   title: Text(
-                    language,
+                    languageName,
                     style: TextStyle(
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                       color: isSelected
@@ -733,14 +744,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     color: Theme.of(context).colorScheme.primary,
                   )
                       : null,
-                  onTap: () {
-                    setState(() {
-                      selectedLanguage = language;
-                    });
+                  onTap: () async {
+                    await languageProvider.changeLanguage(languageCode);
+                    if (!context.mounted) return;
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Language changed to $language'),
+                        content: Text('${l10n.languageChanged} $languageName'),
                         duration: const Duration(seconds: 2),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -756,7 +766,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _showEditProfileDialog(BuildContext context) {
+  void _showEditProfileDialog(BuildContext context, AppLocalizations l10n) {
     final nameController = TextEditingController(text: userName);
     final emailController = TextEditingController(text: userEmail);
 
@@ -789,22 +799,22 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Edit Profile',
+                  l10n.editProfile,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 24),
                 CustomInput(
-                  label: 'Full Name',
-                  hint: 'Enter your name',
+                  label: l10n.fullName,
+                  hint: l10n.enterName,
                   controller: nameController,
                   prefixIcon: Icons.person_outline,
                 ),
                 const SizedBox(height: 16),
                 CustomInput(
-                  label: 'Email',
-                  hint: 'Enter your email',
+                  label: l10n.email,
+                  hint: l10n.enterEmail,
                   controller: emailController,
                   type: InputType.email,
                   prefixIcon: Icons.email_outlined,
@@ -814,7 +824,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: [
                     Expanded(
                       child: CustomButton(
-                        text: 'Cancel',
+                        text: l10n.cancel,
                         type: ButtonType.outlined,
                         onPressed: () {
                           Navigator.pop(context);
@@ -824,7 +834,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: CustomButton(
-                        text: 'Save',
+                        text: l10n.save,
                         type: ButtonType.primary,
                         onPressed: () async {
                           final result = await _authService.updateProfile(
@@ -862,19 +872,19 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _showLogoutDialog(BuildContext context) {
+  void _showLogoutDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Logout'),
-          content: const Text('Are you sure you want to logout?'),
+          title: Text(l10n.logoutConfirmation),
+          content: Text(l10n.areYouSureLogout),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () async {
@@ -885,9 +895,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   isLoggedIn = false;
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Logged out successfully'),
-                    duration: Duration(seconds: 2),
+                  SnackBar(
+                    content: Text(l10n.logoutSuccess),
+                    duration: const Duration(seconds: 2),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
@@ -895,7 +905,7 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.red,
               ),
-              child: const Text('Logout'),
+              child: Text(l10n.logout),
             ),
           ],
         );
@@ -903,7 +913,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _showChangePasswordDialog(BuildContext context) {
+  void _showChangePasswordDialog(BuildContext context, AppLocalizations l10n) {
     final currentPasswordController = TextEditingController();
     final newPasswordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
@@ -943,76 +953,68 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'Change Password',
+                        l10n.changePassword,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 24),
-
-                      // Current Password
                       CustomInput(
-                        label: 'Current Password',
-                        hint: 'Enter current password',
+                        label: l10n.currentPassword,
+                        hint: l10n.enterCurrentPassword,
                         controller: currentPasswordController,
                         type: InputType.password,
                         prefixIcon: Icons.lock_outline,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter current password';
+                            return l10n.pleaseEnterCurrentPassword;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
-
-                      // New Password
                       CustomInput(
-                        label: 'New Password',
-                        hint: 'Enter new password',
+                        label: l10n.newPassword,
+                        hint: l10n.enterNewPassword,
                         controller: newPasswordController,
                         type: InputType.password,
                         prefixIcon: Icons.lock_outline,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter new password';
+                            return l10n.pleaseEnterNewPassword;
                           }
                           if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
+                            return l10n.passwordTooShort;
                           }
                           if (value == currentPasswordController.text) {
-                            return 'New password must be different';
+                            return l10n.passwordMustBeDifferent;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
-
-                      // Confirm New Password
                       CustomInput(
-                        label: 'Confirm New Password',
-                        hint: 'Re-enter new password',
+                        label: l10n.confirmNewPassword,
+                        hint: l10n.reEnterPassword,
                         controller: confirmPasswordController,
                         type: InputType.password,
                         prefixIcon: Icons.lock_outline,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please confirm new password';
+                            return l10n.pleaseConfirmPassword;
                           }
                           if (value != newPasswordController.text) {
-                            return 'Passwords do not match';
+                            return l10n.passwordsDoNotMatch;
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 24),
-
-                      // Buttons
                       Row(
                         children: [
                           Expanded(
                             child: CustomButton(
-                              text: 'Cancel',
+                              text: l10n.cancel,
                               type: ButtonType.outlined,
                               onPressed: isLoading ? null : () {
                                 Navigator.pop(context);
@@ -1022,7 +1024,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: CustomButton(
-                              text: 'Change',
+                              text: l10n.change,
                               type: ButtonType.primary,
                               isLoading: isLoading,
                               onPressed: isLoading ? null : () async {
@@ -1044,7 +1046,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                 });
 
                                 if (!context.mounted) return;
-
                                 Navigator.pop(context);
 
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -1073,12 +1074,12 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _showComingSoonDialog(BuildContext context) {
+  void _showComingSoonDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Coming Soon'),
+          title: Text(l10n.comingSoon),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1088,13 +1089,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'This feature is under development',
+              Text(
+                l10n.featureUnderDevelopment,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                'We\'re working hard to bring you this feature soon!',
+                l10n.workingHardOnFeature,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
@@ -1107,7 +1108,7 @@ class _SettingsPageState extends State<SettingsPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Got it'),
+              child: Text(l10n.gotIt),
             ),
           ],
         );
@@ -1115,7 +1116,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _showAboutDialog(BuildContext context) {
+  void _showAboutDialog(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
     showDialog(
@@ -1147,34 +1148,34 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               const SizedBox(height: 16),
               Text(
-                'DayFlow',
+                l10n.appName,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Version 1.0.0',
+                l10n.version,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
               const SizedBox(height: 16),
               Text(
-                'A smart daily planner to help you manage your tasks, notes, and reminders efficiently.',
+                l10n.appDescription,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall,
               ),
               const SizedBox(height: 24),
               Text(
-                'Developed by Team DayFlow',
+                l10n.developedBy,
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Abderrahmane Houri\nMohamed Al Amin Saàd\nLina Selma Ouadah',
+                l10n.teamMembers,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
@@ -1188,7 +1189,7 @@ class _SettingsPageState extends State<SettingsPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Close'),
+              child: Text(l10n.close),
             ),
           ],
         );
