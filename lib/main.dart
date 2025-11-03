@@ -9,18 +9,14 @@ import 'package:dayflow/services/firebase_auth_service.dart';
 import 'utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize Firebase
-  await Firebase.initializeApp();
-
-  // Initialize Language Provider and load saved language
-  final languageProvider = LanguageProvider();
-  await languageProvider.loadSavedLanguage();
-
-  runApp(DayFlowApp(languageProvider: languageProvider));
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const DayFlowApp());
 }
 
 class DayFlowApp extends StatelessWidget {
