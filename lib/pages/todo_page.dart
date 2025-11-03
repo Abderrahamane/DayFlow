@@ -8,210 +8,344 @@ import '../widgets/task_filter_bar.dart';
 import 'task_detail_page.dart';
 import 'task_edit_page.dart';
 
-class TodoPage extends StatelessWidget {
+import 'package:dayflow/utils/date_utils.dart';
+import 'package:dayflow/widgets/task_card.dart';
+import 'package:dayflow/widgets/quote_card.dart';
+
+class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const _TodoPageContent();
-  }
+  State<TodoPage> createState() => _TodoPageState();
 }
 
-class _TodoPageContent extends StatelessWidget {
-  const _TodoPageContent();
+class _TodoPageState extends State<TodoPage> {
+  final List<Map<String, dynamic>> _tasks = [
+    {
+      'title': 'Morning Routine',
+      'time': '10:00 AM',
+      'completed': false,
+      'hasReminder': false
+    },
+    {
+      'title': 'Project Meeting',
+      'time': '12:00 PM',
+      'completed': false,
+      'hasReminder': false
+    },
+    {
+      'title': 'Lunch Break',
+      'time': '2:00 PM',
+      'completed': true,
+      'hasReminder': false
+    },
+  ];
 
-  void _showDeleteConfirmation(BuildContext context, Task task) {
-    final theme = Theme.of(context);
+  String _formattedHeaderDate() => formattedHeaderDate();
+
+  void _toggleComplete(int index) {
+    setState(() => _tasks[index]['completed'] = !_tasks[index]['completed']);
+  }
+
+  void _showAddTaskDialog({int? editIndex}) {
+    final isEditing = editIndex != null;
+    final titleController = TextEditingController(
+      text: isEditing ? _tasks[editIndex]['title'] : '',
+    );
+    TimeOfDay? selectedTime;
+    bool hasReminder = isEditing ? _tasks[editIndex]['hasReminder'] : false;
+
+    // Parse existing time if editing
+    if (isEditing && _tasks[editIndex]['time'] != 'No time set') {
+      try {
+        final timeParts = _tasks[editIndex]['time'].split(':');
+        final hour = int.parse(timeParts[0]);
+        final minutePart = timeParts[1].split(' ');
+        final minute = int.parse(minutePart[0]);
+        final period = minutePart[1];
+
+        final hour24 = period == 'PM' && hour != 12
+            ? hour + 12
+            : (period == 'AM' && hour == 12 ? 0 : hour);
+
+        selectedTime = TimeOfDay(hour: hour24, minute: minute);
+      } catch (e) {
+        // If parsing fails, leave selectedTime as null
+      }
+    }
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete Task'),
-        content: Text('Are you sure you want to delete "${task.title}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              context.read<TaskService>().deleteTask(task.id);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Task deleted'),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              );
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-  }
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isEditing ? 'Edit Task' : 'Create New Task',
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                    ),
+                    const SizedBox(height: 24),
+                    TextField(
+                      controller: titleController,
+                      decoration: InputDecoration(
+                        labelText: 'Task Title',
+                        hintText: 'Enter task name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        prefixIcon: const Icon(Icons.task_alt),
+                      ),
+                      autofocus: true,
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: () async {
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (time != null) {
+                          setDialogState(() {
+                            selectedTime = time;
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              selectedTime != null
+                                  ? selectedTime!.format(context)
+                                  : 'Select Time',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).dividerColor,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: CheckboxListTile(
+                        title: const Text('Set Reminder'),
+                        subtitle: const Text('Get notified at task time'),
+                        value: hasReminder,
+                        onChanged: (value) {
+                          setDialogState(() {
+                            hasReminder = value ?? false;
+                          });
+                        },
+                        secondary: Icon(
+                          Icons.notifications_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(dialogContext).pop(),
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (titleController.text.trim().isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please enter a task title'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                              return;
+                            }
 
-  void _showAddEditTask(BuildContext context, {Task? task}) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => TaskEditPage(task: task),
+                            final timeString = selectedTime != null
+                                ? selectedTime!.format(context)
+                                : 'No time set';
+
+                            setState(() {
+                              if (isEditing) {
+                                _tasks[editIndex] = {
+                                  'title': titleController.text.trim(),
+                                  'time': timeString,
+                                  'completed': _tasks[editIndex]['completed'],
+                                  'hasReminder': hasReminder,
+                                };
+                              } else {
+                                _tasks.add({
+                                  'title': titleController.text.trim(),
+                                  'time': timeString,
+                                  'completed': false,
+                                  'hasReminder': hasReminder,
+                                });
+                              }
+                            });
+
+                            Navigator.of(dialogContext).pop();
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  isEditing
+                                      ? 'Task updated successfully!'
+                                      : (hasReminder
+                                          ? 'Task added with reminder!'
+                                          : 'Task added successfully!'),
+                                ),
+                                duration: const Duration(seconds: 2),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(isEditing ? 'Update Task' : 'Add Task'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final taskService = context.watch<TaskService>();
-    final tasks = taskService.tasks;
+    final primary = theme.colorScheme.primary;
 
     return Scaffold(
-      body: Column(
-        children: [
-          TaskFilterBar(
-            currentFilter: taskService.currentFilter,
-            currentSort: taskService.currentSort,
-            onFilterChanged: (filter) => taskService.setFilter(filter),
-            onSortChanged: (sort) => taskService.setSort(sort),
-            totalTasks: taskService.totalTasks,
-            completedTasks: taskService.completedTasks,
-            pendingTasks: taskService.pendingTasks,
-            overdueTasks: taskService.overdueTasks,
-          ),
-          Expanded(
-            child: tasks.isEmpty
-                ? _EmptyState(
-              filter: taskService.currentFilter,
-              theme: theme,
-            )
-                : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: tasks.length,
-              itemBuilder: (context, index) {
-                final task = tasks[index];
-                return TaskCard(
-                  task: task,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ChangeNotifierProvider.value(
-                          value: taskService,
-                          child: TaskDetailPage(taskId: task.id),
-                        ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      _formattedHeaderDate(),
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color:
+                            theme.textTheme.bodySmall?.color?.withOpacity(0.7),
                       ),
-                    );
-                  },
-                  onToggle: () => taskService.toggleTaskCompletion(task.id),
-                );
-              },
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Center(
+                    child: Text(
+                      "Today's List",
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                children: [
+                  const SizedBox(height: 8),
+                  ...List.generate(
+                    _tasks.length,
+                    (i) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TaskCard(
+                        task: _tasks[i],
+                        onTap: () => _showAddTaskDialog(editIndex: i),
+                        onToggleComplete: () => _toggleComplete(i),
+                        onDelete: () {
+                          setState(() {
+                            _tasks.removeAt(i);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Task deleted'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const QuoteCard(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddEditTask(context),
-        child: const Icon(Icons.add),
+        onPressed: _showAddTaskDialog,
+        backgroundColor: primary,
+        child: const Icon(Icons.add, size: 28, color: Colors.white),
       ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final TaskFilter filter;
-  final ThemeData theme;
-
-  const _EmptyState({
-    required this.filter,
-    required this.theme,
-  });
-
-  String _getEmptyMessage() {
-    switch (filter) {
-      case TaskFilter.completed:
-        return 'No completed tasks yet';
-      case TaskFilter.pending:
-        return 'No pending tasks';
-      case TaskFilter.overdue:
-        return 'No overdue tasks';
-      case TaskFilter.today:
-        return 'No tasks due today';
-      case TaskFilter.all:
-        return 'No tasks yet';
-    }
-  }
-
-  String _getEmptySubMessage() {
-    switch (filter) {
-      case TaskFilter.completed:
-        return 'Complete some tasks to see them here';
-      case TaskFilter.pending:
-        return 'All tasks are completed!';
-      case TaskFilter.overdue:
-        return 'You\'re all caught up!';
-      case TaskFilter.today:
-        return 'No tasks scheduled for today';
-      case TaskFilter.all:
-        return 'Tap + to create your first task';
-    }
-  }
-
-  IconData _getEmptyIcon() {
-    switch (filter) {
-      case TaskFilter.completed:
-        return Icons.check_circle_outline;
-      case TaskFilter.pending:
-        return Icons.celebration_outlined;
-      case TaskFilter.overdue:
-        return Icons.thumb_up_outlined;
-      case TaskFilter.today:
-        return Icons.today_outlined;
-      case TaskFilter.all:
-        return Icons.task_outlined;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              _getEmptyIcon(),
-              size: 60,
-              color: theme.colorScheme.primary.withOpacity(0.5),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            _getEmptyMessage(),
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _getEmptySubMessage(),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
