@@ -1,7 +1,8 @@
-// Card components
-
 import 'package:flutter/material.dart';
 
+// Card components
+
+// The base card widget that provides the container and styling
 class CustomCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -29,6 +30,7 @@ class CustomCard extends StatelessWidget {
     final theme = Theme.of(context);
     final cardColor = color ?? theme.cardTheme.color ?? theme.colorScheme.surface;
 
+    // The core container for the card's appearance
     Widget card = Container(
       margin: margin ?? const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       decoration: BoxDecoration(
@@ -51,6 +53,7 @@ class CustomCard extends StatelessWidget {
       ),
     );
 
+    // If an onTap function is provided, wrap the card in an InkWell for a ripple effect
     if (onTap != null) {
       return Material(
         color: Colors.transparent,
@@ -66,7 +69,7 @@ class CustomCard extends StatelessWidget {
   }
 }
 
-// Info Card with Icon
+// Info Card with an Icon, Title, and optional Subtitle
 class InfoCard extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -142,19 +145,25 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-// Stat Card
+// Stat Card with a Progress Bar and Delete Icon
 class StatCard extends StatelessWidget {
   final String label;
   final String value;
-  final IconData icon;
+  final double progress;
+  final IconData? icon;
   final Color? color;
+  final VoidCallback? onDelete;
+  final VoidCallback? onTap;
 
   const StatCard({
     super.key,
     required this.label,
     required this.value,
-    required this.icon,
+    this.icon,
     this.color,
+    required this.progress,
+    this.onDelete,
+    this.onTap,
   });
 
   @override
@@ -163,23 +172,62 @@ class StatCard extends StatelessWidget {
     final statColor = color ?? theme.colorScheme.primary;
 
     return CustomCard(
-      padding: const EdgeInsets.all(20),
+      onTap: onTap,
+      padding: const EdgeInsets.fromLTRB(20, 20, 16, 20), // Adjusted padding for icon
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: statColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              color: statColor,
-              size: 24,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Left Icon
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: statColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  icon,
+                  color: statColor,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // Progress Bar (FIXED: Wrapped in Expanded)
+              Expanded(
+                child: LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: statColor.withOpacity(0.2),
+                  color: statColor,
+                  minHeight: 6,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 12), // Spacing before the icon
+
+              // Delete Icon (Always Visible)
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onDelete,
+                  borderRadius: BorderRadius.circular(24),
+                  child: const Padding(
+                    padding: EdgeInsets.all(4.0),
+                    child: Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                      size: 22,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
+
+          // Main Value Text
           Text(
             value,
             style: theme.textTheme.headlineMedium?.copyWith(
@@ -188,6 +236,8 @@ class StatCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
+
+          // Label Text
           Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
