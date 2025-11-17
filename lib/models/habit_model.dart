@@ -176,6 +176,45 @@ class Habit {
       color: Color(json['color']),
     );
   }
+
+  // Firestore serialization
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'description': description,
+      'icon': icon,
+      'frequency': frequency.name,
+      'goalCount': goalCount,
+      'linkedTaskTags': linkedTaskTags,
+      'completionHistory': completionHistory,
+      'createdAt': createdAt.toIso8601String(),
+      'color': color.value,
+    };
+  }
+
+  factory Habit.fromFirestore(Map<String, dynamic> data, String docId) {
+    return Habit(
+      id: docId,
+      name: data['name'] ?? '',
+      description: data['description'],
+      icon: data['icon'] ?? '📝',
+      frequency: HabitFrequency.values.firstWhere(
+        (f) => f.name == data['frequency'],
+        orElse: () => HabitFrequency.daily,
+      ),
+      goalCount: data['goalCount'] ?? 7,
+      linkedTaskTags: data['linkedTaskTags'] != null 
+          ? List<String>.from(data['linkedTaskTags']) 
+          : [],
+      completionHistory: data['completionHistory'] != null 
+          ? Map<String, bool>.from(data['completionHistory']) 
+          : {},
+      createdAt: data['createdAt'] != null 
+          ? DateTime.parse(data['createdAt']) 
+          : DateTime.now(),
+      color: data['color'] != null ? Color(data['color']) : Colors.blue,
+    );
+  }
 }
 
 enum HabitFrequency {
