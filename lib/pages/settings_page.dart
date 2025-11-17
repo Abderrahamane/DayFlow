@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/theme/app_theme.dart';
 import 'package:dayflow/providers/language_provider.dart';
+import 'package:dayflow/providers/analytics_provider.dart';
 import 'package:dayflow/utils/app_localizations.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
 import 'package:dayflow/utils/routes.dart';
@@ -50,6 +51,12 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
     _loadUserData();
     _loadNotificationSettings();
+    
+    // Track that user opened settings page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final analytics = Provider.of<AnalyticsProvider>(context, listen: false);
+      analytics.trackPageView('Settings');
+    });
   }
 
   Future<void> _loadUserData() async {

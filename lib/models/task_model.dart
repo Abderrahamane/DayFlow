@@ -79,6 +79,41 @@ class Task {
     );
   }
 
+  // Firestore serialization
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'description': description,
+      'isCompleted': isCompleted,
+      'createdAt': createdAt.toIso8601String(),
+      'dueDate': dueDate?.toIso8601String(),
+      'priority': priority.name,
+      'tags': tags,
+      'subtasks': subtasks?.map((s) => s.toJson()).toList(),
+    };
+  }
+
+  factory Task.fromFirestore(Map<String, dynamic> data, String docId) {
+    return Task(
+      id: docId,
+      title: data['title'] ?? '',
+      description: data['description'],
+      isCompleted: data['isCompleted'] ?? false,
+      createdAt: data['createdAt'] != null 
+          ? DateTime.parse(data['createdAt']) 
+          : DateTime.now(),
+      dueDate: data['dueDate'] != null ? DateTime.parse(data['dueDate']) : null,
+      priority: TaskPriority.values.firstWhere(
+        (p) => p.name == data['priority'],
+        orElse: () => TaskPriority.medium,
+      ),
+      tags: data['tags'] != null ? List<String>.from(data['tags']) : null,
+      subtasks: data['subtasks'] != null
+          ? (data['subtasks'] as List).map((s) => Subtask.fromJson(s)).toList()
+          : null,
+    );
+  }
+
   int get completedSubtasks =>
       subtasks?.where((s) => s.isCompleted).length ?? 0;
   int get totalSubtasks => subtasks?.length ?? 0;
@@ -146,12 +181,15 @@ class Subtask {
 }
 
 enum TaskPriority {
+  none,
   low,
   medium,
   high;
 
   String get displayName {
     switch (this) {
+      case TaskPriority.none:
+        return 'None';
       case TaskPriority.low:
         return 'Low';
       case TaskPriority.medium:
@@ -189,7 +227,7 @@ enum TaskSort {
   dateCreated,
   dueDate,
   priority,
-  title;
+  alphabetical;
 
   String get displayName {
     switch (this) {
@@ -199,8 +237,8 @@ enum TaskSort {
         return 'Due Date';
       case TaskSort.priority:
         return 'Priority';
-      case TaskSort.title:
-        return 'Title';
+      case TaskSort.alphabetical:
+        return 'Alphabetical';
     }
   }
 }

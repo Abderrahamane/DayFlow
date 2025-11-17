@@ -5,6 +5,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:dayflow/theme/app_theme.dart';
 import 'package:dayflow/providers/language_provider.dart';
+import 'package:dayflow/providers/analytics_provider.dart';
+import 'package:dayflow/providers/auth_provider.dart';
+import 'package:dayflow/providers/tasks_provider.dart';
+import 'package:dayflow/providers/habits_provider.dart';
 import 'package:dayflow/utils/app_localizations.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
 import 'utils/routes.dart';
@@ -25,13 +29,27 @@ void main() async {
   final languageProvider = LanguageProvider();
   await languageProvider.loadSavedLanguage();
 
-  runApp(DayFlowApp(languageProvider: languageProvider));
+  // Initialize Analytics
+  final analyticsProvider = AnalyticsProvider();
+  // TODO: Replace with your actual Mixpanel token
+  // Get your token from: https://mixpanel.com/project/[PROJECT_ID]/settings
+  await analyticsProvider.initialize('YOUR_MIXPANEL_TOKEN_HERE');
+
+  runApp(DayFlowApp(
+    languageProvider: languageProvider,
+    analyticsProvider: analyticsProvider,
+  ));
 }
 
 class DayFlowApp extends StatelessWidget {
   final LanguageProvider languageProvider;
+  final AnalyticsProvider analyticsProvider;
 
-  const DayFlowApp({super.key, required this.languageProvider});
+  const DayFlowApp({
+    super.key,
+    required this.languageProvider,
+    required this.analyticsProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +57,18 @@ class DayFlowApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider.value(value: languageProvider),
+        ChangeNotifierProvider.value(value: analyticsProvider),
 
-        // NEW: create both services
+        // Auth Provider
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+
+        // Tasks Provider
+        ChangeNotifierProvider(create: (_) => TasksProvider()),
+
+        // Habits Provider
+        ChangeNotifierProvider(create: (_) => HabitsProvider()),
+
+        // Legacy services for backward compatibility
         ChangeNotifierProvider<TaskService>(
           create: (_) {
             final taskService = TaskService();
