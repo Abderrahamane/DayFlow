@@ -216,7 +216,7 @@ Replace `'YOUR_MIXPANEL_TOKEN_HERE'` with your actual token:
 await analyticsProvider.initialize('abc123yourtokenhere');
 ```
 
-**Note**: If you don't want analytics, you can skip this step. The app will work without Mixpanel.
+**Note**: This step is **optional**. The app will work perfectly without Mixpanel. Skip this section if you don't need analytics.
 
 ---
 

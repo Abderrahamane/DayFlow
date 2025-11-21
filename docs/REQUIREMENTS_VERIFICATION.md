@@ -30,15 +30,15 @@ This document verifies whether the DayFlow project meets the requirements specif
 
 **Comparison**:
 
-| Aspect | Provider (Current) | BLoC/Cubit (Required) |
-|--------|-------------------|----------------------|
-| Complexity | Low | Medium-High |
-| Boilerplate | Minimal | Significant |
-| Learning Curve | Easy | Steep |
-| Testability | Good | Excellent |
-| Scalability | Good | Excellent |
-| Event Tracing | No | Yes |
-| State Immutability | Optional | Enforced |
+| Aspect         | Provider (Current) | BLoC/Cubit (Required) |
+|----------------|--------------------|-----------------------|
+| Complexity     | Low                | Medium-High           |
+| Boilerplate    | Minimal            | Significant           |
+| Learning Curve | Easy               | Steep                 |
+| Testability    | Good               | Excellent             |
+| Scalability    | Good               | Excellent             |
+| Event Tracing  | No                 | Yes                   |
+| State Immutability | Optional       | Enforced              |
 
 **Example of current implementation** (Provider):
 ```dart
