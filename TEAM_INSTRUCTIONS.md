@@ -2,7 +2,7 @@
 
 This document contains detailed instructions for implementing the course features. Read your assigned section carefully and follow the steps.
 
-## 📋 Table of Contents
+## Table of Contents
 
 1. [General Workflow](#general-workflow)
 2. [Issue 3: Mixpanel Analytics - Lina & Mohammed](#issue-3-mixpanel-analytics---lina--mohammed)
@@ -75,7 +75,7 @@ The following files have been created for you:
 - Basic initialization code has been added to `main.dart`
 - Settings page already tracks when it's opened
 
-### Your Tasks 📝
+### Your Tasks
 
 #### Step 1: Get a Mixpanel Project Token (Mohammed)
 
@@ -339,10 +339,10 @@ npm start
 
 You should see:
 ```
-✅ MongoDB connected successfully
-📦 Database: dayflow
-✅ Server running on port 5000
-🌐 Environment: development
+MongoDB connected successfully
+Database: dayflow
+Server running on port 5000
+Environment: development
 ```
 
 #### Step 6: Test the API
@@ -415,7 +415,7 @@ Three new providers have been created for you:
 - `lib/providers/auth_provider.dart` - Manages authentication
 - All providers are registered in `main.dart`
 
-### Your Tasks 📝
+### Your Tasks
 
 #### Step 1: Understand the Providers
 
@@ -726,7 +726,7 @@ Future<void> _createHabit() async {
    - Create habit → Should save via provider
    - Logout → Should use AuthProvider
 
-### Common Patterns 📚
+### Common Patterns
 
 **1. Get provider without listening (one-time action)**:
 ```dart
@@ -767,7 +767,7 @@ void initState() {
 
 ---
 
-## 🎯 Summary of Responsibilities
+## Summary of Responsibilities
 
 ### Lina's Tasks
 - [ ] Issue 3: Track login events with Mixpanel
@@ -787,7 +787,7 @@ void initState() {
 
 ---
 
-## 📞 Need Help?
+## Need Help?
 
 1. Read the error message carefully
 2. Check the file comments and documentation
@@ -795,7 +795,7 @@ void initState() {
 4. Ask team lead (Abderrahmane)
 5. Ask your teammate
 
-## 🎉 Final Notes
+## Final Notes
 
 - **Take your time** - understand each step before moving forward
 - **Test frequently** - don't wait until the end
@@ -803,4 +803,4 @@ void initState() {
 - **Help each other** - you're a team!
 - **Document issues** - if something doesn't work, write it down
 
-Good luck! You've got this! 🚀
+Good luck! You've got this!

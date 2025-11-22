@@ -1,6 +1,6 @@
 # DayFlow Course Features - Quick Reference
 
-## 🚀 Getting Started
+## Getting Started
 
 ### For Everyone
 
@@ -23,7 +23,7 @@ git checkout -b feature/mohammed-backend-analytics
 
 ---
 
-## 📊 Issue 3: Mixpanel Analytics (Lina + Mohammed)
+## Issue 3: Mixpanel Analytics (Lina + Mohammed)
 
 ### Mohammed's Quick Setup
 
@@ -63,7 +63,7 @@ analytics.trackHabitCreated(habitId: habit.id, habitName: habit.name, frequency:
 
 ---
 
-## 🖥️ Issue 4: Node.js Backend (Mohammed)
+##  Issue 4: Node.js Backend (Mohammed)
 
 ### Quick Setup
 
@@ -94,7 +94,7 @@ npm run dev
 
 ---
 
-## 🎨 Issue 5: State Management (Lina)
+## Issue 5: State Management (Lina)
 
 ### Provider Pattern
 
@@ -146,7 +146,7 @@ await provider.deleteTask(taskId);
 
 ---
 
-## 🧪 Testing Checklist
+## Testing Checklist
 
 ### Lina
 
@@ -168,7 +168,7 @@ await provider.deleteTask(taskId);
 
 ---
 
-## 📝 Commit and PR
+## Commit and PR
 
 ```bash
 # 1. Check what changed
@@ -189,7 +189,7 @@ git push origin feature/your-branch-name
 
 ---
 
-## 🆘 Common Issues
+## Common Issues
 
 ### "Provider not found"
 **Solution**: Make sure you're using `Provider.of<TasksProvider>` with the correct type.
@@ -208,7 +208,7 @@ git push origin feature/your-branch-name
 
 ---
 
-## 📚 Documentation Files
+## Documentation Files
 
 - **TEAM_INSTRUCTIONS.md** - Full detailed instructions
 - **backend/README.md** - Backend setup guide
@@ -216,7 +216,7 @@ git push origin feature/your-branch-name
 
 ---
 
-## 🎯 Division of Work
+## Division of Work
 
 ### Lina (State Management + Analytics)
 1. Track login with Mixpanel
@@ -234,7 +234,7 @@ git push origin feature/your-branch-name
 
 ---
 
-## 💡 Tips
+## Tips
 
 - **Test frequently** - Don't wait until the end
 - **Read error messages** - They usually tell you what's wrong
@@ -244,7 +244,7 @@ git push origin feature/your-branch-name
 
 ---
 
-## 🏁 Done?
+## Done?
 
 When you finish:
 1. ✅ Test everything works
@@ -254,4 +254,4 @@ When you finish:
 5. ✅ Request review from Abderrahmane
 6. ✅ Review your teammate's PR
 
-Good luck! 🚀
+Good luck!

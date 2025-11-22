@@ -1,4 +1,4 @@
-# DayFlow - Smart Daily Planner 🧠
+# DayFlow - Smart Daily Planner
 
 <div align="center">
 
@@ -16,9 +16,9 @@ Manage your tasks, build habits, take notes, and track your progress — with cl
 
 ---
 
-## 🌟 Features
+## Features
 
-### 📝 Task Management
+### Task Management
 - Create, edit, and delete tasks
 - Set priorities (none, low, medium, high)
 - Add due dates and reminders
@@ -26,7 +26,7 @@ Manage your tasks, build habits, take notes, and track your progress — with cl
 - Filter and sort tasks (all, completed, pending, overdue, today)
 - Tag tasks for organization
 
-### 🎯 Habit Tracking
+### Habit Tracking
 - Build positive habits through daily tracking
 - Visual streak indicators
 - Completion rate statistics
@@ -34,31 +34,31 @@ Manage your tasks, build habits, take notes, and track your progress — with cl
 - Customizable icons and colors
 - Progress visualization
 
-### 📒 Notes
+### Notes
 - Quick note-taking
 - Tag-based organization
 - Pin important notes
 - Search functionality
 - Auto-save
 
-### ⏰ Reminders
+### Reminders
 - Schedule notifications
 - Recurring reminders
 - Due date alerts
 - Customizable notification settings
 
-### 🎨 Personalization
+### Personalization
 - **Dark & Light Mode**: Easy on your eyes, day or night
 - **Multi-Language Support**: English, French, Arabic (with RTL support)
 - **Custom Themes**: Personalize your experience
 
-### ☁️ Cloud Features
+###  Cloud Features
 - **Real-time Sync**: Access your data on any device
 - **Firebase Authentication**: Secure email/password and Google Sign-In
 - **Cloud Firestore**: Automatic backup and sync
 - **Offline Support**: Works without internet, syncs when connected
 
-### 📊 Analytics & Insights
+### Analytics & Insights
 - Task completion statistics
 - Habit streak tracking
 - Progress visualization
@@ -66,7 +66,7 @@ Manage your tasks, build habits, take notes, and track your progress — with cl
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -105,19 +105,19 @@ For detailed setup instructions, see [📘 Setup Guide](docs/SETUP_GUIDE.md)
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 Comprehensive documentation is available in the `docs/` folder:
 
 ### For Beginners
-- **[🎯 Getting Started Guide](docs/GETTING_STARTED.md)** - Perfect for beginners, step-by-step learning path
-- **[🚀 Setup Guide](docs/SETUP_GUIDE.md)** - Complete installation and configuration instructions
+- **[Getting Started Guide](docs/GETTING_STARTED.md)** - Perfect for beginners, step-by-step learning path
+- **[Setup Guide](docs/SETUP_GUIDE.md)** - Complete installation and configuration instructions
 
 ### For Developers
-- **[🏗️ Architecture Guide](docs/ARCHITECTURE.md)** - High-level architecture, state management, database design
-- **[📁 File Structure](docs/FILE_STRUCTURE.md)** - Detailed file-by-file documentation with code examples
-- **[✨ Features Documentation](docs/FEATURES.md)** - Complete feature breakdown with implementation details
-- **[✅ Requirements Verification](docs/REQUIREMENTS_VERIFICATION.md)** - Project requirements analysis and verification
+- **[Architecture Guide](docs/ARCHITECTURE.md)** - High-level architecture, state management, database design
+- **[File Structure](docs/FILE_STRUCTURE.md)** - Detailed file-by-file documentation with code examples
+- **[Features Documentation](docs/FEATURES.md)** - Complete feature breakdown with implementation details
+- **[Requirements Verification](docs/REQUIREMENTS_VERIFICATION.md)** - Project requirements analysis and verification
 
 ### Quick Links
 - [Understanding the Project Structure](#project-structure)
@@ -128,7 +128,7 @@ Comprehensive documentation is available in the `docs/` folder:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 DayFlow/
@@ -148,11 +148,11 @@ DayFlow/
 └── pubspec.yaml                  # Dependencies
 ```
 
-For detailed explanation, see [📁 File Structure Documentation](docs/FILE_STRUCTURE.md)
+For detailed explanation, see [File Structure Documentation](docs/FILE_STRUCTURE.md)
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **Flutter** 3.0+ - UI framework
@@ -175,7 +175,7 @@ For detailed explanation, see [📁 File Structure Documentation](docs/FILE_STRU
 
 ---
 
-## 🎨 Key Features Showcase
+## Key Features Showcase
 
 ### State Management (Provider Pattern)
 ```dart
@@ -207,7 +207,7 @@ await tasksProvider.addTask(newTask);  // Saves to Firestore automatically
 
 ---
 
-## 👥 Team
+## Team
 
 | Name | Role | Responsibilities |
 |------|------|------------------|
@@ -217,7 +217,7 @@ await tasksProvider.addTask(newTask);  // Saves to Firestore automatically
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the team! Here's how to contribute:
 
@@ -253,13 +253,13 @@ We welcome contributions from the team! Here's how to contribute:
 
 ---
 
-## 📱 Screenshots
+## Screenshots
 
 _Coming soon - Screenshots will be added here_
 
 ---
 
-## 🐛 Known Issues & Future Enhancements
+## Known Issues & Future Enhancements
 
 ### Known Issues
 - None currently reported
@@ -277,22 +277,22 @@ See [Features Documentation](docs/FEATURES.md) for complete roadmap.
 
 ---
 
-## 📄 License
+## License
 
 This project is developed as part of a university course.
 
 ---
 
-## 📞 Support
+## Support
 
 **Need help?**
-- 📖 Check the [Documentation](docs/)
-- 🐛 [Report a bug](https://github.com/Abderrahamane/DayFlow/issues)
-- 💬 Contact team leader: Abderrahmane Houri
+- Check the [Documentation](docs/)
+- [Report a bug](https://github.com/Abderrahamane/DayFlow/issues)
+- Contact team leader: Abderrahmane Houri
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Flutter team for the amazing framework
 - Firebase for backend services
@@ -302,8 +302,6 @@ This project is developed as part of a university course.
 ---
 
 <div align="center">
-
-**Made with ❤️ by the DayFlow Team**
 
 [⬆ Back to top](#dayflow---smart-daily-planner-)
 

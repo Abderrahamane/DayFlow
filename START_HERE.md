@@ -1,12 +1,12 @@
 # DayFlow - Course Features Implementation
 
-## 🎓 For Lina and Mohammed
+## For Lina and Mohammed
 
 **Welcome!** This branch contains all the code and instructions you need to complete your assigned tasks for the course project.
 
 ---
 
-## 📖 Start Here
+## Start Here
 
 ### 1. Read the Documentation
 
@@ -42,9 +42,9 @@ See the "Who Does What" section below.
 
 ---
 
-## 👥 Who Does What?
+## Who Does What?
 
-### 👩‍💻 Lina's Responsibilities
+### Lina's Responsibilities
 
 **Issue 3 - Mixpanel Analytics (Partial)**
 - [ ] Add login tracking in login page
@@ -56,11 +56,11 @@ See the "Who Does What" section below.
 - [ ] Update login page to use AuthProvider
 - [ ] Update logout to use AuthProvider
 
-**📚 Your Documentation:**
+**Your Documentation:**
 - Primary: [TEAM_INSTRUCTIONS.md](./TEAM_INSTRUCTIONS.md) → See "Issue 5" section
 - Quick ref: [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) → See "Issue 5" section
 
-### 👨‍💻 Mohammed's Responsibilities
+### Mohammed's Responsibilities
 
 **Issue 3 - Mixpanel Analytics (Partial)**
 - [ ] Get Mixpanel token
@@ -74,14 +74,14 @@ See the "Who Does What" section below.
 - [ ] Start server
 - [ ] Test API endpoint
 
-**📚 Your Documentation:**
+**Your Documentation:**
 - Primary: [TEAM_INSTRUCTIONS.md](./TEAM_INSTRUCTIONS.md) → See "Issue 3" and "Issue 4" sections
 - Backend guide: [backend/README.md](./backend/README.md)
 - Quick ref: [QUICK_REFERENCE.md](./QUICK_REFERENCE.md)
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -122,7 +122,7 @@ See the "Who Does What" section below.
 
 ---
 
-## 📁 What's New?
+## What's New?
 
 ### New Flutter Files
 
@@ -166,19 +166,19 @@ backend/
 
 ---
 
-## ✅ What's Already Done
+## What's Already Done
 
 You don't need to create these - they're ready to use:
 
-✅ Mixpanel service with all tracking methods
-✅ Analytics provider for state management  
-✅ Tasks provider with Firestore integration
-✅ Habits provider with Firestore integration
-✅ Auth provider with Firebase
-✅ Backend server structure
-✅ MongoDB connection setup
-✅ API status endpoint
-✅ All providers registered in main.dart
+- Mixpanel service with all tracking methods
+- Analytics provider for state management  
+- Tasks provider with Firestore integration
+- Habits provider with Firestore integration
+- Auth provider with Firebase
+- Backend server structure
+- MongoDB connection setup
+- API status endpoint
+- All providers registered in main.dart
 
 **You just need to:**
 1. Configure tokens/databases
@@ -187,7 +187,7 @@ You don't need to create these - they're ready to use:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### For Lina
 
@@ -240,7 +240,7 @@ npm run dev
 
 ---
 
-## 🧪 Testing Checklist
+## Testing Checklist
 
 ### Lina Tests
 
@@ -265,7 +265,7 @@ npm run dev
 
 ---
 
-## 🆘 Need Help?
+## Need Help?
 
 ### Step 1: Check Documentation
 - **Detailed help**: TEAM_INSTRUCTIONS.md
@@ -296,7 +296,7 @@ npm run dev
 
 ---
 
-## 📊 Progress Tracking
+## Progress Tracking
 
 ### Issue 3: Mixpanel Analytics
 - [ ] Mohammed: Get token and add to main.dart
@@ -321,7 +321,7 @@ npm run dev
 
 ---
 
-## 🎯 Deliverables
+## Deliverables
 
 When you're done, create a Pull Request with:
 
@@ -335,7 +335,7 @@ When you're done, create a Pull Request with:
 
 ---
 
-## 💡 Tips for Success
+## Tips for Success
 
 1. **Read first, code second** - Understand before implementing
 2. **Test frequently** - Don't wait until the end
@@ -346,7 +346,7 @@ When you're done, create a Pull Request with:
 
 ---
 
-## 🎉 You've Got This!
+## You've Got This!
 
 Everything is set up for you. The infrastructure is ready, the documentation is comprehensive, and your teammates are here to help.
 
@@ -354,7 +354,7 @@ Everything is set up for you. The infrastructure is ready, the documentation is 
 
 ---
 
-## 📞 Contact
+## Contact
 
 **Team Lead**: Abderrahmane  
 **Team Members**: Lina & Mohammed
