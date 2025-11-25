@@ -93,7 +93,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 
 ### Priority 1: Critical (Week 1-2)
 
-#### 1. Complete Reminders Feature
+#### 1. Complete Reminders Feature (issue done)
 **What**: Fully implement reminders functionality
 **Why**: Page exists but doesn't work yet
 **Tasks**:
@@ -109,7 +109,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 **Assigned to**: Mohamed Al Amin Saàd
 **Estimated time**: 1 week
 
-#### 2. Complete Notes CRUD Operations
+#### 2. Complete Notes CRUD Operations (issue done)
 **What**: Implement full Create, Read, Update, Delete for notes
 **Why**: Currently only basic display exists
 **Tasks**:
@@ -123,7 +123,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 **Assigned to**: Lina Selma Ouadah
 **Estimated time**: 4 days
 
-#### 3. Fix Mixpanel Token Configuration
+#### 3. Fix Mixpanel Token Configuration (issue done)
 **What**: Replace placeholder Mixpanel token with actual token
 **Why**: Analytics won't work with placeholder
 **Tasks**:
@@ -136,7 +136,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 **Assigned to**: Abderrahmane Houri
 **Estimated time**: 1 hour
 
-#### 4. Populate constants.dart
+#### 4. Populate constants.dart (issue done)
 **What**: Add app-wide constants currently scattered in code
 **Why**: Better code organization and maintainability
 **Tasks**:
@@ -156,7 +156,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 
 ### High Priority (Next 2-4 weeks)
 
-#### 1. Calendar View
+#### 1. Calendar View (issue done)
 **Description**: Visual calendar showing tasks and habits by date
 
 **Features**:
@@ -175,7 +175,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 
 ---
 
-#### 2. Task Attachments
+#### 2. Task Attachments (issue done)
 **Description**: Allow users to attach files/images to tasks
 
 **Features**:
@@ -195,7 +195,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 
 ---
 
-#### 3. Recurring Tasks
+#### 3. Recurring Tasks (issue done)
 **Description**: Tasks that repeat daily, weekly, or custom schedule
 
 **Features**:
@@ -214,7 +214,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 
 ---
 
-#### 4. Habit Statistics & Visualization
+#### 4. Habit Statistics & Visualization (issue done)
 **Description**: Beautiful charts showing habit progress
 
 **Features**:
@@ -234,7 +234,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 
 ---
 
-#### 5. Task Templates
+#### 5. Task Templates (issue done)
 **Description**: Save common tasks as templates for quick creation
 
 **Features**:
@@ -277,7 +277,7 @@ This document outlines the **next steps**, **recommended improvements**, **featu
 
 ---
 
-#### 7. Pomodoro Timer
+#### 7. Pomodoro Timer (issue done)
 **Description**: Built-in Pomodoro timer for focused work sessions
 
 **Features**:
