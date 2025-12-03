@@ -31,7 +31,7 @@ void main() async {
 
   // Initialize Analytics
   final analyticsProvider = AnalyticsProvider();
-  // TODO: Replace with your actual Mixpanel token
+  // TODO: saad mohammed : Replace with your actual Mixpanel token
   // Get your token from: https://mixpanel.com/project/[PROJECT_ID]/settings
   await analyticsProvider.initialize('YOUR_MIXPANEL_TOKEN_HERE');
 
