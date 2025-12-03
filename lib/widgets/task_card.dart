@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../models/task_model.dart';
 
 class TaskCard extends StatelessWidget {
-  final Map<String, dynamic> task;
+  final Task task;
   final VoidCallback onTap;
   final VoidCallback onToggleComplete;
   final VoidCallback onDelete;
@@ -13,6 +16,18 @@ class TaskCard extends StatelessWidget {
     required this.onToggleComplete,
     required this.onDelete,
   });
+
+  String _dueDateLabel(BuildContext context) {
+    if (task.dueDate == null) return 'No due date';
+    final formatted = DateFormat('MMM d • h:mm a').format(task.dueDate!);
+    if (task.isOverdue) {
+      return 'Overdue • $formatted';
+    }
+    if (task.isDueToday) {
+      return 'Due today • ${DateFormat('h:mm a').format(task.dueDate!)}';
+    }
+    return formatted;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +56,11 @@ class TaskCard extends StatelessWidget {
                 height: 34,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: task['completed']
+                  color: task.isCompleted
                       ? Theme.of(context).colorScheme.primary
                       : Colors.transparent,
                   border: Border.all(
-                    color: task['completed']
+                    color: task.isCompleted
                         ? Colors.transparent
                         : Theme.of(context)
                             .colorScheme
@@ -53,7 +68,7 @@ class TaskCard extends StatelessWidget {
                             .withOpacity(0.12),
                   ),
                 ),
-                child: task['completed']
+                child: task.isCompleted
                     ? const Icon(Icons.check, size: 18, color: Colors.white)
                     : const SizedBox.shrink(),
               ),
@@ -67,21 +82,21 @@ class TaskCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          task['title'],
+                          task.title,
                           style: theme.textTheme.titleMedium?.copyWith(
-                            decoration: task['completed']
+                            decoration: task.isCompleted
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none,
-                            color: task['completed']
+                            color: task.isCompleted
                                 ? theme.textTheme.bodySmall?.color?.withOpacity(0.6)
                                 : null,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      if (task['hasReminder'])
+                      if (task.tags != null && task.tags!.isNotEmpty)
                         Icon(
-                          Icons.notifications_active,
+                          Icons.sell_outlined,
                           size: 16,
                           color: theme.colorScheme.primary,
                         ),
@@ -89,7 +104,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    task['time'],
+                    _dueDateLabel(context),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
                     ),
