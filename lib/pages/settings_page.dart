@@ -1,11 +1,11 @@
 // lib/pages/settings_page.dart (LOCALIZED VERSION)
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/theme/app_theme.dart';
-import 'package:dayflow/providers/language_provider.dart';
-import 'package:dayflow/providers/analytics_provider.dart';
+import 'package:dayflow/blocs/language/language_cubit.dart';
+import 'package:dayflow/blocs/theme/theme_cubit.dart';
 import 'package:dayflow/utils/app_localizations.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
 import 'package:dayflow/utils/routes.dart';
@@ -51,12 +51,6 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
     _loadUserData();
     _loadNotificationSettings();
-    
-    // Track that user opened settings page
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final analytics = Provider.of<AnalyticsProvider>(context, listen: false);
-      analytics.trackPageView('Settings');
-    });
   }
 
   Future<void> _loadUserData() async {
@@ -142,10 +136,10 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final languageProvider = Provider.of<LanguageProvider>(context);
+    final themeCubit = context.watch<ThemeCubit>();
+    final languageCubit = context.watch<LanguageCubit>();
     final l10n = AppLocalizations.of(context);
-    final isDarkMode = themeProvider.isDarkMode;
+    final isDarkMode = themeCubit.isDarkMode;
 
     if (_isLoading) {
       return Scaffold(
@@ -171,7 +165,7 @@ class _SettingsPageState extends State<SettingsPage> {
               context,
               title: l10n.appearance,
               children: [
-                _buildThemeToggle(context, themeProvider, l10n),
+                _buildThemeToggle(context, themeCubit, l10n),
               ],
             ),
 
@@ -182,7 +176,7 @@ class _SettingsPageState extends State<SettingsPage> {
               context,
               title: l10n.language,
               children: [
-                _buildLanguageSelector(context, languageProvider, l10n),
+                _buildLanguageSelector(context, languageCubit, l10n),
               ],
             ),
 
@@ -392,9 +386,10 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildThemeToggle(BuildContext context, ThemeProvider themeProvider, AppLocalizations l10n) {
+  Widget _buildThemeToggle(
+      BuildContext context, ThemeCubit themeCubit, AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final isDarkMode = themeProvider.isDarkMode;
+    final isDarkMode = themeCubit.isDarkMode;
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -426,7 +421,7 @@ class _SettingsPageState extends State<SettingsPage> {
       trailing: Switch(
         value: isDarkMode,
         onChanged: (value) {
-          themeProvider.toggleTheme();
+          themeCubit.toggleTheme();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${l10n.themeChanged} ${value ? l10n.darkMode : l10n.lightMode}'),
@@ -482,13 +477,14 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildLanguageSelector(BuildContext context, LanguageProvider languageProvider, AppLocalizations l10n) {
+  Widget _buildLanguageSelector(
+      BuildContext context, LanguageCubit languageCubit, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
     // Get current language country code
     String currentCountry = 'GB'; // Default
     for (var entry in languages.entries) {
-      if (entry.value['code'] == languageProvider.locale.languageCode) {
+      if (entry.value['code'] == languageCubit.state.languageCode) {
         currentCountry = entry.value['country']!;
         break;
       }
@@ -519,7 +515,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       subtitle: Text(
-        languageProvider.languageName,
+        languageCubit.languageName,
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurface.withOpacity(0.6),
         ),
@@ -529,7 +525,7 @@ class _SettingsPageState extends State<SettingsPage> {
         color: theme.colorScheme.onSurface.withOpacity(0.4),
       ),
       onTap: () {
-        _showLanguageSelector(context, languageProvider, l10n);
+        _showLanguageSelector(context, languageCubit, l10n);
       },
     );
   }
@@ -674,7 +670,8 @@ class _SettingsPageState extends State<SettingsPage> {
     return name.substring(0, 1).toUpperCase();
   }
 
-  void _showLanguageSelector(BuildContext context, LanguageProvider languageProvider, AppLocalizations l10n) {
+  void _showLanguageSelector(
+      BuildContext context, LanguageCubit languageCubit, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -709,7 +706,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 final languageName = entry.key;
                 final languageCode = entry.value['code']!;
                 final countryCode = entry.value['country']!;
-                final isSelected = languageProvider.locale.languageCode == languageCode;
+                final isSelected = languageCubit.state.languageCode == languageCode;
 
                 return ListTile(
                   leading: Container(
@@ -752,7 +749,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   )
                       : null,
                   onTap: () async {
-                    await languageProvider.changeLanguage(languageCode);
+                    await languageCubit.changeLanguage(languageCode);
                     if (!context.mounted) return;
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,144 +1,99 @@
-// lib/main.dart (UPDATED WITH LOCALIZATION)
 import 'package:dayflow/firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
-import 'package:dayflow/theme/app_theme.dart';
-import 'package:dayflow/providers/language_provider.dart';
-import 'package:dayflow/providers/analytics_provider.dart';
-import 'package:dayflow/providers/auth_provider.dart';
-import 'package:dayflow/providers/tasks_provider.dart';
-import 'package:dayflow/providers/habits_provider.dart';
-import 'package:dayflow/utils/app_localizations.dart';
-import 'package:dayflow/services/firebase_auth_service.dart';
-import 'utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:dayflow/services/task_service.dart';
-import 'package:dayflow/services/habit_service.dart';
+
+import 'blocs/habit/habit_bloc.dart';
+import 'blocs/language/language_cubit.dart';
+import 'blocs/task/task_bloc.dart';
+import 'blocs/theme/theme_cubit.dart';
+import 'data/local/app_database.dart';
+import 'data/repositories/habit_repository.dart';
+import 'data/repositories/task_repository.dart';
+import 'theme/app_theme.dart';
+import 'utils/app_localizations.dart';
+import 'utils/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Initialize Language Provider and load saved language
-  final languageProvider = LanguageProvider();
-  await languageProvider.loadSavedLanguage();
+  final languageCubit = LanguageCubit();
+  await languageCubit.loadSavedLanguage();
 
-  // Initialize Analytics
-  final analyticsProvider = AnalyticsProvider();
-  // TODO: saad mohammed : Replace with your actual Mixpanel token
-  // Get your token from: https://mixpanel.com/project/[PROJECT_ID]/settings
-  await analyticsProvider.initialize('YOUR_MIXPANEL_TOKEN_HERE');
+  final database = AppDatabase();
+  await database.init();
+  final taskRepository = TaskRepository(database);
+  final habitRepository = HabitRepository(database);
 
-  runApp(DayFlowApp(
-    languageProvider: languageProvider,
-    analyticsProvider: analyticsProvider,
-  ));
+  runApp(
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: taskRepository),
+        RepositoryProvider.value(value: habitRepository),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider<LanguageCubit>(create: (_) => languageCubit),
+          BlocProvider(create: (_) => TaskBloc(taskRepository)..add(LoadTasks())),
+          BlocProvider(create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),
+        ],
+        child: const DayFlowApp(),
+      ),
+    ),
+  );
 }
 
 class DayFlowApp extends StatelessWidget {
-  final LanguageProvider languageProvider;
-  final AnalyticsProvider analyticsProvider;
-
-  const DayFlowApp({
-    super.key,
-    required this.languageProvider,
-    required this.analyticsProvider,
-  });
+  const DayFlowApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider.value(value: languageProvider),
-        ChangeNotifierProvider.value(value: analyticsProvider),
-
-        // Auth Provider
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-
-        // Tasks Provider
-        ChangeNotifierProvider(create: (_) => TasksProvider()),
-
-        // Habits Provider
-        ChangeNotifierProvider(create: (_) => HabitsProvider()),
-
-        // Legacy services for backward compatibility
-        ChangeNotifierProvider<TaskService>(
-          create: (_) {
-            final taskService = TaskService();
-            final habitService = HabitService();
-            taskService.linkHabitService(habitService);
-            return taskService;
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return BlocBuilder<LanguageCubit, Locale>(
+          builder: (context, locale) {
+            return MaterialApp(
+              title: 'DayFlow',
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('en'),
+                Locale('fr'),
+                Locale('ar'),
+              ],
+              locale: locale,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              home: const AuthChecker(),
+              routes: Routes.routes,
+              builder: (context, child) {
+                final isRtl = locale.languageCode == 'ar';
+                return Directionality(
+                  textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+                  child: child!,
+                );
+              },
+            );
           },
-        ),
-
-        // Provide the same habitService instance
-        ChangeNotifierProxyProvider<TaskService, HabitService>(
-          create: (_) => HabitService(),
-          update: (_, taskService, habitService) {
-            // ensure both remain linked
-            habitService ??= HabitService();
-            taskService.linkHabitService(habitService);
-            return habitService;
-          },
-        ),
-      ],
-      child: Consumer2<ThemeProvider, LanguageProvider>(
-        builder: (context, themeProvider, langProvider, _) {
-          return MaterialApp(
-            title: 'DayFlow',
-            debugShowCheckedModeBanner: false,
-
-            // Localization delegates
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-
-            // Supported locales
-            supportedLocales: const [
-              Locale('en'), // English
-              Locale('fr'), // French
-              Locale('ar'), // Arabic
-            ],
-
-            // Current locale from LanguageProvider
-            locale: langProvider.locale,
-
-            // Theme
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeProvider.themeMode,
-
-            // Routes
-            home: const AuthChecker(),
-            routes: Routes.routes,
-
-            // RTL support for Arabic
-            builder: (context, child) {
-              return Directionality(
-                textDirection: langProvider.isRTL
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
-                child: child!,
-              );
-            },
-          );
-        },
-      ),
+        );
+      },
     );
   }
 }
 
-// Check authentication status on app launch
 class AuthChecker extends StatelessWidget {
   const AuthChecker({Key? key}) : super(key: key);
 
@@ -147,16 +102,13 @@ class AuthChecker extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // Show loading splash while checking auth
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SplashScreen();
         }
 
-        // Check if user is logged in
         if (snapshot.hasData && snapshot.data != null) {
           final user = snapshot.data!;
 
-          // Check if email is verified
           if (!user.emailVerified) {
             Future.microtask(() {
               final currentRoute = ModalRoute.of(context)?.settings.name;
@@ -170,7 +122,6 @@ class AuthChecker extends StatelessWidget {
             return const SplashScreen();
           }
 
-          // User logged in and verified - go to home
           Future.microtask(() {
             final currentRoute = ModalRoute.of(context)?.settings.name;
             if (currentRoute != Routes.home) {
@@ -180,7 +131,6 @@ class AuthChecker extends StatelessWidget {
           return const SplashScreen();
         }
 
-        // No user logged in - go to welcome
         Future.microtask(() {
           final currentRoute = ModalRoute.of(context)?.settings.name;
           if (currentRoute != Routes.welcome) {

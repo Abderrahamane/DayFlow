@@ -11,7 +11,6 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: 0.20.2
-  provider: ^6.1.1
   shared_preferences: ^2.2.2
   country_flags: ^3.0.0
   url_launcher: ^6.2.0  # For email functionality
@@ -26,6 +25,16 @@ dependencies:
   mixpanel_flutter: ^2.3.1
 
   # State Management
+  flutter_bloc: ^9.0.0
+  equatable: ^2.0.5
+
+  # Local database (non-sqflite SQLite bindings)
+  drift: ^2.20.2
+  sqlite3_flutter_libs: ^0.5.24
+  sqlite3: ^2.4.0
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  uuid: ^4.5.1
 
   # UI Components
   cupertino_icons: ^1.0.6
@@ -34,6 +43,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  drift_dev: ^2.20.2
+  build_runner: ^2.4.11
 
 flutter:
   uses-material-design: true

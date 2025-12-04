@@ -1,6 +1,8 @@
 // lib/widgets/app_drawer.dart (WITH LOCALIZATION)
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/theme/theme_cubit.dart';
 import '../theme/app_theme.dart';
 import '../utils/routes.dart';
 import '../utils/app_localizations.dart';
@@ -10,8 +12,8 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDark = themeProvider.isDarkMode;
+    final themeCubit = context.watch<ThemeCubit>();
+    final isDark = themeCubit.isDarkMode;
     final l10n = AppLocalizations.of(context);
 
     return Drawer(
@@ -151,7 +153,7 @@ class AppDrawer extends StatelessWidget {
                     trailing: Switch(
                       value: isDark,
                       onChanged: (value) {
-                        themeProvider.toggleTheme();
+                        themeCubit.toggleTheme();
                       },
                     ),
                   ),

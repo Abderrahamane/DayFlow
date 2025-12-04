@@ -1,8 +1,9 @@
 // lib/pages/task_edit_page.dart - Simplified edit form
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/task/task_bloc.dart';
 import '../models/task_model.dart';
-import '../services/task_service.dart';
 
 class TaskEditPage extends StatefulWidget {
   final Task? task;
@@ -55,9 +56,8 @@ class _TaskEditPageState extends State<TaskEditPage> {
   void _saveTask() {
     if (!_formKey.currentState!.validate()) return;
 
-    final taskService = context.read<TaskService>();
     final task = Task(
-      id: widget.task?.id ?? 'task_${DateTime.now().millisecondsSinceEpoch}',
+      id: widget.task?.id ?? '',
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim().isEmpty
           ? null
@@ -70,11 +70,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
       subtasks: _subtasks.isEmpty ? null : _subtasks,
     );
 
-    if (widget.task == null) {
-      taskService.addTask(task);
-    } else {
-      taskService.updateTask(task);
-    }
+    context.read<TaskBloc>().add(AddOrUpdateTask(task));
 
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
