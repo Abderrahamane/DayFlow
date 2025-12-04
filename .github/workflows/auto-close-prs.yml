@@ -1,0 +1,18 @@
+name: Auto-Lock New Pull Requests
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lock this PR
+        uses: dessant/lock-threads@v5
+        with:
+          issue-inactive-days: 0
+          pr-inactive-days: 0
