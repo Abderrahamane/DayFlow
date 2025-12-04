@@ -177,7 +177,7 @@ class TaskService extends ChangeNotifier {
           return a.dueDate!.compareTo(b.dueDate!);
         case TaskSort.priority:
           return b.priority.index.compareTo(a.priority.index);
-        case TaskSort.title:
+        case TaskSort.alphabetical:
           return a.title.compareTo(b.title);
       }
     });
