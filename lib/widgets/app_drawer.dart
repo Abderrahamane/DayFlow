@@ -153,7 +153,7 @@ class AppDrawer extends StatelessWidget {
                     trailing: Switch(
                       value: isDark,
                       onChanged: (value) {
-                        themeProvider.toggleTheme();
+                        themeCubit.toggleTheme();
                       },
                     ),
                   ),

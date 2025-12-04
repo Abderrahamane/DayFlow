@@ -10,16 +10,6 @@ class TaskDetailPage extends StatelessWidget {
 
   const TaskDetailPage({super.key, required this.taskId});
 
-  Color _getPriorityColor(TaskPriority priority) {
-    switch (priority) {
-      case TaskPriority.high:
-        return Colors.red[400]!;
-      case TaskPriority.medium:
-        return Colors.orange[400]!;
-      case TaskPriority.low:
-        return Colors.blue[400]!;
-    }
-  }
 
   String _formatDate(DateTime date) {
     final months = [
@@ -90,7 +80,7 @@ class TaskDetailPage extends StatelessWidget {
           );
         }
 
-        final priorityColor = _getPriorityColor(task.priority);
+        final priorityColor = Colors.red;
 
         return Scaffold(
           backgroundColor: theme.brightness == Brightness.light
