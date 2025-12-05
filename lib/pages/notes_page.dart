@@ -1,162 +1,93 @@
+// lib/pages/notes_page.dart
+
 import 'package:flutter/material.dart';
-import '/widgets/note_item.dart'; // <-- make sure this imports your NoteItem widget file
-import 'note_page_write.dart';
-import '/models/note_model.dart';
+import 'package:provider/provider.dart';
+import '../models/note_model.dart';
+import '../providers/note_provider.dart';
+import '../widgets/note_item.dart'; // Your custom NoteItem
+import 'note_editor_page.dart'; // Your editor page
 
-// Global variable : 
-List <Note> notes = List.empty(growable : true) ;
-
-class NotesPage extends StatefulWidget {
+class NotesPage extends StatelessWidget {
   const NotesPage({super.key});
 
   @override
-  State<NotesPage> createState() => _NotesPageState();
-}
-
-class _NotesPageState extends State<NotesPage> {
-
-  // create static list one Notes 
-
-
-  // title and content taht we will get from the Note page 
-  late Note returnedNote ;
-
-
-
-  @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        body: notes.isEmpty
-            ? Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.note_outlined,
-                size: 80,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Notes Page',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Note-taking features coming soon!',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-        )
-            : ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: notes.length,
-          itemBuilder: (context, index) {
-            Note singleNote = notes[index] ;
-            // set the onDelete Fucntion
-            singleNote.onDelete = (){
-              notes.remove(notes[index]) ;
-              setState(() {
+      appBar: AppBar(
+        title: const Text('My Notes'),
+        actions: [
+          // Add a refresh button for debugging
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              // This lets you manually tell the provider to load from the DB again
+              Provider.of<NoteProvider>(context, listen: false).loadNotes();
+            },
+          )
+        ],
+      ),
 
-              });
-            }  ;
+      // <<< --- THIS IS THE PART RESPONSIBLE FOR SHOWING THE NOTES --- >>>
+      body: Consumer<NoteProvider>(
+        builder: (context, provider, child) {
+          // 1. First, check if it's loading.
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            // set the onTap function
-            singleNote.onTap = () async {
-              // will go to a nota page with the content of this note
-              await Navigator.push
-                (
-                context ,
-                MaterialPageRoute(builder: (contex) => NotePageWrite(note : singleNote ) ) ,
-              ) ;
-              //sort
-              notes.sort((a, b) {
-                final aTime = a.updatedAt ?? a.createdAt!;
-                final bTime = b.updatedAt ?? b.createdAt!;
-                return bTime.compareTo(aTime); // newest note first
-              });
-              // should update the UI
+          // 2. If it's NOT loading and the list is empty, show the message.
+          if (provider.notes.isEmpty) {
+            return const Center(
+              child: Text('No notes yet. Add one!'),
+            );
+          }
 
-              setState(() {
+          // 3. If it's NOT loading and has notes, build the list.
+          return ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: provider.notes.length,
+            itemBuilder: (context, index) {
+              final note = provider.notes[index];
+              return NoteItem(
+                // Use your custom NoteItem widget here
+                note: note,
+                // onTap: () {
+                //   _navigateToEditor(context, note: note);
+                // },
+              );
+            },
+          );
+        },
+      ),
+      // --- END OF THE DISPLAY PART ---
 
-              });
-            } ;
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          _navigateToEditor(context); // Go to editor to create a new note
+        },
+      ),
+    );
+  }
 
-            return NoteItem(note: singleNote);
-
-          },
-        ),
-
-        // add the floting btm
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async{
-            // we should wait to get the data then continue the code
-            returnedNote = await Navigator.push(
-              context ,
-              MaterialPageRoute(builder: (contex)=> const NotePageWrite()) ,
-            ) ;
-            // refresh teh UI if it is updated
-            if(returnedNote != null) {
-              // sort the
-              notes.sort((a, b) {
-                final aTime = a.updatedAt ?? a.createdAt!;
-                final bTime = b.updatedAt ?? b.createdAt!;
-                return bTime.compareTo(aTime); // newest note first
-              });
-              // should update the UI
-
-              setState(() {
-
-              });
-            }
-
-            //Add the content to the map
-            inNewNoteCreated(returnedNote) ; // if it already exist , it will not add ( they can knew that )
-
-            // add tegh methods to it
-
-            print(notes) ;
-          },
-          child: const Icon(Icons.add),
-        )
-
-
+  void _navigateToEditor(BuildContext context, {Note? note}) async {
+    final returnedNote = await Navigator.push<Note>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NoteEditorPage(note: note),
+      ),
     );
 
-    // Functions : 
-
-
-
+    if (returnedNote != null) {
+      // Use listen: false because we are in a function, not the build method.
+      final provider = Provider.of<NoteProvider>(context, listen: false);
+      if (note != null) {
+        // We were editing an existing note
+        await provider.updateNote(returnedNote);
+      } else {
+        // We were adding a new note
+        await provider.addNote(returnedNote);
+      }
+    }
   }
-
-
-  // Functions : 
-
-
-  // create the note
-  void inNewNoteCreated(Note note) {
-    notes.add(note) ;
-    notes.sort((a, b) {
-      final aTime = a.updatedAt ?? a.createdAt!;
-      final bTime = b.updatedAt ?? b.createdAt!;
-      return bTime.compareTo(aTime); // newest note first
-    });
-    setState(() {
-
-    });
-
-  }
-
-  // delete the note
-  void onNoteDeleted(Note note) {
-    notes.remove(note) ;
-    setState(() {
-
-    });
-  }
-
-//LATER : I should another one for Note Edit ( when click on it to open )
-
 }

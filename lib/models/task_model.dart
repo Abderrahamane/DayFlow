@@ -224,6 +224,7 @@ enum TaskFilter {
 }
 
 enum TaskSort {
+  title , 
   dateCreated,
   dueDate,
   priority,
