@@ -5,6 +5,7 @@ import 'package:dayflow/blocs/reminder/reminder_event.dart';
 import 'package:dayflow/blocs/reminder/reminder_state.dart';
 import 'package:dayflow/widgets/add_reminder_dialog.dart';
 import 'package:dayflow/widgets/reminder_day_section.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 
 class RemindersPage extends StatefulWidget {
   const RemindersPage({super.key});
@@ -34,6 +35,8 @@ class _RemindersPageState extends State<RemindersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddReminderDialog,
@@ -68,7 +71,7 @@ class _RemindersPageState extends State<RemindersPage> {
                     onPressed: () {
                       context.read<ReminderBloc>().add(LoadReminders());
                     },
-                    child: const Text('Retry'),
+                    child: Text(l10n.remindersRetry),
                   ),
                 ],
               ),
@@ -88,14 +91,14 @@ class _RemindersPageState extends State<RemindersPage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'No Reminders',
+                      l10n.remindersNoRemindersTitle,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             color: Colors.grey.shade600,
                           ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Add reminders or create tasks',
+                      l10n.remindersNoRemindersSubtitle,
                       style: TextStyle(
                         color: Colors.grey.shade500,
                       ),
@@ -116,21 +119,21 @@ class _RemindersPageState extends State<RemindersPage> {
                 children: [
                   if (state.todayReminders.isNotEmpty) ...[
                     ReminderDaySection(
-                      day: 'Today',
+                      day: l10n.remindersToday,
                       reminders: state.todayReminders,
                     ),
                     const SizedBox(height: 16),
                   ],
                   if (state.tomorrowReminders.isNotEmpty) ...[
                     ReminderDaySection(
-                      day: 'Tomorrow',
+                      day: l10n.remindersTomorrow,
                       reminders: state.tomorrowReminders,
                     ),
                     const SizedBox(height: 16),
                   ],
                   if (state.upcomingReminders.isNotEmpty) ...[
                     ReminderDaySection(
-                      day: 'Upcoming',
+                      day: l10n.remindersUpcoming,
                       reminders: state.upcomingReminders,
                     ),
                   ],
@@ -139,8 +142,8 @@ class _RemindersPageState extends State<RemindersPage> {
             );
           }
 
-          return const Center(
-            child: Text('Something went wrong'),
+          return Center(
+            child: Text(l10n.remindersSomethingWrong),
           );
         },
       ),

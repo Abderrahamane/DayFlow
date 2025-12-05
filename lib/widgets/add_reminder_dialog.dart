@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_event.dart';
 import 'package:dayflow/models/reminder_model.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 
 class AddReminderDialog extends StatefulWidget {
   const AddReminderDialog({super.key});
@@ -64,13 +65,15 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
   }
 
   void _handleAddReminder() {
+    final l10n = AppLocalizations.of(context);
+
     if (_titleController.text.trim().isEmpty) {
-      _showSnackBar('Please enter a reminder title');
+      _showSnackBar(l10n.reminderErrorTitleRequired);
       return;
     }
 
     if (_selectedTime == null) {
-      _showSnackBar('Please select a time');
+      _showSnackBar(l10n.reminderErrorTimeRequired);
       return;
     }
 
@@ -84,8 +87,7 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
 
     context.read<ReminderBloc>().add(AddReminder(reminder));
     Navigator.of(context).pop();
-
-    _showSnackBar('Reminder added!', isSuccess: true);
+    _showSnackBar(l10n.reminderAdded, isSuccess: true);
   }
 
   void _showSnackBar(String message, {bool isSuccess = false}) {
@@ -93,15 +95,16 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
       SnackBar(
         content: Text(message),
         duration: const Duration(seconds: 2),
-        backgroundColor: isSuccess
-            ? Theme.of(context).colorScheme.primary
-            : null,
+        backgroundColor:
+            isSuccess ? Theme.of(context).colorScheme.primary : null,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -115,21 +118,21 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Create New Reminder',
+                l10n.reminderCreateTitle,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               const SizedBox(height: 24),
-              _buildTitleField(),
+              _buildTitleField(l10n),
               const SizedBox(height: 16),
-              _buildDescriptionField(),
+              _buildDescriptionField(l10n),
               const SizedBox(height: 16),
-              _buildDateSelector(),
+              _buildDateSelector(l10n),
               const SizedBox(height: 16),
-              _buildTimeSelector(),
+              _buildTimeSelector(l10n),
               const SizedBox(height: 24),
-              _buildActionButtons(),
+              _buildActionButtons(l10n),
             ],
           ),
         ),
@@ -137,12 +140,12 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
     );
   }
 
-  Widget _buildTitleField() {
+  Widget _buildTitleField(AppLocalizations l10n) {
     return TextField(
       controller: _titleController,
       decoration: InputDecoration(
-        labelText: 'Title',
-        hintText: 'Enter reminder title',
+        labelText: l10n.reminderTitle,
+        hintText: l10n.reminderEnterTitle,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -152,12 +155,12 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
     );
   }
 
-  Widget _buildDescriptionField() {
+  Widget _buildDescriptionField(AppLocalizations l10n) {
     return TextField(
       controller: _descriptionController,
       decoration: InputDecoration(
-        labelText: 'Description (Optional)',
-        hintText: 'Enter description',
+        labelText: l10n.reminderDescriptionOptional,
+        hintText: l10n.reminderEnterDescription,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -167,7 +170,7 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
     );
   }
 
-  Widget _buildDateSelector() {
+  Widget _buildDateSelector(AppLocalizations l10n) {
     return InkWell(
       onTap: _selectDate,
       borderRadius: BorderRadius.circular(12),
@@ -194,7 +197,7 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
     );
   }
 
-  Widget _buildTimeSelector() {
+  Widget _buildTimeSelector(AppLocalizations l10n) {
     return InkWell(
       onTap: _selectTime,
       borderRadius: BorderRadius.circular(12),
@@ -214,7 +217,7 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
             Text(
               _selectedTime != null
                   ? _formatTime12Hour(_selectedTime!)
-                  : 'Select Time',
+                  : l10n.reminderSelectTime,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
@@ -223,14 +226,14 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(AppLocalizations l10n) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(
-            'Cancel',
+            l10n.cancel,
             style: TextStyle(
               color: Theme.of(context).textTheme.bodySmall?.color,
             ),
@@ -242,15 +245,12 @@ class _AddReminderDialogState extends State<AddReminderDialog> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: const Text('Add Reminder'),
+          child: Text(l10n.reminderAdd),
         ),
       ],
     );

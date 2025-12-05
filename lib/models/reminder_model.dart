@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:dayflow/utils/app_localizations.dart';
+
 class ReminderModel {
   final int? id;
   final String title;
@@ -15,7 +18,6 @@ class ReminderModel {
     this.isActive = true,
   });
 
-  // Convert ReminderModel to Map for database
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -27,7 +29,6 @@ class ReminderModel {
     };
   }
 
-  // Create ReminderModel from Map
   factory ReminderModel.fromMap(Map<String, dynamic> map) {
     return ReminderModel(
       id: map['id'] as int?,
@@ -39,7 +40,6 @@ class ReminderModel {
     );
   }
 
-  // Create ReminderModel from TodoModel
   factory ReminderModel.fromTodo(Map<String, dynamic> todo) {
     return ReminderModel(
       id: todo['id'] as int?,
@@ -51,7 +51,6 @@ class ReminderModel {
     );
   }
 
-  // Create a copy with updated fields
   ReminderModel copyWith({
     int? id,
     String? title,
@@ -70,7 +69,6 @@ class ReminderModel {
     );
   }
 
-  // Check if reminder is for today
   bool get isToday {
     final now = DateTime.now();
     return date.year == now.year &&
@@ -78,7 +76,6 @@ class ReminderModel {
         date.day == now.day;
   }
 
-  // Check if reminder is for tomorrow
   bool get isTomorrow {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
     return date.year == tomorrow.year &&
@@ -86,19 +83,31 @@ class ReminderModel {
         date.day == tomorrow.day;
   }
 
-  // Get formatted day text
-  String get dayText {
-    if (isToday) return 'Today';
-    if (isTomorrow) return 'Tomorrow';
-    
+  ///Localized day text
+  String dayTextLocalized(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (isToday) return l10n.remindersToday;
+    if (isTomorrow) return l10n.remindersTomorrow;
+
     final now = DateTime.now();
     final difference = date.difference(now).inDays;
-    
+
     if (difference < 7) {
-      final weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      final List<String> weekdays = [
+        l10n.weekdayMonday,
+        l10n.weekdayTuesday,
+        l10n.weekdayWednesday,
+        l10n.weekdayThursday,
+        l10n.weekdayFriday,
+        l10n.weekdaySaturday,
+        l10n.weekdaySunday,
+      ];
+
       return weekdays[date.weekday - 1];
     }
-    
+
+    // Localized fallback date
     return '${date.day}/${date.month}/${date.year}';
   }
 }

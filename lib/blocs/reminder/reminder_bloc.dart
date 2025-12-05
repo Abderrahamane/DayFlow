@@ -52,10 +52,10 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
         // Fetch all reminders and emit updated state
         final reminders = await repository.getAllReminders();
         emit(_groupRemindersByDate(reminders));
-      } catch (e) {
-        emit(ReminderError('Failed to add reminder: ${e.toString()}'));
-    }
+    } catch (e) {
+    emit(ReminderError('Failed to add reminder: ${e.toString()}'));
   }
+}
 
 
   Future<void> _onUpdateReminder(

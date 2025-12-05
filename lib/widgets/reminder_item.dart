@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_event.dart';
 import 'package:dayflow/models/reminder_model.dart';
+import 'package:dayflow/utils/app_localizations.dart';
 
 class ReminderItem extends StatelessWidget {
   final ReminderModel reminder;
@@ -21,6 +22,9 @@ class ReminderItem extends StatelessWidget {
   }
 
   void _showOptionsBottomSheet(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final canEdit = reminder.id != null;
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -43,39 +47,71 @@ class ReminderItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ListTile(
-                  leading: const Icon(Icons.edit, color: Colors.blue),
-                  title: const Text('Edit Reminder'),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _showEditDialog(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(
-                    reminder.isActive
-                        ? Icons.notifications_off
-                        : Icons.notifications_active,
-                    color: Colors.orange,
+
+                if (!canEdit) ...[
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.grey.shade600),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.reminderInfoTaskLocked,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  title: Text(
-                    reminder.isActive
-                        ? 'Disable Reminder'
-                        : 'Enable Reminder',
+                  const Divider(),
+                ],
+
+                if (canEdit) ...[
+                  ListTile(
+                    leading: const Icon(Icons.edit, color: Colors.blue),
+                    title: Text(l10n.reminderEnterTitle),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _showEditDialog(context);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _toggleActive(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.delete, color: Colors.red),
-                  title: const Text('Delete Reminder'),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _showDeleteConfirmation(context);
-                  },
-                ),
+                  ListTile(
+                    leading: Icon(
+                      reminder.isActive
+                          ? Icons.notifications_off
+                          : Icons.notifications_active,
+                      color: Colors.orange,
+                    ),
+                    title: Text(
+                      reminder.isActive
+                          ? l10n.disableReminder
+                          : l10n.enableReminder,
+                    ),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _toggleActive(context);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.delete, color: Colors.red),
+                    title: Text(l10n.deleteReminder),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _showDeleteConfirmation(context);
+                    },
+                  ),
+                ] else ...[
+                  ListTile(
+                    leading: const Icon(Icons.close, color: Colors.grey),
+                    title: Text(l10n.close),
+                    onTap: () => Navigator.pop(sheetContext),
+                  ),
+                ],
                 const SizedBox(height: 8),
               ],
             ),
@@ -93,10 +129,11 @@ class ReminderItem extends StatelessWidget {
   }
 
   void _showEditDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     final titleController = TextEditingController(text: reminder.title);
-    final descriptionController = TextEditingController(
-      text: reminder.description ?? '',
-    );
+    final descriptionController =
+        TextEditingController(text: reminder.description ?? '');
     TimeOfDay? selectedTime = _parseTimeOfDay(reminder.time);
     DateTime selectedDate = reminder.date;
 
@@ -114,24 +151,23 @@ class ReminderItem extends StatelessWidget {
                 constraints: const BoxConstraints(maxWidth: 400),
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Edit Reminder',
+                        l10n.editReminder,
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
-                            ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 24),
+
+                      // Title
                       TextField(
                         controller: titleController,
                         decoration: InputDecoration(
-                          labelText: 'Title',
-                          hintText: 'Enter reminder title',
+                          labelText: l10n.reminderTitle,
+                          hintText: l10n.reminderEnterTitle,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -140,11 +176,13 @@ class ReminderItem extends StatelessWidget {
                         autofocus: true,
                       ),
                       const SizedBox(height: 16),
+
+                      // Description
                       TextField(
                         controller: descriptionController,
                         decoration: InputDecoration(
-                          labelText: 'Description (Optional)',
-                          hintText: 'Enter description',
+                          labelText: l10n.reminderDescriptionOptional,
+                          hintText: l10n.reminderEnterDescription,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -153,6 +191,8 @@ class ReminderItem extends StatelessWidget {
                         maxLines: 2,
                       ),
                       const SizedBox(height: 16),
+
+                      // Date picker
                       InkWell(
                         onTap: () async {
                           final date = await showDatePicker(
@@ -180,10 +220,9 @@ class ReminderItem extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.calendar_today,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              Icon(Icons.calendar_today,
+                                  color:
+                                      Theme.of(context).colorScheme.primary),
                               const SizedBox(width: 12),
                               Text(
                                 '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
@@ -194,18 +233,13 @@ class ReminderItem extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
+
+                      // Time picker
                       InkWell(
                         onTap: () async {
                           final time = await showTimePicker(
                             context: context,
                             initialTime: selectedTime ?? TimeOfDay.now(),
-                            builder: (context, child) {
-                              return MediaQuery(
-                                data: MediaQuery.of(context)
-                                    .copyWith(alwaysUse24HourFormat: false),
-                                child: child!,
-                              );
-                            },
                           );
                           if (time != null) {
                             setDialogState(() {
@@ -224,15 +258,14 @@ class ReminderItem extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.access_time,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              Icon(Icons.access_time,
+                                  color:
+                                      Theme.of(context).colorScheme.primary),
                               const SizedBox(width: 12),
                               Text(
                                 selectedTime != null
                                     ? _formatTime12Hour(selectedTime!)
-                                    : 'Select Time',
+                                    : l10n.reminderSelectTime,
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                             ],
@@ -240,30 +273,25 @@ class ReminderItem extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 24),
+
+                      // Buttons
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           TextButton(
-                            onPressed: () => Navigator.of(dialogContext).pop(),
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.color,
-                              ),
-                            ),
+                            onPressed: () =>
+                                Navigator.of(dialogContext).pop(),
+                            child: Text(l10n.cancel),
                           ),
                           const SizedBox(width: 12),
                           ElevatedButton(
                             onPressed: () {
                               if (titleController.text.trim().isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
+                                  SnackBar(
                                     content: Text(
-                                        'Please enter a reminder title'),
-                                    duration: Duration(seconds: 2),
+                                        l10n.reminderErrorTitleRequired),
+                                    duration: const Duration(seconds: 2),
                                   ),
                                 );
                                 return;
@@ -271,9 +299,10 @@ class ReminderItem extends StatelessWidget {
 
                               if (selectedTime == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please select a time'),
-                                    duration: Duration(seconds: 2),
+                                  SnackBar(
+                                    content:
+                                        Text(l10n.reminderErrorTimeRequired),
+                                    duration: const Duration(seconds: 2),
                                   ),
                                 );
                                 return;
@@ -297,26 +326,15 @@ class ReminderItem extends StatelessWidget {
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text('Reminder updated!'),
+                                  content: Text(l10n.reminderUpdated),
                                   duration: const Duration(seconds: 2),
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.primary,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primary,
                                 ),
                               );
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text('Update'),
+                            child: Text(l10n.update),
                           ),
                         ],
                       ),
@@ -332,6 +350,8 @@ class ReminderItem extends StatelessWidget {
   }
 
   void _showDeleteConfirmation(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -339,14 +359,14 @@ class ReminderItem extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text('Delete Reminder'),
+          title: Text(l10n.reminderDeleted),
           content: Text(
-            'Are you sure you want to delete "${reminder.title}"?',
+            '${l10n.reminderDeleteConfirmation} "${reminder.title}"?',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -357,9 +377,9 @@ class ReminderItem extends StatelessWidget {
                   Navigator.of(dialogContext).pop();
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Reminder deleted'),
-                      duration: Duration(seconds: 2),
+                    SnackBar(
+                      content: Text(l10n.reminderDeleted),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
                 }
@@ -368,7 +388,7 @@ class ReminderItem extends StatelessWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Delete'),
+              child: Text(l10n.delete),
             ),
           ],
         );
@@ -378,7 +398,6 @@ class ReminderItem extends StatelessWidget {
 
   TimeOfDay? _parseTimeOfDay(String timeString) {
     try {
-      // Parse "10:30 AM" or "10:30" format
       final parts = timeString.split(' ');
       final timeParts = parts[0].split(':');
       int hour = int.parse(timeParts[0]);
@@ -394,7 +413,7 @@ class ReminderItem extends StatelessWidget {
       }
 
       return TimeOfDay(hour: hour, minute: minute);
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }
@@ -422,7 +441,8 @@ class ReminderItem extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeDisplay(BuildContext context, Map<String, String> timeData) {
+  Widget _buildTimeDisplay(
+      BuildContext context, Map<String, String> timeData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -442,16 +462,59 @@ class ReminderItem extends StatelessWidget {
   }
 
   Widget _buildReminderContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          reminder.title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                reminder.title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
+            ),
+
+            // “Task” label
+            if (reminder.id == null) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.task_alt,
+                      size: 12,
+                      color: Colors.blue.shade700,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      l10n.task,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
         ),
-        if (reminder.description != null && reminder.description!.isNotEmpty) ...[
+
+        if (reminder.description != null &&
+            reminder.description!.isNotEmpty) ...[
           const SizedBox(height: 4),
           Text(
             reminder.description!,
@@ -465,6 +528,12 @@ class ReminderItem extends StatelessWidget {
   }
 
   Widget _buildToggleButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (reminder.id == null) {
+      return const SizedBox(width: 48);
+    }
+
     return IconButton(
       icon: Icon(
         reminder.isActive
@@ -475,7 +544,8 @@ class ReminderItem extends StatelessWidget {
             : Colors.grey,
       ),
       onPressed: () => _toggleActive(context),
-      tooltip: reminder.isActive ? 'Disable reminder' : 'Enable reminder',
+      tooltip:
+          reminder.isActive ? l10n.disableReminder : l10n.enableReminder,
     );
   }
 
@@ -489,9 +559,7 @@ class ReminderItem extends StatelessWidget {
         displayTime = parts[0];
         period = parts[1];
       }
-    } catch (e) {
-      // Keep original time if parsing fails
-    }
+    } catch (_) {}
 
     return {
       'time': displayTime,
