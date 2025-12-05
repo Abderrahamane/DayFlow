@@ -1,146 +1,148 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dayflow/blocs/reminder/reminder_bloc.dart';
+import 'package:dayflow/blocs/reminder/reminder_event.dart';
+import 'package:dayflow/blocs/reminder/reminder_state.dart';
+import 'package:dayflow/widgets/add_reminder_dialog.dart';
+import 'package:dayflow/widgets/reminder_day_section.dart';
 
-class RemindersPage extends StatelessWidget {
+class RemindersPage extends StatefulWidget {
   const RemindersPage({super.key});
+
+  @override
+  State<RemindersPage> createState() => _RemindersPageState();
+}
+
+class _RemindersPageState extends State<RemindersPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ReminderBloc>().add(LoadReminders());
+  }
+
+  void _showAddReminderDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return BlocProvider.value(
+          value: context.read<ReminderBloc>(),
+          child: const AddReminderDialog(),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Implement add reminder dialog
-          showModalBottomSheet(
-            context: context,
-            builder: (context) => Container(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Add Reminder Comming Soon!',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  // TODO: Add reminder form
-                ],
-              ),
-            ),
-          );
-        },
+        onPressed: _showAddReminderDialog,
         child: const Icon(Icons.add),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildDaySection(context, 'Today'),
-          const SizedBox(height: 16),
-          _buildDaySection(context, 'Tomorrow'),
-        ],
-      ),
-    );
-  }
+      body: BlocBuilder<ReminderBloc, ReminderState>(
+        builder: (context, state) {
+          if (state is ReminderLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-  Widget _buildDaySection(BuildContext context, String day) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
-          child: Text(
-            day,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        CustomCard(
-          child: Column(
-            children: [
-              if (day == 'Today') ...[
-                _buildReminderItem(
-                  context,
-                  '10:00',
-                  'AM',
-                  'Meeting with Alex',
-                  'Project detail and discussion',
-                ),
-                const Divider(),
-                _buildReminderItem(
-                  context,
-                  '12:00',
-                  'PM',
-                  'Lunch with Sarah',
-                  'Catch up at The Corner Cafe',
-                ),
-              ],
-              if (day == 'Tomorrow')
-                _buildReminderItem(
-                  context,
-                  '2:00',
-                  'PM',
-                  'Project Review',
-                  'Final checks before launch',
-                ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+          if (state is ReminderError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.red,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    state.message,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<ReminderBloc>().add(LoadReminders());
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
 
-  Widget _buildReminderItem(BuildContext context, String time, String period,
-      String title, String description) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                time,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+          if (state is ReminderLoaded) {
+            if (!state.hasReminders) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.notifications_none,
+                      size: 80,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No Reminders',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: Colors.grey.shade600,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Add reminders or create tasks',
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<ReminderBloc>().add(RefreshReminders());
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+              child: ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  if (state.todayReminders.isNotEmpty) ...[
+                    ReminderDaySection(
+                      day: 'Today',
+                      reminders: state.todayReminders,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  if (state.tomorrowReminders.isNotEmpty) ...[
+                    ReminderDaySection(
+                      day: 'Tomorrow',
+                      reminders: state.tomorrowReminders,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  if (state.upcomingReminders.isNotEmpty) ...[
+                    ReminderDaySection(
+                      day: 'Upcoming',
+                      reminders: state.upcomingReminders,
+                    ),
+                  ],
+                ],
               ),
-              Text(
-                period,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.notifications_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              // TODO: Implement reminder notification toggle
-            },
-          ),
-        ],
+            );
+          }
+
+          return const Center(
+            child: Text('Something went wrong'),
+          );
+        },
       ),
     );
   }
