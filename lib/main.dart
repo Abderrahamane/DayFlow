@@ -66,7 +66,9 @@ void main() async {
           BlocProvider(
             create: (_) => ReminderBloc(reminderRepository)..add(LoadReminders()),
           ),
-              create: (_) => TaskBloc(taskRepository)..add(LoadTasks())),
+          BlocProvider(
+              create: (_) => TaskBloc(taskRepository)..add(LoadTasks())
+          ),
           BlocProvider(
               create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),
         ],
