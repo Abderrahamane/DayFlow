@@ -67,6 +67,19 @@ class AppDatabase {
         FOREIGN KEY(habitId) REFERENCES habits(id) ON DELETE CASCADE
       );
     ''');
+
+    _db.execute('''
+      CREATE TABLE IF NOT EXISTS reminders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        time TEXT NOT NULL,
+        description TEXT,
+        date TEXT NOT NULL,
+        isActive INTEGER NOT NULL DEFAULT 1,
+        createdAt INTEGER NOT NULL,
+        source TEXT NOT NULL DEFAULT 'reminder'
+      );
+    ''');
   }
 
   void close() {

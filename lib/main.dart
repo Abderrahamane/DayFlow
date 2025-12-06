@@ -1,10 +1,11 @@
+import 'package:dayflow/blocs/reminder/reminder_bloc.dart';
+import 'package:dayflow/blocs/reminder/reminder_event.dart';
 import 'package:dayflow/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'blocs/habit/habit_bloc.dart';
 import 'blocs/language/language_cubit.dart';
 import 'blocs/task/task_bloc.dart';
@@ -12,14 +13,18 @@ import 'blocs/theme/theme_cubit.dart';
 import 'data/local/app_database.dart';
 import 'data/repositories/habit_repository.dart';
 import 'data/repositories/task_repository.dart';
+import 'data/repositories/reminder_repository.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
 import 'utils/routes.dart';
+import 'package:dayflow/services/notification_servise.dart';
+
 import 'package:dayflow/services/mixpanel_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase
   //initialize mix panel
   await MixpanelService.init("03771de9ce682b349440c8df1886944e");
 
@@ -27,25 +32,40 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Initialize notification service
+  await NotificationService.initNotification();
+
+  // Initialize language cubit
   final languageCubit = LanguageCubit();
   await languageCubit.loadSavedLanguage();
 
+  // Initialize database and repositories
   final database = AppDatabase();
   await database.init();
   final taskRepository = TaskRepository(database);
   final habitRepository = HabitRepository(database);
+  final reminderRepository = ReminderRepository(database);
 
   runApp(
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(value: taskRepository),
         RepositoryProvider.value(value: habitRepository),
+        RepositoryProvider.value(value: reminderRepository),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => ThemeCubit()),
           BlocProvider<LanguageCubit>(create: (_) => languageCubit),
           BlocProvider(
+            create: (_) => TaskBloc(taskRepository)..add(LoadTasks()),
+          ),
+          BlocProvider(
+            create: (_) => HabitBloc(habitRepository)..add(LoadHabits()),
+          ),
+          BlocProvider(
+            create: (_) => ReminderBloc(reminderRepository)..add(LoadReminders()),
+          ),
               create: (_) => TaskBloc(taskRepository)..add(LoadTasks())),
           BlocProvider(
               create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),

@@ -11,7 +11,8 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   // All translations
   static final Map<String, Map<String, String>> _localizedValues = {
@@ -59,7 +60,8 @@ class AppLocalizations {
   String get emailVerificationSent => translate('email_verification_sent');
   String get resendVerificationEmail => translate('resend_verification_email');
   String get useDifferentAccount => translate('use_different_account');
-  String get checkingVerificationStatus => translate('checking_verification_status');
+  String get checkingVerificationStatus =>
+      translate('checking_verification_status');
 
   // Settings
   String get settings => translate('settings');
@@ -120,7 +122,8 @@ class AppLocalizations {
   String get pleaseConfirmPassword => translate('please_confirm_password');
   String get passwordsDoNotMatch => translate('passwords_do_not_match');
   String get passwordMustBeDifferent => translate('password_must_be_different');
-  String get pleaseEnterCurrentPassword => translate('please_enter_current_password');
+  String get pleaseEnterCurrentPassword =>
+      translate('please_enter_current_password');
   String get pleaseEnterNewPassword => translate('please_enter_new_password');
 
   // Input Placeholders
@@ -265,6 +268,56 @@ class AppLocalizations {
   String get lastUpdated => translate('last_updated');
   String get byUsingDayflow => translate('by_using_dayflow');
 
+  // Reminders Page Localization
+  String get remindersRetry => translate('remindersRetry');
+  String get remindersNoRemindersTitle =>
+      translate('remindersNoRemindersTitle');
+  String get remindersNoRemindersSubtitle =>
+      translate('remindersNoRemindersSubtitle');
+  String get remindersToday => translate('remindersToday');
+  String get remindersTomorrow => translate('remindersTomorrow');
+  String get remindersUpcoming => translate('remindersUpcoming');
+  String get remindersSomethingWrong => translate('remindersSomethingWrong');
+
+  // Reminders model page Localization
+  String get weekdayMonday => translate('weekdayMonday');
+  String get weekdayTuesday => translate('weekdayTuesday');
+  String get weekdayWednesday => translate('weekdayWednesday');
+  String get weekdayThursday => translate('weekdayThursday');
+  String get weekdayFriday => translate('weekdayFriday');
+  String get weekdaySaturday => translate('weekdaySaturday');
+  String get weekdaySunday => translate('weekdaySunday');
+
+  // Reminder add dialog Localization
+  String get reminderCreateTitle => translate('reminderCreateTitle');
+  String get reminderTitle => translate('reminderTitle');
+  String get reminderEnterTitle => translate('reminderEnterTitle');
+  String get reminderDescriptionOptional =>
+      translate('reminderDescriptionOptional');
+  String get reminderEnterDescription => translate('reminderEnterDescription');
+  String get reminderSelectTime => translate('reminderSelectTime');
+  String get reminderAdd => translate('reminderAdd');
+  String get reminderErrorTitleRequired =>
+      translate('reminderErrorTitleRequired');
+  String get reminderErrorTimeRequired =>
+      translate('reminderErrorTimeRequired');
+  String get reminderAdded => translate('reminderAdded');
+
+  // reminders item Localization
+  String get reminderEditTitle => translate('reminderEditTitle');
+  String get update => translate('update');
+  String get editReminder => translate('editReminder');
+  String get deleteReminder => translate('deleteReminder');
+  String get enableReminder => translate('enableReminder');
+  String get disableReminder => translate('disableReminder');
+  String get reminderDeleteConfirmation =>
+      translate('reminderDeleteConfirmation');
+  String get reminderUpdated => translate('reminderUpdated');
+  String get reminderDeleted => translate('reminderDeleted');
+  String get delete => translate('delete');
+  String get reminderInfoTaskLocked	 => translate('reminderInfoTaskLocked');
+  String get task => translate('task');
+
 }
 
 // English Translations
@@ -338,11 +391,13 @@ const Map<String, String> _enTranslations = {
   'get_help': 'Get help with DayFlow',
   'terms_and_privacy': 'Terms & Privacy Policy',
   'legal_info': 'Legal information',
-  'sign_in_to_continue_desc': 'Access your tasks, notes, and reminders\nacross all your devices',
+  'sign_in_to_continue_desc':
+      'Access your tasks, notes, and reminders\nacross all your devices',
 
   'coming_soon': 'Coming Soon',
   'feature_under_development': 'This feature is under development',
-  'working_hard_on_feature': "We're working hard to bring you this feature soon!",
+  'working_hard_on_feature':
+      "We're working hard to bring you this feature soon!",
   'logout_confirmation': 'Logout',
   'are_you_sure_logout': 'Are you sure you want to logout?',
   'logout_success': 'Logged out successfully',
@@ -370,7 +425,8 @@ const Map<String, String> _enTranslations = {
   'enter_current_password': 'Enter current password',
   'enter_new_password': 'Enter new password',
 
-  'app_description': 'A smart daily planner to help you manage your tasks, notes, and reminders efficiently.',
+  'app_description':
+      'A smart daily planner to help you manage your tasks, notes, and reminders efficiently.',
   'developed_by': 'Developed by Team DayFlow',
   'team_members': 'Abderrahmane Houri\nMohamed Al Amin Saàd\nLina Selma Ouadah',
 
@@ -381,23 +437,31 @@ const Map<String, String> _enTranslations = {
   'skip': 'Skip',
   'next': 'Next',
   'organize_your_tasks': 'Organize Your Tasks',
-  'organize_tasks_desc': 'Create, manage, and prioritize your daily tasks with ease. Never miss a deadline again.',
+  'organize_tasks_desc':
+      'Create, manage, and prioritize your daily tasks with ease. Never miss a deadline again.',
   'capture_your_ideas': 'Capture Your Ideas',
-  'capture_ideas_desc': 'Jot down notes, thoughts, and ideas instantly. Keep everything organized in one place.',
+  'capture_ideas_desc':
+      'Jot down notes, thoughts, and ideas instantly. Keep everything organized in one place.',
   'set_smart_reminders': 'Set Smart Reminders',
-  'set_reminders_desc': 'Get timely notifications for important tasks. Stay on top of your schedule effortlessly.',
+  'set_reminders_desc':
+      'Get timely notifications for important tasks. Stay on top of your schedule effortlessly.',
   'track_your_habits': 'Track Your Habits',
-  'track_habits_desc': 'Build better habits with daily tracking. Monitor your progress and achieve your goals.',
+  'track_habits_desc':
+      'Build better habits with daily tracking. Monitor your progress and achieve your goals.',
   'remember_password': 'Remember your password? Login',
   'check_your_email': 'Check Your Email',
-  'forgot_password_desc': "Don't worry! Enter your email address and we'll send you a link to reset your password.",
-  'reset_email_sent': "We've sent a password reset link to your email address. Please check your inbox and follow the instructions.",
+  'forgot_password_desc':
+      "Don't worry! Enter your email address and we'll send you a link to reset your password.",
+  'reset_email_sent':
+      "We've sent a password reset link to your email address. Please check your inbox and follow the instructions.",
   'resend_email': 'Resend Email',
   'didnt_receive_email': "Didn't receive the email?",
   'check_spam_folder': 'Check your spam folder or try resending the email.',
-  'email_verified_success': 'Email verified successfully! Welcome to DayFlow 🎉',
+  'email_verified_success':
+      'Email verified successfully! Welcome to DayFlow 🎉',
   'verification_email_to': "We've sent a verification email to",
-  'check_inbox_and_click': 'Please check your inbox (and spam folder) and click the verification link to continue.',
+  'check_inbox_and_click':
+      'Please check your inbox (and spam folder) and click the verification link to continue.',
   'resend_in': 'Resend in',
   'i_agree_to_the': 'I agree to the ',
   'terms_conditions': 'Terms & Conditions',
@@ -442,7 +506,8 @@ const Map<String, String> _enTranslations = {
   'description': 'Description',
   'describe_issue': 'Describe the issue in detail',
   'submit': 'Submit',
-  'problem_report_submitted': "✓ Problem report submitted. We'll review it soon!",
+  'problem_report_submitted':
+      "✓ Problem report submitted. We'll review it soon!",
   'backup_status': 'Backup Status',
   'last_backup': 'Last backup',
   'no_backups_yet': 'No backups yet',
@@ -465,9 +530,12 @@ const Map<String, String> _enTranslations = {
   'backup_completed': '✓ Backup completed successfully',
   'backup_restored': '✓ Backup restored successfully',
   'synced_cloud': '✓ Synced with cloud successfully',
-  'restore_confirm': 'This will restore your data from the last backup. Current data will be replaced. Continue?',
-  'delete_data_confirm': '⚠️ This will permanently delete all your data including tasks, notes, and settings. This action cannot be undone!',
-  'clear_cache_confirm': 'This will clear temporary files and free up storage space. Continue?',
+  'restore_confirm':
+      'This will restore your data from the last backup. Current data will be replaced. Continue?',
+  'delete_data_confirm':
+      '⚠️ This will permanently delete all your data including tasks, notes, and settings. This action cannot be undone!',
+  'clear_cache_confirm':
+      'This will clear temporary files and free up storage space. Continue?',
   'cache_cleared': '✓ Cache cleared successfully',
   'all_data_deleted': 'All data deleted',
   'delete_all': 'Delete All',
@@ -476,19 +544,26 @@ const Map<String, String> _enTranslations = {
   'terms_of_service': 'Terms of Service',
   'privacy_policy_title': 'Privacy Policy',
   'last_updated': 'Last updated',
-  'by_using_dayflow': 'By using DayFlow, you agree to these Terms of Service and Privacy Policy.',
+  'by_using_dayflow':
+      'By using DayFlow, you agree to these Terms of Service and Privacy Policy.',
   'faq_create_task': 'How do I create a new task?',
-  'faq_create_task_answer': 'Tap the + button on the Tasks page, enter your task details, and tap Save. You can set priorities, due dates, and categories.',
+  'faq_create_task_answer':
+      'Tap the + button on the Tasks page, enter your task details, and tap Save. You can set priorities, due dates, and categories.',
   'faq_dark_mode': 'How do I enable dark mode?',
-  'faq_dark_mode_answer': 'Go to Settings → Appearance, then toggle the Theme switch to enable dark mode.',
+  'faq_dark_mode_answer':
+      'Go to Settings → Appearance, then toggle the Theme switch to enable dark mode.',
   'faq_sync_data': 'Can I sync my data across devices?',
-  'faq_sync_data_answer': 'Yes! Sign in with your account and enable Cloud Sync in Settings → Backup & Sync.',
+  'faq_sync_data_answer':
+      'Yes! Sign in with your account and enable Cloud Sync in Settings → Backup & Sync.',
   'faq_set_reminders': 'How do I set reminders?',
-  'faq_set_reminders_answer': 'Open a task or create a new one, tap on "Set Reminder", choose your date and time, and save.',
+  'faq_set_reminders_answer':
+      'Open a task or create a new one, tap on "Set Reminder", choose your date and time, and save.',
   'faq_backup_data': 'How do I backup my data?',
-  'faq_backup_data_answer': 'Go to Settings → Backup & Sync, then tap "Backup Now". You can also enable Auto Backup.',
+  'faq_backup_data_answer':
+      'Go to Settings → Backup & Sync, then tap "Backup Now". You can also enable Auto Backup.',
   'faq_export_data': 'Can I export my data?',
-  'faq_export_data_answer': 'For now this is not possible, maybe in the future yes.',
+  'faq_export_data_answer':
+      'For now this is not possible, maybe in the future yes.',
 
   // Question Flow
   'qf_biggest_challenge': "What's your biggest productivity challenge?",
@@ -536,6 +611,47 @@ const Map<String, String> _enTranslations = {
   'qf_next_question': 'Next question! 🎯',
   'qf_completion': "Perfect! You're all set! 🎉",
   'qf_finish': 'Finish',
+
+  "remindersRetry": "Retry",
+  "remindersNoRemindersTitle": "No Reminders",
+  "remindersNoRemindersSubtitle": "Add reminders or create tasks",
+  "remindersToday": "Today",
+  "remindersTomorrow": "Tomorrow",
+  "remindersUpcoming": "Upcoming",
+  "remindersSomethingWrong": "Something went wrong",
+
+  "weekdayMonday": "Monday",
+  "weekdayTuesday": "Tuesday",
+  "weekdayWednesday": "Wednesday",
+  "weekdayThursday": "Thursday",
+  "weekdayFriday": "Friday",
+  "weekdaySaturday": "Saturday",
+  "weekdaySunday": "Sunday",
+
+  "reminderCreateTitle": "Create New Reminder",
+  "reminderTitle": "Title",
+  "reminderEnterTitle": "Enter reminder title",
+  "reminderDescriptionOptional": "Description (Optional)",
+  "reminderEnterDescription": "Enter description",
+  "reminderSelectTime": "Select Time",
+  "reminderAdd": "Add Reminder",
+  "reminderErrorTitleRequired": "Please enter a reminder title",
+  "reminderErrorTimeRequired": "Please select a time",
+  "reminderAdded": "Reminder added!",
+
+  "reminderEditTitle": "Edit Reminder",
+  "update": "Update",
+  "editReminder": "Edit Reminder",
+  "deleteReminder": "Delete Reminder",
+  "enableReminder": "Enable Reminder",
+  "disableReminder": "Disable Reminder",
+  "reminderDeleteConfirmation":
+      "Are you sure you want to delete this reminder?",
+  "reminderUpdated": "Reminder updated!",
+  "reminderDeleted": "Reminder deleted",
+  "delete": "delete",
+  "reminderInfoTaskLocked": "This reminder is from a task and cannot be edited here",
+  "task": "task",
 };
 
 // French Translations
@@ -609,11 +725,13 @@ const Map<String, String> _frTranslations = {
   'get_help': "Obtenir de l'aide avec DayFlow",
   'terms_and_privacy': 'Conditions et confidentialité',
   'legal_info': 'Informations légales',
-  'sign_in_to_continue_desc': 'Accédez à vos tâches, notes et rappels\nsur tous vos appareils',
+  'sign_in_to_continue_desc':
+      'Accédez à vos tâches, notes et rappels\nsur tous vos appareils',
 
   'coming_soon': 'Bientôt disponible',
   'feature_under_development': 'Cette fonctionnalité est en développement',
-  'working_hard_on_feature': 'Nous travaillons dur pour vous apporter cette fonctionnalité bientôt!',
+  'working_hard_on_feature':
+      'Nous travaillons dur pour vous apporter cette fonctionnalité bientôt!',
   'logout_confirmation': 'Déconnexion',
   'are_you_sure_logout': 'Êtes-vous sûr de vouloir vous déconnecter?',
   'logout_success': 'Déconnecté avec succès',
@@ -641,7 +759,8 @@ const Map<String, String> _frTranslations = {
   'enter_current_password': 'Entrez le mot de passe actuel',
   'enter_new_password': 'Entrez le nouveau mot de passe',
 
-  'app_description': 'Un planificateur quotidien intelligent pour vous aider à gérer efficacement vos tâches, notes et rappels.',
+  'app_description':
+      'Un planificateur quotidien intelligent pour vous aider à gérer efficacement vos tâches, notes et rappels.',
   'developed_by': 'Développé par Team DayFlow',
   'team_members': 'Abderrahmane Houri\nMohamed Al Amin Saàd\nLina Selma Ouadah',
 
@@ -652,23 +771,32 @@ const Map<String, String> _frTranslations = {
   'skip': 'Passer',
   'next': 'Suivant',
   'organize_your_tasks': 'Organisez vos tâches',
-  'organize_tasks_desc': 'Créez, gérez et priorisez vos tâches quotidiennes facilement. Ne manquez plus jamais une échéance.',
+  'organize_tasks_desc':
+      'Créez, gérez et priorisez vos tâches quotidiennes facilement. Ne manquez plus jamais une échéance.',
   'capture_your_ideas': 'Capturez vos idées',
-  'capture_ideas_desc': 'Notez vos notes, pensées et idées instantanément. Gardez tout organisé en un seul endroit.',
+  'capture_ideas_desc':
+      'Notez vos notes, pensées et idées instantanément. Gardez tout organisé en un seul endroit.',
   'set_smart_reminders': 'Définir des rappels intelligents',
-  'set_reminders_desc': 'Recevez des notifications opportunes pour les tâches importantes. Restez au top de votre emploi du temps sans effort.',
+  'set_reminders_desc':
+      'Recevez des notifications opportunes pour les tâches importantes. Restez au top de votre emploi du temps sans effort.',
   'track_your_habits': 'Suivez vos habitudes',
-  'track_habits_desc': 'Développez de meilleures habitudes avec un suivi quotidien. Surveillez vos progrès et atteignez vos objectifs.',
+  'track_habits_desc':
+      'Développez de meilleures habitudes avec un suivi quotidien. Surveillez vos progrès et atteignez vos objectifs.',
   'remember_password': 'Vous vous souvenez de votre mot de passe? Connexion',
   'check_your_email': 'Vérifiez votre email',
-  'forgot_password_desc': "Ne vous inquiétez pas! Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
-  'reset_email_sent': "Nous avons envoyé un lien de réinitialisation à votre adresse email. Veuillez vérifier votre boîte de réception et suivre les instructions.",
+  'forgot_password_desc':
+      "Ne vous inquiétez pas! Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+  'reset_email_sent':
+      "Nous avons envoyé un lien de réinitialisation à votre adresse email. Veuillez vérifier votre boîte de réception et suivre les instructions.",
   'resend_email': "Renvoyer l'email",
   'didnt_receive_email': "Vous n'avez pas reçu l'email?",
-  'check_spam_folder': "Vérifiez votre dossier spam ou essayez de renvoyer l'email.",
-  'email_verified_success': 'Email vérifié avec succès! Bienvenue sur DayFlow 🎉',
+  'check_spam_folder':
+      "Vérifiez votre dossier spam ou essayez de renvoyer l'email.",
+  'email_verified_success':
+      'Email vérifié avec succès! Bienvenue sur DayFlow 🎉',
   'verification_email_to': 'Nous avons envoyé un email de vérification à',
-  'check_inbox_and_click': 'Veuillez vérifier votre boîte de réception (et spam) et cliquer sur le lien de vérification pour continuer.',
+  'check_inbox_and_click':
+      'Veuillez vérifier votre boîte de réception (et spam) et cliquer sur le lien de vérification pour continuer.',
   'resend_in': 'Renvoyer dans',
   'i_agree_to_the': "J'accepte les ",
   'terms_conditions': 'Conditions générales',
@@ -713,7 +841,8 @@ const Map<String, String> _frTranslations = {
   'description': 'Description',
   'describe_issue': 'Décrivez le problème en détail',
   'submit': 'Soumettre',
-  'problem_report_submitted': '✓ Rapport de problème soumis. Nous l\'examinerons bientôt!',
+  'problem_report_submitted':
+      '✓ Rapport de problème soumis. Nous l\'examinerons bientôt!',
   'backup_status': 'État de la sauvegarde',
   'last_backup': 'Dernière sauvegarde',
   'no_backups_yet': 'Pas encore de sauvegardes',
@@ -723,7 +852,8 @@ const Map<String, String> _frTranslations = {
   'sync_with_cloud': 'Synchroniser avec le cloud',
   'backup_settings': 'Paramètres de sauvegarde',
   'auto_backup': 'Sauvegarde automatique',
-  'auto_backup_daily': 'Sauvegarder automatiquement les données quotidiennement',
+  'auto_backup_daily':
+      'Sauvegarder automatiquement les données quotidiennement',
   'cloud_sync': 'Synchronisation cloud',
   'sync_across_devices': 'Synchroniser les données sur tous les appareils',
   'encrypt_data': 'Chiffrer les données',
@@ -736,9 +866,12 @@ const Map<String, String> _frTranslations = {
   'backup_completed': '✓ Sauvegarde terminée avec succès',
   'backup_restored': '✓ Sauvegarde restaurée avec succès',
   'synced_cloud': '✓ Synchronisé avec le cloud avec succès',
-  'restore_confirm': 'Cela restaurera vos données à partir de la dernière sauvegarde. Les données actuelles seront remplacées. Continuer?',
-  'delete_data_confirm': '⚠️ Cela supprimera définitivement toutes vos données, y compris les tâches, notes et paramètres. Cette action est irréversible!',
-  'clear_cache_confirm': 'Cela effacera les fichiers temporaires et libérera de l\'espace. Continuer?',
+  'restore_confirm':
+      'Cela restaurera vos données à partir de la dernière sauvegarde. Les données actuelles seront remplacées. Continuer?',
+  'delete_data_confirm':
+      '⚠️ Cela supprimera définitivement toutes vos données, y compris les tâches, notes et paramètres. Cette action est irréversible!',
+  'clear_cache_confirm':
+      'Cela effacera les fichiers temporaires et libérera de l\'espace. Continuer?',
   'cache_cleared': '✓ Cache vidé avec succès',
   'all_data_deleted': 'Toutes les données supprimées',
   'delete_all': 'Tout supprimer',
@@ -747,19 +880,26 @@ const Map<String, String> _frTranslations = {
   'terms_of_service': 'Conditions d\'utilisation',
   'privacy_policy_title': 'Politique de confidentialité',
   'last_updated': 'Dernière mise à jour',
-  'by_using_dayflow': 'En utilisant DayFlow, vous acceptez ces Conditions d\'utilisation et cette Politique de confidentialité.',
+  'by_using_dayflow':
+      'En utilisant DayFlow, vous acceptez ces Conditions d\'utilisation et cette Politique de confidentialité.',
   'faq_create_task': 'Comment créer une nouvelle tâche?',
-  'faq_create_task_answer': 'Appuyez sur le bouton + dans la page Tâches, entrez les détails de votre tâche et appuyez sur Enregistrer. Vous pouvez définir des priorités, des dates d\'échéance et des catégories.',
+  'faq_create_task_answer':
+      'Appuyez sur le bouton + dans la page Tâches, entrez les détails de votre tâche et appuyez sur Enregistrer. Vous pouvez définir des priorités, des dates d\'échéance et des catégories.',
   'faq_dark_mode': 'Comment activer le mode sombre?',
-  'faq_dark_mode_answer': 'Allez dans Paramètres → Apparence, puis basculez l\'interrupteur Thème pour activer le mode sombre.',
+  'faq_dark_mode_answer':
+      'Allez dans Paramètres → Apparence, puis basculez l\'interrupteur Thème pour activer le mode sombre.',
   'faq_sync_data': 'Puis-je synchroniser mes données sur plusieurs appareils?',
-  'faq_sync_data_answer': 'Oui! Connectez-vous avec votre compte et activez la Synchronisation Cloud dans Paramètres → Sauvegarde et Synchronisation.',
+  'faq_sync_data_answer':
+      'Oui! Connectez-vous avec votre compte et activez la Synchronisation Cloud dans Paramètres → Sauvegarde et Synchronisation.',
   'faq_set_reminders': 'Comment définir des rappels?',
-  'faq_set_reminders_answer': 'Ouvrez une tâche ou créez-en une nouvelle, appuyez sur "Définir un rappel", choisissez votre date et heure, et enregistrez.',
+  'faq_set_reminders_answer':
+      'Ouvrez une tâche ou créez-en une nouvelle, appuyez sur "Définir un rappel", choisissez votre date et heure, et enregistrez.',
   'faq_backup_data': 'Comment sauvegarder mes données?',
-  'faq_backup_data_answer': 'Allez dans Paramètres → Sauvegarde et Synchronisation, puis appuyez sur "Sauvegarder maintenant". Vous pouvez également activer la Sauvegarde automatique.',
+  'faq_backup_data_answer':
+      'Allez dans Paramètres → Sauvegarde et Synchronisation, puis appuyez sur "Sauvegarder maintenant". Vous pouvez également activer la Sauvegarde automatique.',
   'faq_export_data': 'Puis-je exporter mes données?',
-  'faq_export_data_answer': 'Pour l\'instant, ce n\'est pas possible, peut-être à l\'avenir.',
+  'faq_export_data_answer':
+      'Pour l\'instant, ce n\'est pas possible, peut-être à l\'avenir.',
 
   // Question Flow
   'qf_biggest_challenge': 'Quel est votre plus grand défi de productivité?',
@@ -807,6 +947,48 @@ const Map<String, String> _frTranslations = {
   'qf_next_question': 'Question suivante! 🎯',
   'qf_completion': 'Parfait! Vous êtes prêt! 🎉',
   'qf_finish': 'Terminer',
+
+  "remindersRetry": "Réessayer",
+  "remindersNoRemindersTitle": "Aucun rappel",
+  "remindersNoRemindersSubtitle": "Ajoutez des rappels ou créez des tâches",
+  "remindersToday": "Aujourd'hui",
+  "remindersTomorrow": "Demain",
+  "remindersUpcoming": "À venir",
+  "remindersSomethingWrong": "Une erreur s'est produite",
+
+  "weekdayMonday": "Lundi",
+  "weekdayTuesday": "Mardi",
+  "weekdayWednesday": "Mercredi",
+  "weekdayThursday": "Jeudi",
+  "weekdayFriday": "Vendredi",
+  "weekdaySaturday": "Samedi",
+  "weekdaySunday": "Dimanche",
+
+  "reminderCreateTitle": "Créer un nouveau rappel",
+  "reminderTitle": "Titre",
+  "reminderEnterTitle": "Entrez le titre du rappel",
+  "reminderDescriptionOptional": "Description (Optionnel)",
+  "reminderEnterDescription": "Entrez la description",
+  "reminderSelectTime": "Sélectionner l'heure",
+  "reminderAdd": "Ajouter rappel",
+  "reminderErrorTitleRequired": "Veuillez entrer un titre pour le rappel",
+  "reminderErrorTimeRequired": "Veuillez sélectionner une heure",
+  "reminderAdded": "Rappel ajouté !",
+
+  "reminderEditTitle": "Modifier le rappel",
+  "update": "Mettre à jour",
+  "editReminder": "Modifier le rappel",
+  "deleteReminder": "Supprimer le rappel",
+  "enableReminder": "Activer le rappel",
+  "disableReminder": "Désactiver le rappel",
+  "reminderDeleteConfirmation":
+      "Êtes-vous sûr de vouloir supprimer ce rappel ?",
+  "reminderUpdated": "Rappel mis à jour !",
+  "reminderDeleted": "Rappel supprimé",
+  "delete": "supprimé",
+  "reminderInfoTaskLocked": "Ce rappel provient d'’'une tâche et ne peut pas être modifié ici",
+  "task": "Tâche",
+
 };
 
 // Arabic Translations
@@ -880,7 +1062,8 @@ const Map<String, String> _arTranslations = {
   'get_help': 'احصل على المساعدة مع ديفلو',
   'terms_and_privacy': 'الشروط والخصوصية',
   'legal_info': 'المعلومات القانونية',
-  'sign_in_to_continue_desc': 'الوصول إلى مهامك وملاحظاتك وتذكيراتك\nعلى جميع أجهزتك',
+  'sign_in_to_continue_desc':
+      'الوصول إلى مهامك وملاحظاتك وتذكيراتك\nعلى جميع أجهزتك',
 
   'coming_soon': 'قريباً',
   'feature_under_development': 'هذه الميزة قيد التطوير',
@@ -912,7 +1095,8 @@ const Map<String, String> _arTranslations = {
   'enter_current_password': 'أدخل كلمة المرور الحالية',
   'enter_new_password': 'أدخل كلمة المرور الجديدة',
 
-  'app_description': 'مخطط يومي ذكي لمساعدتك في إدارة مهامك وملاحظاتك وتذكيراتك بكفاءة.',
+  'app_description':
+      'مخطط يومي ذكي لمساعدتك في إدارة مهامك وملاحظاتك وتذكيراتك بكفاءة.',
   'developed_by': 'تطوير فريق ديفلو',
   'team_members': 'عبد الرحمن حوري\nمحمد الأمين سعد\nلينا سلمى وداح',
 
@@ -923,23 +1107,32 @@ const Map<String, String> _arTranslations = {
   'skip': 'تخطي',
   'next': 'التالي',
   'organize_your_tasks': 'نظم مهامك',
-  'organize_tasks_desc': 'أنشئ وأدر ورتب مهامك اليومية بسهولة. لا تفوت موعداً نهائياً مرة أخرى.',
+  'organize_tasks_desc':
+      'أنشئ وأدر ورتب مهامك اليومية بسهولة. لا تفوت موعداً نهائياً مرة أخرى.',
   'capture_your_ideas': 'سجل أفكارك',
-  'capture_ideas_desc': 'دون ملاحظاتك وأفكارك وخواطرك فوراً. احتفظ بكل شيء منظماً في مكان واحد.',
+  'capture_ideas_desc':
+      'دون ملاحظاتك وأفكارك وخواطرك فوراً. احتفظ بكل شيء منظماً في مكان واحد.',
   'set_smart_reminders': 'اضبط تذكيرات ذكية',
-  'set_reminders_desc': 'احصل على إشعارات في الوقت المناسب للمهام المهمة. ابق في صدارة جدولك بسهولة.',
+  'set_reminders_desc':
+      'احصل على إشعارات في الوقت المناسب للمهام المهمة. ابق في صدارة جدولك بسهولة.',
   'track_your_habits': 'تتبع عاداتك',
-  'track_habits_desc': 'ابنِ عادات أفضل مع التتبع اليومي. راقب تقدمك وحقق أهدافك.',
+  'track_habits_desc':
+      'ابنِ عادات أفضل مع التتبع اليومي. راقب تقدمك وحقق أهدافك.',
   'remember_password': 'هل تتذكر كلمة المرور؟ تسجيل الدخول',
   'check_your_email': 'تحقق من بريدك الإلكتروني',
-  'forgot_password_desc': 'لا تقلق! أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.',
-  'reset_email_sent': 'لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد واتباع التعليمات.',
+  'forgot_password_desc':
+      'لا تقلق! أدخل عنوان بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.',
+  'reset_email_sent':
+      'لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد واتباع التعليمات.',
   'resend_email': 'إعادة إرسال البريد',
   'didnt_receive_email': 'لم تستلم البريد الإلكتروني؟',
-  'check_spam_folder': 'تحقق من مجلد الرسائل غير المرغوب فيها أو حاول إعادة الإرسال.',
-  'email_verified_success': 'تم التحقق من البريد الإلكتروني بنجاح! مرحباً بك في ديفلو 🎉',
+  'check_spam_folder':
+      'تحقق من مجلد الرسائل غير المرغوب فيها أو حاول إعادة الإرسال.',
+  'email_verified_success':
+      'تم التحقق من البريد الإلكتروني بنجاح! مرحباً بك في ديفلو 🎉',
   'verification_email_to': 'لقد أرسلنا بريداً إلكترونياً للتحقق إلى',
-  'check_inbox_and_click': 'يرجى التحقق من صندوق الوارد (ومجلد الرسائل غير المرغوب فيها) والنقر على رابط التحقق للمتابعة.',
+  'check_inbox_and_click':
+      'يرجى التحقق من صندوق الوارد (ومجلد الرسائل غير المرغوب فيها) والنقر على رابط التحقق للمتابعة.',
   'resend_in': 'إعادة الإرسال بعد',
   'i_agree_to_the': 'أوافق على ',
   'terms_conditions': 'الشروط والأحكام',
@@ -1007,9 +1200,12 @@ const Map<String, String> _arTranslations = {
   'backup_completed': '✓ اكتمل النسخ الاحتياطي بنجاح',
   'backup_restored': '✓ تمت استعادة النسخة الاحتياطية بنجاح',
   'synced_cloud': '✓ تمت المزامنة مع السحابة بنجاح',
-  'restore_confirm': 'سيؤدي هذا إلى استعادة بياناتك من آخر نسخة احتياطية. سيتم استبدال البيانات الحالية. هل تريد المتابعة؟',
-  'delete_data_confirm': '⚠️ سيؤدي هذا إلى حذف جميع بياناتك نهائياً بما في ذلك المهام والملاحظات والإعدادات. لا يمكن التراجع عن هذا الإجراء!',
-  'clear_cache_confirm': 'سيؤدي هذا إلى مسح الملفات المؤقتة وتحرير مساحة التخزين. هل تريد المتابعة؟',
+  'restore_confirm':
+      'سيؤدي هذا إلى استعادة بياناتك من آخر نسخة احتياطية. سيتم استبدال البيانات الحالية. هل تريد المتابعة؟',
+  'delete_data_confirm':
+      '⚠️ سيؤدي هذا إلى حذف جميع بياناتك نهائياً بما في ذلك المهام والملاحظات والإعدادات. لا يمكن التراجع عن هذا الإجراء!',
+  'clear_cache_confirm':
+      'سيؤدي هذا إلى مسح الملفات المؤقتة وتحرير مساحة التخزين. هل تريد المتابعة؟',
   'cache_cleared': '✓ تم مسح ذاكرة التخزين المؤقت بنجاح',
   'all_data_deleted': 'تم حذف جميع البيانات',
   'delete_all': 'حذف الكل',
@@ -1018,19 +1214,26 @@ const Map<String, String> _arTranslations = {
   'terms_of_service': 'شروط الخدمة',
   'privacy_policy_title': 'سياسة الخصوصية',
   'last_updated': 'آخر تحديث',
-  'by_using_dayflow': 'باستخدام ديفلو، فإنك توافق على شروط الخدمة وسياسة الخصوصية هذه.',
+  'by_using_dayflow':
+      'باستخدام ديفلو، فإنك توافق على شروط الخدمة وسياسة الخصوصية هذه.',
   'faq_create_task': 'كيف أنشئ مهمة جديدة؟',
-  'faq_create_task_answer': 'اضغط على زر + في صفحة المهام، أدخل تفاصيل مهمتك، واضغط على حفظ. يمكنك تعيين الأولويات وتواريخ الاستحقاق والفئات.',
+  'faq_create_task_answer':
+      'اضغط على زر + في صفحة المهام، أدخل تفاصيل مهمتك، واضغط على حفظ. يمكنك تعيين الأولويات وتواريخ الاستحقاق والفئات.',
   'faq_dark_mode': 'كيف أفعّل الوضع الداكن؟',
-  'faq_dark_mode_answer': 'انتقل إلى الإعدادات ← المظهر، ثم قم بتبديل مفتاح السمة لتفعيل الوضع الداكن.',
+  'faq_dark_mode_answer':
+      'انتقل إلى الإعدادات ← المظهر، ثم قم بتبديل مفتاح السمة لتفعيل الوضع الداكن.',
   'faq_sync_data': 'هل يمكنني مزامنة بياناتي عبر الأجهزة؟',
-  'faq_sync_data_answer': 'نعم! سجل الدخول بحسابك وفعّل مزامنة السحابة في الإعدادات ← النسخ الاحتياطي والمزامنة.',
+  'faq_sync_data_answer':
+      'نعم! سجل الدخول بحسابك وفعّل مزامنة السحابة في الإعدادات ← النسخ الاحتياطي والمزامنة.',
   'faq_set_reminders': 'كيف أضبط التذكيرات؟',
-  'faq_set_reminders_answer': 'افتح مهمة أو أنشئ واحدة جديدة، اضغط على "تعيين تذكير"، اختر التاريخ والوقت، واحفظ.',
+  'faq_set_reminders_answer':
+      'افتح مهمة أو أنشئ واحدة جديدة، اضغط على "تعيين تذكير"، اختر التاريخ والوقت، واحفظ.',
   'faq_backup_data': 'كيف أنسخ بياناتي احتياطياً؟',
-  'faq_backup_data_answer': 'انتقل إلى الإعدادات ← النسخ الاحتياطي والمزامنة، ثم اضغط على "نسخ احتياطي الآن". يمكنك أيضاً تفعيل النسخ الاحتياطي التلقائي.',
+  'faq_backup_data_answer':
+      'انتقل إلى الإعدادات ← النسخ الاحتياطي والمزامنة، ثم اضغط على "نسخ احتياطي الآن". يمكنك أيضاً تفعيل النسخ الاحتياطي التلقائي.',
   'faq_export_data': 'هل يمكنني تصدير بياناتي؟',
-  'faq_export_data_answer': 'في الوقت الحالي هذا غير ممكن، ربما في المستقبل نعم.',
+  'faq_export_data_answer':
+      'في الوقت الحالي هذا غير ممكن، ربما في المستقبل نعم.',
 
   // Question Flow
   'qf_biggest_challenge': 'ما هو أكبر تحدي إنتاجية تواجهه?',
@@ -1078,13 +1281,55 @@ const Map<String, String> _arTranslations = {
   'qf_next_question': 'السؤال التالي! 🎯',
   'qf_completion': 'مثالي! أنت جاهز! 🎉',
   'qf_finish': 'إنهاء',
+
+  "remindersRetry": "إعادة المحاولة",
+  "remindersNoRemindersTitle": "لا توجد تذكيرات",
+  "remindersNoRemindersSubtitle": "أضف تذكيرات أو أنشئ مهام",
+  "remindersToday": "اليوم",
+  "remindersTomorrow": "غدًا",
+  "remindersUpcoming": "القادمة",
+  "remindersSomethingWrong": "حدث خطأ ما",
+
+  "weekdayMonday": "الاثنين",
+  "weekdayTuesday": "الثلاثاء",
+  "weekdayWednesday": "الأربعاء",
+  "weekdayThursday": "الخميس",
+  "weekdayFriday": "الجمعة",
+  "weekdaySaturday": "السبت",
+  "weekdaySunday": "الأحد",
+
+  "reminderCreateTitle": "إنشاء تذكير جديد",
+  "reminderTitle": "العنوان",
+  "reminderEnterTitle": "أدخل عنوان التذكير",
+  "reminderDescriptionOptional": "الوصف (اختياري)",
+  "reminderEnterDescription": "أدخل الوصف",
+  "reminderSelectTime": "اختر الوقت",
+  "reminderAdd": "إضافة تذكير",
+  "reminderErrorTitleRequired": "يرجى إدخال عنوان التذكير",
+  "reminderErrorTimeRequired": "يرجى اختيار الوقت",
+  "reminderAdded": "تمت إضافة التذكير!",
+
+  "reminderEditTitle": "تعديل التذكير",
+  "update": "تحديث",
+  "editReminder": "تعديل التذكير",
+  "deleteReminder": "حذف التذكير",
+  "enableReminder": "تفعيل التذكير",
+  "disableReminder": "إلغاء التذكير",
+  "reminderDeleteConfirmation": "هل أنت متأكد أنك تريد حذف هذا التذكير؟",
+  "reminderUpdated": "تم تحديث التذكير!",
+  "reminderDeleted": "تم حذف التذكير",
+  "delete": "حذف",
+  "reminderInfoTaskLocked": "هذا التذكير ينتمي لمهمة ولا يمكن تعديله هنا",
+  "task": "مهمة",
 };
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) => ['en', 'fr', 'ar'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      ['en', 'fr', 'ar'].contains(locale.languageCode);
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
