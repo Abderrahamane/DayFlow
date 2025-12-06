@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:dayflow/models/task_model.dart';
+import 'package:dayflow/services/mixpanel_service.dart';
 
 import '../local/app_database.dart';
 
@@ -47,6 +47,10 @@ class TaskRepository {
 
   Future<void> upsertTask(Task task) async {
     await _ensureDb();
+
+    final isNew = _db.rawDb
+        .select('SELECT id FROM tasks WHERE id = ?', [task.id]).isEmpty;
+
     _db.rawDb.execute(
       'INSERT OR REPLACE INTO tasks (id, title, description, isCompleted, createdAt, dueDate, priority, tagsJson) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [
@@ -61,6 +65,20 @@ class TaskRepository {
       ],
     );
 
+    // Analytics Call
+    MixpanelService.instance.trackEvent(
+      isNew ? "Task Created" : "Task Updated",
+      {
+        "task_id": task.id,
+        "title": task.title,
+        "priority": task.priority.toString(),
+        "has_due_date": task.dueDate != null,
+        "tags_count": task.tags?.length ?? 0,
+        "subtasks_count": task.subtasks?.length ?? 0,
+      },
+    );
+
+    // Handle subtasks
     _db.rawDb.execute('DELETE FROM subtasks WHERE taskId = ?', [task.id]);
 
     if (task.subtasks != null) {
@@ -81,22 +99,58 @@ class TaskRepository {
 
   Future<void> deleteTask(String id) async {
     await _ensureDb();
+
     _db.rawDb.execute('DELETE FROM tasks WHERE id = ?', [id]);
+
+    // Analytics
+    MixpanelService.instance.trackEvent("Task Deleted", {
+      "task_id": id,
+    });
   }
 
   Future<void> toggleTaskCompletion(String id) async {
     await _ensureDb();
+    final before = _db.rawDb
+        .select('SELECT isCompleted FROM tasks WHERE id = ?', [id])
+        .first['isCompleted'] as int;
+
     _db.rawDb.execute(
       'UPDATE tasks SET isCompleted = CASE WHEN isCompleted = 1 THEN 0 ELSE 1 END WHERE id = ?',
       [id],
+    );
+
+    final completed = before == 0;
+
+    // ✅ Correct Analytics
+    MixpanelService.instance.trackEvent(
+      completed ? "Task Completed" : "Task Uncompleted",
+      {
+        "task_id": id,
+      },
     );
   }
 
   Future<void> toggleSubtask(String taskId, String subtaskId) async {
     await _ensureDb();
+
+    final before = _db.rawDb
+        .select('SELECT isCompleted FROM subtasks WHERE id = ?', [subtaskId])
+        .first['isCompleted'] as int;
+
     _db.rawDb.execute(
       'UPDATE subtasks SET isCompleted = CASE WHEN isCompleted = 1 THEN 0 ELSE 1 END WHERE id = ?',
       [subtaskId],
+    );
+
+    final completed = before == 0;
+
+    // Analytics
+    MixpanelService.instance.trackEvent(
+      completed ? "Subtask Completed" : "Subtask Uncompleted",
+      {
+        "task_id": taskId,
+        "subtask_id": subtaskId,
+      },
     );
   }
 }

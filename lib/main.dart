@@ -15,9 +15,13 @@ import 'data/repositories/task_repository.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
 import 'utils/routes.dart';
+import 'package:dayflow/services/mixpanel_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  //initialize mix panel
+  await MixpanelService.init("03771de9ce682b349440c8df1886944e");
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -41,8 +45,10 @@ void main() async {
         providers: [
           BlocProvider(create: (_) => ThemeCubit()),
           BlocProvider<LanguageCubit>(create: (_) => languageCubit),
-          BlocProvider(create: (_) => TaskBloc(taskRepository)..add(LoadTasks())),
-          BlocProvider(create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),
+          BlocProvider(
+              create: (_) => TaskBloc(taskRepository)..add(LoadTasks())),
+          BlocProvider(
+              create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),
         ],
         child: const DayFlowApp(),
       ),
