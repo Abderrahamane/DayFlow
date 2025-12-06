@@ -19,11 +19,15 @@ import 'utils/app_localizations.dart';
 import 'utils/routes.dart';
 import 'package:dayflow/services/notification_servise.dart';
 
+import 'package:dayflow/services/mixpanel_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
+  //initialize mix panel
+  await MixpanelService.init("03771de9ce682b349440c8df1886944e");
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -62,6 +66,9 @@ void main() async {
           BlocProvider(
             create: (_) => ReminderBloc(reminderRepository)..add(LoadReminders()),
           ),
+              create: (_) => TaskBloc(taskRepository)..add(LoadTasks())),
+          BlocProvider(
+              create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),
         ],
         child: const DayFlowApp(),
       ),
