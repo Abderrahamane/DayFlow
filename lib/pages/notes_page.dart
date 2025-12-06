@@ -2,75 +2,86 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart'; // <<< 1. IMPORT THE NEW PACKAGE
 import '../models/note_model.dart';
 import '../providers/note_provider.dart';
-import '../widgets/note_item.dart'; // Your custom NoteItem
-import 'note_editor_page.dart'; // Your editor page
+import '../widgets/note_item.dart';
+import 'note_editor_page.dart';
+import '../theme/app_theme.dart'; // Import your theme
 
 class NotesPage extends StatelessWidget {
   const NotesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Notes'),
-        actions: [
-          // Add a refresh button for debugging
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              // This lets you manually tell the provider to load from the DB again
-              Provider.of<NoteProvider>(context, listen: false).loadNotes();
-            },
-          )
-        ],
-      ),
-
-      // <<< --- THIS IS THE PART RESPONSIBLE FOR SHOWING THE NOTES --- >>>
-      body: Consumer<NoteProvider>(
-        builder: (context, provider, child) {
-          // 1. First, check if it's loading.
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          // 2. If it's NOT loading and the list is empty, show the message.
-          if (provider.notes.isEmpty) {
-            return const Center(
-              child: Text('No notes yet. Add one!'),
-            );
-          }
-
-          // 3. If it's NOT loading and has notes, build the list.
-          return ListView.builder(
-            padding: const EdgeInsets.all(8),
-            itemCount: provider.notes.length,
-            itemBuilder: (context, index) {
-              final note = provider.notes[index];
-              return NoteItem(
-                // Use your custom NoteItem widget here
-                note: note,
-                // onTap: () {
-                //   _navigateToEditor(context, note: note);
-                // },
-              );
-            },
-          );
-        },
-      ),
-      // --- END OF THE DISPLAY PART ---
-
+      backgroundColor: theme.scaffoldBackgroundColor,
+      // <<< --- 2. THE FLOATING ACTION BUTTON IS STYLED LIKE THE DESIGN --- >>>
       floatingActionButton: FloatingActionButton(
+        onPressed: () => _navigateToEditor(context),
         child: const Icon(Icons.add),
-        onPressed: () {
-          _navigateToEditor(context); // Go to editor to create a new note
-        },
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 16),
+              // <<< --- 3. THE NEW CUSTOM HEADER --- >>>
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Notes', style: theme.textTheme.headlineLarge),
+                  IconButton(
+                    icon: Icon(Icons.search, color: theme.iconTheme.color),
+                    onPressed: () { /* TODO: Implement search functionality */ },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              // <<< --- END OF THE NEW HEADER --- >>>
+              
+              // <<< --- 4. THE BODY WITH THE STAGGERED GRID --- >>>
+              Expanded(
+                child: Consumer<NoteProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (provider.notes.isEmpty) {
+                      return const Center(child: Text('No notes yet. Add one!'));
+                    }
+
+                    // This is the new grid layout widget
+                    return MasonryGridView.count(
+                      crossAxisCount: 2, // Two columns
+                      mainAxisSpacing: 12, // Vertical space between cards
+                      crossAxisSpacing: 12, // Horizontal space between cards
+                      itemCount: provider.notes.length,
+                      itemBuilder: (context, index) {
+                        final note = provider.notes[index];
+                        // We pass the note to our redesigned NoteItem
+                        return GestureDetector(
+                          onTap: () => _navigateToEditor(context, note: note),
+                          child: NoteItem(note: note),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   void _navigateToEditor(BuildContext context, {Note? note}) async {
+    final provider = Provider.of<NoteProvider>(context, listen: false);
     final returnedNote = await Navigator.push<Note>(
       context,
       MaterialPageRoute(
@@ -79,13 +90,9 @@ class NotesPage extends StatelessWidget {
     );
 
     if (returnedNote != null) {
-      // Use listen: false because we are in a function, not the build method.
-      final provider = Provider.of<NoteProvider>(context, listen: false);
       if (note != null) {
-        // We were editing an existing note
         await provider.updateNote(returnedNote);
       } else {
-        // We were adding a new note
         await provider.addNote(returnedNote);
       }
     }

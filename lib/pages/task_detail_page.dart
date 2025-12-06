@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/task_model.dart';
-import '../providers/task_provider.dart'; // <<< USING THE NEW LOCAL PROVIDER
+import '../providers/tasks_provider.dart'; // <<< USING THE NEW LOCAL PROVIDER
 import 'task_edit_page.dart';
 
 class TaskDetailPage extends StatelessWidget {
