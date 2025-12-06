@@ -1,4 +1,7 @@
 // lib/models/task_model.dart
+
+import 'dart:convert';
+
 class Task {
   final String id;
   final String title;
@@ -10,6 +13,9 @@ class Task {
   final List<String>? tags;
   final List<Subtask>? subtasks;
 
+  // <<< --- THIS IS THE MISSING PROPERTY --- >>>
+  final String category;
+
   Task({
     required this.id,
     required this.title,
@@ -20,6 +26,8 @@ class Task {
     this.priority = TaskPriority.medium,
     this.tags,
     this.subtasks,
+    // <<< ADDED TO THE CONSTRUCTOR (with a default 'Personal' value) >>>
+    this.category = 'Personal',
   });
 
   Task copyWith({
@@ -32,6 +40,8 @@ class Task {
     TaskPriority? priority,
     List<String>? tags,
     List<Subtask>? subtasks,
+    // <<< ADDED TO THE 'copyWith' METHOD >>>
+    String? category,
   }) {
     return Task(
       id: id ?? this.id,
@@ -43,77 +53,11 @@ class Task {
       priority: priority ?? this.priority,
       tags: tags ?? this.tags,
       subtasks: subtasks ?? this.subtasks,
+      category: category ?? this.category,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'description': description,
-      'isCompleted': isCompleted,
-      'createdAt': createdAt.toIso8601String(),
-      'dueDate': dueDate?.toIso8601String(),
-      'priority': priority.name,
-      'tags': tags,
-      'subtasks': subtasks?.map((s) => s.toJson()).toList(),
-    };
-  }
-
-  factory Task.fromJson(Map<String, dynamic> json) {
-    return Task(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      isCompleted: json['isCompleted'] ?? false,
-      createdAt: DateTime.parse(json['createdAt']),
-      dueDate: json['dueDate'] != null ? DateTime.parse(json['dueDate']) : null,
-      priority: TaskPriority.values.firstWhere(
-            (p) => p.name == json['priority'],
-        orElse: () => TaskPriority.medium,
-      ),
-      tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
-      subtasks: json['subtasks'] != null
-          ? (json['subtasks'] as List).map((s) => Subtask.fromJson(s)).toList()
-          : null,
-    );
-  }
-
-  // Firestore serialization
-  Map<String, dynamic> toFirestore() {
-    return {
-      'title': title,
-      'description': description,
-      'isCompleted': isCompleted,
-      'createdAt': createdAt.toIso8601String(),
-      'dueDate': dueDate?.toIso8601String(),
-      'priority': priority.name,
-      'tags': tags,
-      'subtasks': subtasks?.map((s) => s.toJson()).toList(),
-    };
-  }
-
-  factory Task.fromFirestore(Map<String, dynamic> data, String docId) {
-    return Task(
-      id: docId,
-      title: data['title'] ?? '',
-      description: data['description'],
-      isCompleted: data['isCompleted'] ?? false,
-      createdAt: data['createdAt'] != null 
-          ? DateTime.parse(data['createdAt']) 
-          : DateTime.now(),
-      dueDate: data['dueDate'] != null ? DateTime.parse(data['dueDate']) : null,
-      priority: TaskPriority.values.firstWhere(
-        (p) => p.name == data['priority'],
-        orElse: () => TaskPriority.medium,
-      ),
-      tags: data['tags'] != null ? List<String>.from(data['tags']) : null,
-      subtasks: data['subtasks'] != null
-          ? (data['subtasks'] as List).map((s) => Subtask.fromJson(s)).toList()
-          : null,
-    );
-  }
-
+  // --- GETTERS (These are all correct from your original file) ---
   int get completedSubtasks =>
       subtasks?.where((s) => s.isCompleted).length ?? 0;
   int get totalSubtasks => subtasks?.length ?? 0;
@@ -128,7 +72,9 @@ class Task {
 
   bool get isOverdue {
     if (dueDate == null || isCompleted) return false;
-    return dueDate!.isBefore(DateTime.now());
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    return dueDate!.isBefore(today);
   }
 
   bool get isDueToday {
@@ -163,6 +109,7 @@ class Subtask {
     );
   }
 
+  // Used for saving subtasks as a JSON string in the database
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -171,6 +118,7 @@ class Subtask {
     };
   }
 
+  // Used for loading subtasks from a JSON string from the database
   factory Subtask.fromJson(Map<String, dynamic> json) {
     return Subtask(
       id: json['id'],
@@ -200,6 +148,8 @@ enum TaskPriority {
   }
 }
 
+// These enums are not used in the local provider but are kept here
+// as they are part of your model definition.
 enum TaskFilter {
   all,
   completed,
@@ -209,22 +159,16 @@ enum TaskFilter {
 
   String get displayName {
     switch (this) {
-      case TaskFilter.all:
-        return 'All';
-      case TaskFilter.completed:
-        return 'Completed';
-      case TaskFilter.pending:
-        return 'Pending';
-      case TaskFilter.overdue:
-        return 'Overdue';
-      case TaskFilter.today:
-        return 'Today';
+      case TaskFilter.all: return 'All';
+      case TaskFilter.completed: return 'Completed';
+      case TaskFilter.pending: return 'Pending';
+      case TaskFilter.overdue: return 'Overdue';
+      case TaskFilter.today: return 'Today';
     }
   }
 }
 
 enum TaskSort {
-  title , 
   dateCreated,
   dueDate,
   priority,
@@ -232,14 +176,10 @@ enum TaskSort {
 
   String get displayName {
     switch (this) {
-      case TaskSort.dateCreated:
-        return 'Date Created';
-      case TaskSort.dueDate:
-        return 'Due Date';
-      case TaskSort.priority:
-        return 'Priority';
-      case TaskSort.alphabetical:
-        return 'Alphabetical';
+      case TaskSort.dateCreated: return 'Date Created';
+      case TaskSort.dueDate: return 'Due Date';
+      case TaskSort.priority: return 'Priority';
+      case TaskSort.alphabetical: return 'Alphabetical';
     }
   }
 }

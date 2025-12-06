@@ -1,260 +1,76 @@
-// lib/providers/tasks_provider.dart
+// lib/providers/task_provider.dart
 
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../helpers/database_helper.dart';
 import '../models/task_model.dart';
-import '../services/mixpanel_service.dart';
 
-/// TasksProvider - Manages task state with Firestore integration
-/// 
-/// This provider handles all task-related operations including:
-/// - Fetching tasks from Firestore
-/// - Creating new tasks
-/// - Updating existing tasks
-/// - Deleting tasks
-/// - Filtering and sorting tasks
-/// 
-/// Usage:
-/// ```dart
-/// final tasksProvider = Provider.of<TasksProvider>(context);
-/// tasksProvider.addTask(newTask);
-/// ```
-class TasksProvider extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
+class TaskProvider extends ChangeNotifier {
   List<Task> _tasks = [];
-  TaskFilter _currentFilter = TaskFilter.all;
-  TaskSort _currentSort = TaskSort.dateCreated;
-  bool _isLoading = false;
-  String? _error;
+  bool isLoading = false;
 
-  // Getters
-  List<Task> get tasks => _getFilteredAndSortedTasks();
-  List<Task> get allTasks => _tasks;
-  TaskFilter get currentFilter => _currentFilter;
-  TaskSort get currentSort => _currentSort;
-  bool get isLoading => _isLoading;
-  String? get error => _error;
+  List<Task> get tasks => _tasks;
 
-  int get totalTasks => _tasks.length;
-  int get completedTasks => _tasks.where((t) => t.isCompleted).length;
-  int get pendingTasks => _tasks.where((t) => !t.isCompleted).length;
-  int get overdueTasks => _tasks.where((t) => t.isOverdue).length;
+  TaskProvider() {
+    loadTasksFromDb();
+  }
 
-  /// Initialize and load tasks from Firestore
-  Future<void> loadTasks() async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      _error = 'No user logged in';
-      notifyListeners();
-      return;
-    }
-
-    _isLoading = true;
-    _error = null;
+  Future<void> loadTasksFromDb() async {
+    isLoading = true;
     notifyListeners();
-
     try {
-      final snapshot = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('tasks')
-          .get();
-
-      _tasks = snapshot.docs.map((doc) {
-        final data = doc.data();
-        return Task.fromFirestore(data, doc.id);
-      }).toList();
-
-      _isLoading = false;
-      notifyListeners();
-    } catch (e) {
-      _error = 'Error loading tasks: $e';
-      _isLoading = false;
+      _tasks = await DatabaseHelper.instance.getTasks();
+      _sortTasks();
+    } finally {
+      isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Add a new task to Firestore
   Future<void> addTask(Task task) async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-
-    try {
-      final docRef = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('tasks')
-          .add(task.toFirestore());
-
-      final newTask = Task(
-        id: docRef.id,
-        title: task.title,
-        description: task.description,
-        isCompleted: task.isCompleted,
-        createdAt: task.createdAt,
-        dueDate: task.dueDate,
-        priority: task.priority,
-        tags: task.tags,
-        subtasks: task.subtasks,
-      );
-
-      _tasks.add(newTask);
-      notifyListeners();
-    } catch (e) {
-      _error = 'Error adding task: $e';
-      notifyListeners();
-    }
+    await DatabaseHelper.instance.addTask(task);
+    _tasks.add(task);
+    _sortTasks();
+    notifyListeners();
   }
 
-  /// Update an existing task
   Future<void> updateTask(Task task) async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-
-    try {
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('tasks')
-          .doc(task.id)
-          .update(task.toFirestore());
-
-      final index = _tasks.indexWhere((t) => t.id == task.id);
-      if (index != -1) {
-        _tasks[index] = task;
-        notifyListeners();
-      }
-    } catch (e) {
-      _error = 'Error updating task: $e';
-      notifyListeners();
+    await DatabaseHelper.instance.updateTask(task);
+    final index = _tasks.indexWhere((t) => t.id == task.id);
+    if (index != -1) {
+      _tasks[index] = task;
     }
-  }
-
-  /// Toggle task completion status
-  Future<void> toggleTaskCompletion(String taskId) async {
-    final index = _tasks.indexWhere((t) => t.id == taskId);
-    if (index == -1) return;
-
-    final task = _tasks[index];
-    final updatedTask = Task(
-      id: task.id,
-      title: task.title,
-      description: task.description,
-      isCompleted: !task.isCompleted,
-      createdAt: task.createdAt,
-      dueDate: task.dueDate,
-      priority: task.priority,
-      tags: task.tags,
-      subtasks: task.subtasks,
-    );
-
-    await updateTask(updatedTask);
-
-    // Track completion in analytics
-    if (updatedTask.isCompleted) {
-      MixpanelService.instance.trackTaskCompleted(
-        taskId: taskId,
-        taskTitle: task.title,
-        priority: task.priority.toString().split('.').last,
-      );
-    }
-  }
-
-  /// Delete a task
-  Future<void> deleteTask(String taskId) async {
-    final user = _auth.currentUser;
-    if (user == null) return;
-
-    try {
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('tasks')
-          .doc(taskId)
-          .delete();
-
-      _tasks.removeWhere((t) => t.id == taskId);
-      notifyListeners();
-    } catch (e) {
-      _error = 'Error deleting task: $e';
-      notifyListeners();
-    }
-  }
-
-  /// Set filter
-  void setFilter(TaskFilter filter) {
-    _currentFilter = filter;
+    _sortTasks();
     notifyListeners();
   }
 
-  /// Set sort order
-  void setSort(TaskSort sort) {
-    _currentSort = sort;
+  Future<void> deleteTask(String id) async {
+    await DatabaseHelper.instance.deleteTask(id);
+    _tasks.removeWhere((task) => task.id == id);
     notifyListeners();
   }
 
-  /// Get filtered and sorted tasks
-  List<Task> _getFilteredAndSortedTasks() {
-    List<Task> filtered = List.from(_tasks);
-
-    // Apply filter
-    switch (_currentFilter) {
-      case TaskFilter.completed:
-        filtered = filtered.where((t) => t.isCompleted).toList();
-        break;
-      case TaskFilter.pending:
-        filtered = filtered.where((t) => !t.isCompleted).toList();
-        break;
-      case TaskFilter.overdue:
-        filtered = filtered.where((t) => t.isOverdue).toList();
-        break;
-      case TaskFilter.today:
-        final today = DateTime.now();
-        filtered = filtered.where((t) {
-          if (t.dueDate == null) return false;
-          return t.dueDate!.year == today.year &&
-                 t.dueDate!.month == today.month &&
-                 t.dueDate!.day == today.day;
-        }).toList();
-        break;
-      case TaskFilter.all:
-        // No filter
-        break;
+  Future<void> toggleTaskCompletion(String id) async {
+    final index = _tasks.indexWhere((t) => t.id == id);
+    if (index != -1) {
+      final task = _tasks[index];
+      final updatedTask = task.copyWith(isCompleted: !task.isCompleted);
+      await updateTask(updatedTask);
     }
+  }
 
-    // Apply sort
-    switch (_currentSort) {
-      case TaskSort.dateCreated:
-        filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        break;
-      case TaskSort.dueDate:
-        filtered.sort((a, b) {
-          if (a.dueDate == null && b.dueDate == null) return 0;
-          if (a.dueDate == null) return 1;
-          if (b.dueDate == null) return -1;
-          return a.dueDate!.compareTo(b.dueDate!);
-        });
-        break;
-      case TaskSort.priority:
-        filtered.sort((a, b) {
-          final priorityOrder = {
-            TaskPriority.high: 0,
-            TaskPriority.medium: 1,
-            TaskPriority.low: 2,
-            TaskPriority.none: 3,
-          };
-          return (priorityOrder[a.priority] ?? 3)
-              .compareTo(priorityOrder[b.priority] ?? 3);
-        });
-        break;
-      case TaskSort.alphabetical:
-        filtered.sort((a, b) => a.title.compareTo(b.title));
-        break;
+  Task? getTaskById(String id) {
+    try {
+      return _tasks.firstWhere((task) => task.id == id);
+    } catch (e) {
+      return null;
     }
+  }
 
-    return filtered;
+  void _sortTasks() {
+    _tasks.sort((a, b) {
+      if (!a.isCompleted && b.isCompleted) return -1;
+      if (a.isCompleted && !b.isCompleted) return 1;
+      return b.createdAt.compareTo(a.createdAt);
+    });
   }
 }

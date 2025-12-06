@@ -1,8 +1,7 @@
-// lib/pages/task_edit_page.dart - Simplified edit form
+// lib/pages/task_edit_page.dart
+
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/task_model.dart';
-import '../services/task_service.dart';
 
 class TaskEditPage extends StatefulWidget {
   final Task? task;
@@ -31,8 +30,9 @@ class _TaskEditPageState extends State<TaskEditPage> {
     _selectedPriority = widget.task?.priority ?? TaskPriority.medium;
     _selectedDueDate = widget.task?.dueDate;
     if (widget.task?.tags != null) _tags.addAll(widget.task!.tags!);
-    if (widget.task?.subtasks != null)
+    if (widget.task?.subtasks != null) {
       _subtasks.addAll(widget.task!.subtasks!);
+    }
   }
 
   @override
@@ -52,11 +52,12 @@ class _TaskEditPageState extends State<TaskEditPage> {
     if (date != null) setState(() => _selectedDueDate = date);
   }
 
+  // <<< --- THIS IS THE CRITICAL CHANGE --- >>>
   void _saveTask() {
     if (!_formKey.currentState!.validate()) return;
 
-    final taskService = context.read<TaskService>();
-    final task = Task(
+    // Instead of calling a service, we just create the final Task object.
+    final taskToSave = Task(
       id: widget.task?.id ?? 'task_${DateTime.now().millisecondsSinceEpoch}',
       title: _titleController.text.trim(),
       description: _descriptionController.text.trim().isEmpty
@@ -70,20 +71,8 @@ class _TaskEditPageState extends State<TaskEditPage> {
       subtasks: _subtasks.isEmpty ? null : _subtasks,
     );
 
-    if (widget.task == null) {
-      taskService.addTask(task);
-    } else {
-      taskService.updateTask(task);
-    }
-
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(widget.task == null ? 'Task created' : 'Task updated'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
+    // This sends the completed object back to the page that opened this one.
+    Navigator.pop(context, taskToSave);
   }
 
   void _showSubtaskDialog() {
@@ -231,7 +220,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                           filled: true,
                         ),
                         validator: (v) =>
-                        v?.trim().isEmpty ?? true ? 'Required' : null,
+                            v?.trim().isEmpty ?? true ? 'Required' : null,
                         textCapitalization: TextCapitalization.sentences,
                       ),
                       const SizedBox(height: 16),
@@ -259,25 +248,29 @@ class _TaskEditPageState extends State<TaskEditPage> {
                       ),
                       const SizedBox(height: 12),
                       Row(
-                        children: TaskPriority.values.map((priority) {
+                        children: TaskPriority.values
+                            .where((p) => p != TaskPriority.none)
+                            .map((priority) {
                           final isSelected = _selectedPriority == priority;
                           final color = priority == TaskPriority.high
                               ? Colors.red[400]!
                               : priority == TaskPriority.medium
-                              ? Colors.orange[400]!
-                              : Colors.blue[400]!;
+                                  ? Colors.orange[400]!
+                                  : Colors.blue[400]!;
 
                           return Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
                               child: InkWell(
-                                onTap: () =>
-                                    setState(() => _selectedPriority = priority),
+                                onTap: () => setState(
+                                    () => _selectedPriority = priority),
                                 borderRadius: BorderRadius.circular(12),
                                 child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding:
-                                  const EdgeInsets.symmetric(vertical: 12),
+                                  duration:
+                                      const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12),
                                   decoration: BoxDecoration(
                                     color: isSelected
                                         ? color
@@ -293,8 +286,9 @@ class _TaskEditPageState extends State<TaskEditPage> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
-                                      color:
-                                      isSelected ? Colors.white : color,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : color,
                                     ),
                                   ),
                                 ),
@@ -318,7 +312,8 @@ class _TaskEditPageState extends State<TaskEditPage> {
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: theme.dividerColor),
+                            border:
+                                Border.all(color: theme.dividerColor),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -336,8 +331,8 @@ class _TaskEditPageState extends State<TaskEditPage> {
                               if (_selectedDueDate != null)
                                 IconButton(
                                   icon: const Icon(Icons.clear, size: 20),
-                                  onPressed: () =>
-                                      setState(() => _selectedDueDate = null),
+                                  onPressed: () => setState(
+                                      () => _selectedDueDate = null),
                                 ),
                             ],
                           ),
@@ -369,8 +364,8 @@ class _TaskEditPageState extends State<TaskEditPage> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 12),
                             decoration: BoxDecoration(
-                              color:
-                              theme.colorScheme.primary.withOpacity(0.05),
+                              color: theme.colorScheme.primary
+                                  .withOpacity(0.05),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -381,7 +376,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                                 IconButton(
                                   icon: const Icon(Icons.close, size: 20),
                                   onPressed: () => setState(
-                                          () => _subtasks.remove(subtask)),
+                                      () => _subtasks.remove(subtask)),
                                 ),
                               ],
                             ),
