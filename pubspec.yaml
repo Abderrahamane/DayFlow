@@ -38,6 +38,9 @@ dependencies:
 
   # UI Components
   cupertino_icons: ^1.0.6
+  permission_handler: ^12.0.1
+  timezone: ^0.10.1
+  flutter_local_notifications: ^19.5.0
 
 dev_dependencies:
   flutter_test:

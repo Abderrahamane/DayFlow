@@ -17,6 +17,8 @@ import 'data/repositories/reminder_repository.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
 import 'utils/routes.dart';
+import 'package:dayflow/services/notification_servise.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +27,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize notification service
+  await NotificationService.initNotification();
 
   // Initialize language cubit
   final languageCubit = LanguageCubit();

@@ -3,6 +3,7 @@ import 'package:dayflow/blocs/reminder/reminder_event.dart';
 import 'package:dayflow/blocs/reminder/reminder_state.dart';
 import 'package:dayflow/data/repositories/reminder_repository.dart';
 import 'package:dayflow/models/reminder_model.dart';
+import 'package:dayflow/utils/reminder_notification_helper.dart';
 
 class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   final ReminderRepository repository;
@@ -23,6 +24,12 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     emit(ReminderLoading());
     try {
       final reminders = await repository.getAllReminders();
+      
+      // Reschedule all active reminders when loading
+      await ReminderNotificationHelper.rescheduleAllReminders(
+        reminders.where((r) => r.id != null).toList(),
+      );
+      
       emit(_groupRemindersByDate(reminders));
     } catch (e) {
       emit(ReminderError('Failed to load reminders: ${e.toString()}'));
@@ -44,19 +51,24 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   Future<void> _onAddReminder(
     AddReminder event,
     Emitter<ReminderState> emit,
-    ) async {
-      try {
-        // Insert the reminder into the database
-        await repository.insertReminder(event.reminder);
+  ) async {
+    try {
+      // Insert the reminder into the database
+      final newId = await repository.insertReminder(event.reminder);
+      
+      // Create a new reminder with the ID from database
+      final reminderWithId = event.reminder.copyWith(id: newId);
+      
+      // Schedule notification for the new reminder
+      await ReminderNotificationHelper.scheduleReminderNotification(reminderWithId);
 
-        // Fetch all reminders and emit updated state
-        final reminders = await repository.getAllReminders();
-        emit(_groupRemindersByDate(reminders));
+      // Fetch all reminders and emit updated state
+      final reminders = await repository.getAllReminders();
+      emit(_groupRemindersByDate(reminders));
     } catch (e) {
-    emit(ReminderError('Failed to add reminder: ${e.toString()}'));
+      emit(ReminderError('Failed to add reminder: ${e.toString()}'));
+    }
   }
-}
-
 
   Future<void> _onUpdateReminder(
     UpdateReminder event,
@@ -65,7 +77,14 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     try {
       await repository.updateReminder(event.reminder);
 
-      // No notification updates now
+      // Cancel old notification and schedule new one if active
+      if (event.reminder.id != null) {
+        await ReminderNotificationHelper.cancelReminderNotification(event.reminder.id!);
+        
+        if (event.reminder.isActive) {
+          await ReminderNotificationHelper.scheduleReminderNotification(event.reminder);
+        }
+      }
 
       final reminders = await repository.getAllReminders();
       emit(_groupRemindersByDate(reminders));
@@ -81,7 +100,8 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     try {
       await repository.deleteReminder(event.id);
 
-      // No notification cancel
+      // Cancel notification when deleting
+      await ReminderNotificationHelper.cancelReminderNotification(event.id);
 
       final reminders = await repository.getAllReminders();
       emit(_groupRemindersByDate(reminders));
@@ -101,7 +121,14 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
 
       await repository.updateReminder(updatedReminder);
 
-      // No scheduling or canceling notifications
+      // Schedule or cancel notification based on active state
+      if (updatedReminder.id != null) {
+        if (updatedReminder.isActive) {
+          await ReminderNotificationHelper.scheduleReminderNotification(updatedReminder);
+        } else {
+          await ReminderNotificationHelper.cancelReminderNotification(updatedReminder.id!);
+        }
+      }
 
       final reminders = await repository.getAllReminders();
       emit(_groupRemindersByDate(reminders));

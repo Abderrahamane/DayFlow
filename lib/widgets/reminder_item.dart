@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_event.dart';
+import 'package:dayflow/blocs/reminder/reminder_state.dart';
 import 'package:dayflow/models/reminder_model.dart';
 import 'package:dayflow/utils/app_localizations.dart';
 
@@ -74,7 +75,7 @@ class ReminderItem extends StatelessWidget {
                 if (canEdit) ...[
                   ListTile(
                     leading: const Icon(Icons.edit, color: Colors.blue),
-                    title: Text(l10n.reminderEnterTitle),
+                    title: Text(l10n.editReminder),
                     onTap: () {
                       Navigator.pop(sheetContext);
                       _showEditDialog(context);
@@ -130,6 +131,7 @@ class ReminderItem extends StatelessWidget {
 
   void _showEditDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final bloc = context.read<ReminderBloc>(); // Store bloc reference
 
     final titleController = TextEditingController(text: reminder.title);
     final descriptionController =
@@ -140,210 +142,230 @@ class ReminderItem extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.editReminder,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Title
-                      TextField(
-                        controller: titleController,
-                        decoration: InputDecoration(
-                          labelText: l10n.reminderTitle,
-                          hintText: l10n.reminderEnterTitle,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.title),
+        return BlocProvider.value(
+          value: bloc, // Pass the bloc to the dialog
+          child: StatefulBuilder(
+            builder: (context, setDialogState) {
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.editReminder,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        autofocus: true,
-                      ),
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 24),
 
-                      // Description
-                      TextField(
-                        controller: descriptionController,
-                        decoration: InputDecoration(
-                          labelText: l10n.reminderDescriptionOptional,
-                          hintText: l10n.reminderEnterDescription,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        // Title
+                        TextField(
+                          controller: titleController,
+                          decoration: InputDecoration(
+                            labelText: l10n.reminderTitle,
+                            hintText: l10n.reminderEnterTitle,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            prefixIcon: const Icon(Icons.title),
                           ),
-                          prefixIcon: const Icon(Icons.description),
+                          autofocus: true,
                         ),
-                        maxLines: 2,
-                      ),
-                      const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                      // Date picker
-                      InkWell(
-                        onTap: () async {
-                          final date = await showDatePicker(
-                            context: context,
-                            initialDate: selectedDate,
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime.now().add(
-                              const Duration(days: 365),
+                        // Description
+                        TextField(
+                          controller: descriptionController,
+                          decoration: InputDecoration(
+                            labelText: l10n.reminderDescriptionOptional,
+                            hintText: l10n.reminderEnterDescription,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          );
-                          if (date != null) {
-                            setDialogState(() {
-                              selectedDate = date;
-                            });
-                          }
-                        },
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
+                            prefixIcon: const Icon(Icons.description),
                           ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.calendar_today,
-                                  color:
-                                      Theme.of(context).colorScheme.primary),
-                              const SizedBox(width: 12),
-                              Text(
-                                '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                                style: Theme.of(context).textTheme.bodyLarge,
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Date picker
+                        InkWell(
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime.now().add(
+                                const Duration(days: 365),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Time picker
-                      InkWell(
-                        onTap: () async {
-                          final time = await showTimePicker(
-                            context: context,
-                            initialTime: selectedTime ?? TimeOfDay.now(),
-                          );
-                          if (time != null) {
-                            setDialogState(() {
-                              selectedTime = time;
-                            });
-                          }
-                        },
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.access_time,
-                                  color:
-                                      Theme.of(context).colorScheme.primary),
-                              const SizedBox(width: 12),
-                              Text(
-                                selectedTime != null
-                                    ? _formatTime12Hour(selectedTime!)
-                                    : l10n.reminderSelectTime,
-                                style: Theme.of(context).textTheme.bodyLarge,
+                            );
+                            if (date != null) {
+                              setDialogState(() {
+                                selectedDate = date;
+                              });
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Theme.of(context).dividerColor,
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () =>
-                                Navigator.of(dialogContext).pop(),
-                            child: Text(l10n.cancel),
-                          ),
-                          const SizedBox(width: 12),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (titleController.text.trim().isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        l10n.reminderErrorTitleRequired),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              if (selectedTime == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text(l10n.reminderErrorTimeRequired),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              final updatedReminder = ReminderModel(
-                                id: reminder.id,
-                                title: titleController.text.trim(),
-                                time: _formatTime12Hour(selectedTime!),
-                                description:
-                                    descriptionController.text.trim(),
-                                date: selectedDate,
-                                isActive: reminder.isActive,
-                              );
-
-                              context.read<ReminderBloc>().add(
-                                    UpdateReminder(updatedReminder),
-                                  );
-
-                              Navigator.of(dialogContext).pop();
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.reminderUpdated),
-                                  duration: const Duration(seconds: 2),
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primary,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.calendar_today,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                const SizedBox(width: 12),
+                                Text(
+                                  '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                              );
-                            },
-                            child: Text(l10n.update),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Time picker
+                        InkWell(
+                          onTap: () async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: selectedTime ?? TimeOfDay.now(),
+                            );
+                            if (time != null) {
+                              setDialogState(() {
+                                selectedTime = time;
+                              });
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.access_time,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                const SizedBox(width: 12),
+                                Text(
+                                  selectedTime != null
+                                      ? _formatTime12Hour(selectedTime!)
+                                      : l10n.reminderSelectTime,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
+                              child: Text(l10n.cancel),
+                            ),
+                            const SizedBox(width: 12),
+                            BlocConsumer<ReminderBloc, ReminderState>(
+                              listener: (context, state) {
+                                // Close dialog when update is successful
+                                if (state is ReminderLoaded) {
+                                  Navigator.of(dialogContext).pop();
+                                  
+                                  // Show success message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l10n.reminderUpdated),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                    ),
+                                  );
+                                }
+                              },
+                              builder: (context, state) {
+                                final isUpdating = state is ReminderLoading;
+                                
+                                return ElevatedButton(
+                                  onPressed: isUpdating ? null : () {
+                                    if (titleController.text.trim().isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              l10n.reminderErrorTitleRequired),
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    if (selectedTime == null) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text(l10n.reminderErrorTimeRequired),
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    final updatedReminder = ReminderModel(
+                                      id: reminder.id,
+                                      title: titleController.text.trim(),
+                                      time: _formatTime12Hour(selectedTime!),
+                                      description:
+                                          descriptionController.text.trim(),
+                                      date: selectedDate,
+                                      isActive: reminder.isActive,
+                                    );
+
+                                    bloc.add(UpdateReminder(updatedReminder));
+                                  },
+                                  child: isUpdating
+                                      ? const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : Text(l10n.update),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );
@@ -478,7 +500,7 @@ class ReminderItem extends StatelessWidget {
               ),
             ),
 
-            // “Task” label
+            // "Task" label
             if (reminder.id == null) ...[
               const SizedBox(width: 8),
               Container(
