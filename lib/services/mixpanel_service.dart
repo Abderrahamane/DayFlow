@@ -1,178 +1,241 @@
-// lib/services/mixpanel_service.dart
-
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:flutter/foundation.dart';
 
-/// MixpanelService - Handles all analytics tracking for DayFlow app
-/// 
-/// This service initializes Mixpanel and provides methods to track user events
-/// and set user properties.
-/// 
-/// Usage:
-/// 1. Initialize in main.dart: await MixpanelService.init('YOUR_TOKEN');
-/// 2. Track events: MixpanelService.instance.trackEvent('event_name', {...});
-/// 3. Set user properties: MixpanelService.instance.identifyUser('userId', {...});
 class MixpanelService {
   static Mixpanel? _mixpanel;
   static MixpanelService? _instance;
 
   MixpanelService._();
 
-  /// Get singleton instance
   static MixpanelService get instance {
     _instance ??= MixpanelService._();
     return _instance!;
   }
 
-  /// Initialize Mixpanel with your project token
-  /// 
-  /// Call this in main.dart before running the app:
-  /// ```dart
-  /// await MixpanelService.init('YOUR_MIXPANEL_TOKEN');
-  /// ```
-  /// 
-  /// Get your token from: https://mixpanel.com/project/[PROJECT_ID]/settings
   static Future<void> init(String token) async {
     try {
       _mixpanel = await Mixpanel.init(
         token,
-        trackAutomaticEvents: true, // Automatically track app opens, sessions
+        trackAutomaticEvents: true,
       );
       debugPrint('✅ Mixpanel initialized successfully');
     } catch (e) {
-      debugPrint('❌ Error initializing Mixpanel: $e');
+      debugPrint('❌ Mixpanel init error: $e');
     }
   }
 
-  /// Track a custom event with optional properties
-  /// 
-  /// Example:
-  /// ```dart
-  /// MixpanelService.instance.trackEvent('Task Completed', {
-  ///   'task_id': 'task123',
-  ///   'task_priority': 'high',
-  ///   'completion_time': DateTime.now().toIso8601String(),
-  /// });
-  /// ```
-  void trackEvent(String eventName, [Map<String, dynamic>? properties]) {
-    if (_mixpanel == null) {
-      debugPrint('⚠️ Mixpanel not initialized. Call MixpanelService.init() first');
-      return;
-    }
+  // GENERIC TRACKING
+  void trackEvent(String name, [Map<String, dynamic>? props]) {
+    if (_mixpanel == null) return;
 
     try {
-      _mixpanel!.track(eventName, properties: properties);
-      debugPrint('📊 Tracked event: $eventName ${properties != null ? 'with properties' : ''}');
+      _mixpanel!.track(name, properties: props);
     } catch (e) {
       debugPrint('❌ Error tracking event: $e');
     }
   }
 
-  /// Identify user and set user profile properties
-  /// 
-  /// Call this after user logs in:
-  /// ```dart
-  /// MixpanelService.instance.identifyUser('user123', {
-  ///   'email': 'user@example.com',
-  ///   'name': 'John Doe',
-  ///   'login_provider': 'google',
-  /// });
-  /// ```
+  // USER IDENTIFICATION
   void identifyUser(String userId, Map<String, dynamic>? properties) {
-    if (_mixpanel == null) {
-      debugPrint('⚠️ Mixpanel not initialized');
-      return;
-    }
+    if (_mixpanel == null) return;
 
     try {
       _mixpanel!.identify(userId);
-      
       if (properties != null) {
-        // Set user profile properties
-        _mixpanel!.getPeople().set('\$email', properties['email']);
-        _mixpanel!.getPeople().set('\$name', properties['name']);
-        
-        // Set custom properties
         properties.forEach((key, value) {
-          if (key != 'email' && key != 'name') {
-            _mixpanel!.getPeople().set(key, value);
-          }
+          _mixpanel!.getPeople().set(key, value);
         });
       }
-      
-      debugPrint('👤 User identified: $userId');
     } catch (e) {
-      debugPrint('❌ Error identifying user: $e');
+      debugPrint('❌ Identify error: $e');
     }
   }
 
-  /// Clear user identity (call on logout)
   void reset() {
     if (_mixpanel == null) return;
-    
-    try {
-      _mixpanel!.reset();
-      debugPrint('🔄 Mixpanel user reset');
-    } catch (e) {
-      debugPrint('❌ Error resetting Mixpanel: $e');
-    }
+    _mixpanel!.reset();
   }
 
-  /// Track user login event
-  /// 
-  /// This is a convenience method for tracking login events
-  void trackLogin({
-    required String userId,
-    required String email,
-    required String loginProvider,
+  // TASKS ANALYTICS (based on tasks table)
+  void trackTaskCreated({
+    required String id,
+    required String title,
+    required int priority,
+    required int createdAt,
+    int? dueDate,
+    List<String>? tags,
   }) {
-    trackEvent('User Logged In', {
-      'user_id': userId,
-      'email': email,
-      'login_provider': loginProvider,
-      'timestamp': DateTime.now().toIso8601String(),
-    });
-
-    identifyUser(userId, {
-      'email': email,
-      'name': email.split('@')[0], // Use email prefix as name
-      'login_provider': loginProvider,
+    trackEvent("Task Created", {
+      "task_id": id,
+      "title": title,
+      "priority": priority,
+      "due_date": dueDate,
+      "tags": tags,
+      "created_at": createdAt,
     });
   }
 
-  /// Track task completion event
-  void trackTaskCompleted({
+  void trackTaskUpdated({
+    required String id,
+    required String field,
+    required dynamic newValue,
+  }) {
+    trackEvent("Task Updated", {
+      "task_id": id,
+      "updated_field": field,
+      "new_value": newValue,
+    });
+  }
+
+  void trackTaskCompleted(String id, String title) {
+    trackEvent("Task Completed", {
+      "task_id": id,
+      "title": title,
+      "timestamp": DateTime.now().toIso8601String(),
+    });
+  }
+
+  void trackTaskDeleted(String id) {
+    trackEvent("Task Deleted", {
+      "task_id": id,
+    });
+  }
+
+  // SUBTASKS ANALYTICS
+  void trackSubtaskCreated({
+    required String id,
     required String taskId,
-    required String taskTitle,
-    String? priority,
+    required String title,
   }) {
-    trackEvent('User Completed Task', {
-      'task_id': taskId,
-      'task_title': taskTitle,
-      'task_priority': priority ?? 'none',
-      'timestamp': DateTime.now().toIso8601String(),
+    trackEvent("Subtask Created", {
+      "subtask_id": id,
+      "task_id": taskId,
+      "title": title,
     });
   }
 
-  /// Track habit creation event
+  void trackSubtaskCompleted(String id, String taskId) {
+    trackEvent("Subtask Completed", {
+      "subtask_id": id,
+      "task_id": taskId,
+    });
+  }
+
+  void trackSubtaskDeleted(String id, String taskId) {
+    trackEvent("Subtask Deleted", {
+      "subtask_id": id,
+      "task_id": taskId,
+    });
+  }
+
+  // HABITS ANALYTICS
   void trackHabitCreated({
     required String habitId,
-    required String habitName,
-    String? frequency,
+    required String name,
+    required int frequency,
+    required int createdAt,
   }) {
-    trackEvent('User Created Habit', {
-      'habit_id': habitId,
-      'habit_name': habitName,
-      'frequency': frequency ?? 'daily',
-      'timestamp': DateTime.now().toIso8601String(),
+    trackEvent("Habit Created", {
+      "habit_id": habitId,
+      "name": name,
+      "frequency": frequency,
+      "created_at": createdAt,
     });
   }
 
-  /// Track page view event
+  void trackHabitUpdated({
+    required String habitId,
+    required String field,
+    required dynamic newValue,
+  }) {
+    trackEvent("Habit Updated", {
+      "habit_id": habitId,
+      "field": field,
+      "new_value": newValue,
+    });
+  }
+
+  void trackHabitDeleted(String habitId) {
+    trackEvent("Habit Deleted", {
+      "habit_id": habitId,
+    });
+  }
+
+  // HABIT COMPLETION ANALYTICS
+  void trackHabitCompletion({
+    required String habitId,
+    required String dateKey,
+    required bool isCompleted,
+  }) {
+    trackEvent("Habit Completion", {
+      "habit_id": habitId,
+      "date": dateKey,
+      "completed": isCompleted,
+    });
+  }
+
+  void trackHabitStreakUpdated({
+    required String habitId,
+    required int streak,
+  }) {
+    trackEvent("Habit Streak Updated", {
+      "habit_id": habitId,
+      "streak": streak,
+    });
+  }
+
+  // REMINDERS ANALYTICS
+  void trackReminderCreated({
+    required int id,
+    required String title,
+    required String date,
+    required String time,
+  }) {
+    trackEvent("Reminder Created", {
+      "reminder_id": id,
+      "title": title,
+      "date": date,
+      "time": time,
+    });
+  }
+
+  void trackReminderUpdated({
+    required int id,
+    required String field,
+    required dynamic value,
+  }) {
+    trackEvent("Reminder Updated", {
+      "reminder_id": id,
+      "field": field,
+      "new_value": value,
+    });
+  }
+
+  void trackReminderDeleted(int id) {
+    trackEvent("Reminder Deleted", {
+      "reminder_id": id,
+    });
+  }
+
+  void trackReminderTriggered(int id) {
+    trackEvent("Reminder Triggered", {
+      "reminder_id": id,
+      "timestamp": DateTime.now().toIso8601String(),
+    });
+  }
+
+  void trackReminderSnoozed(int id, int minutes) {
+    trackEvent("Reminder Snoozed", {
+      "reminder_id": id,
+      "snooze_minutes": minutes,
+    });
+  }
+
+  // UI PAGE VIEWS
   void trackPageView(String pageName) {
-    trackEvent('Page Viewed', {
-      'page_name': pageName,
-      'timestamp': DateTime.now().toIso8601String(),
+    trackEvent("Page Viewed", {
+      "page_name": pageName,
+      "timestamp": DateTime.now().toIso8601String(),
     });
   }
 }
