@@ -94,6 +94,15 @@ class TaskCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (task.isRecurring)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Icon(
+                            Icons.repeat,
+                            size: 16,
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ),
                       if (task.tags != null && task.tags!.isNotEmpty)
                         Icon(
                           Icons.sell_outlined,

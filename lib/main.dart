@@ -10,10 +10,18 @@ import 'blocs/habit/habit_bloc.dart';
 import 'blocs/language/language_cubit.dart';
 import 'blocs/task/task_bloc.dart';
 import 'blocs/theme/theme_cubit.dart';
+import 'blocs/note/note_bloc.dart';
+import 'blocs/calendar/calendar_bloc.dart';
+import 'blocs/template/template_bloc.dart';
+import 'blocs/habit_stats/habit_stats_bloc.dart';
+import 'blocs/pomodoro/pomodoro_bloc.dart';
 import 'data/local/app_database.dart';
 import 'data/repositories/habit_repository.dart';
 import 'data/repositories/task_repository.dart';
 import 'data/repositories/reminder_repository.dart';
+import 'data/repositories/note_repository.dart';
+import 'data/repositories/task_template_repository.dart';
+import 'data/repositories/pomodoro_repository.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
 import 'utils/routes.dart';
@@ -45,6 +53,9 @@ void main() async {
   final taskRepository = TaskRepository(database);
   final habitRepository = HabitRepository(database);
   final reminderRepository = ReminderRepository(database);
+  final noteRepository = NoteRepository(database);
+  final templateRepository = TaskTemplateRepository(database);
+  final pomodoroRepository = PomodoroRepository(database);
 
   runApp(
     MultiRepositoryProvider(
@@ -52,6 +63,9 @@ void main() async {
         RepositoryProvider.value(value: taskRepository),
         RepositoryProvider.value(value: habitRepository),
         RepositoryProvider.value(value: reminderRepository),
+        RepositoryProvider.value(value: noteRepository),
+        RepositoryProvider.value(value: templateRepository),
+        RepositoryProvider.value(value: pomodoroRepository),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -67,10 +81,23 @@ void main() async {
             create: (_) => ReminderBloc(reminderRepository)..add(LoadReminders()),
           ),
           BlocProvider(
-              create: (_) => TaskBloc(taskRepository)..add(LoadTasks())
+            create: (_) => NoteBloc(noteRepository)..add(LoadNotes()),
           ),
           BlocProvider(
-              create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),
+            create: (_) => CalendarBloc(
+              taskRepository: taskRepository,
+              habitRepository: habitRepository,
+            )..add(LoadCalendarData()),
+          ),
+          BlocProvider(
+            create: (_) => TemplateBloc(templateRepository)..add(LoadTemplates()),
+          ),
+          BlocProvider(
+            create: (_) => HabitStatsBloc(habitRepository)..add(LoadHabitStats()),
+          ),
+          BlocProvider(
+            create: (_) => PomodoroBloc(pomodoroRepository)..add(LoadPomodoroData()),
+          ),
         ],
         child: const DayFlowApp(),
       ),

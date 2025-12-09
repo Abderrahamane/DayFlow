@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dayflow/models/task_model.dart';
+import 'package:dayflow/models/recurrence_model.dart';
 import 'package:dayflow/services/mixpanel_service.dart';
 
 import '../local/app_database.dart';
@@ -26,6 +27,8 @@ class TaskRepository {
               ))
           .toList();
 
+      final recurrenceData = row['recurrenceData'] as String?;
+
       return Task(
         id: row['id'] as String,
         title: row['title'] as String,
@@ -41,6 +44,10 @@ class TaskRepository {
             ? List<String>.from(jsonDecode(row['tagsJson'] as String))
             : null,
         subtasks: relatedSubtasks.isEmpty ? null : relatedSubtasks,
+        recurrence: recurrenceData != null && recurrenceData.isNotEmpty
+            ? RecurrencePattern.fromDatabase(recurrenceData)
+            : null,
+        parentTaskId: row['parentTaskId'] as String?,
       );
     }).toList();
   }
@@ -52,7 +59,7 @@ class TaskRepository {
         .select('SELECT id FROM tasks WHERE id = ?', [task.id]).isEmpty;
 
     _db.rawDb.execute(
-      'INSERT OR REPLACE INTO tasks (id, title, description, isCompleted, createdAt, dueDate, priority, tagsJson) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT OR REPLACE INTO tasks (id, title, description, isCompleted, createdAt, dueDate, priority, tagsJson, recurrenceData, parentTaskId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         task.id,
         task.title,
@@ -62,6 +69,8 @@ class TaskRepository {
         task.dueDate?.millisecondsSinceEpoch,
         task.priority.index,
         task.tags != null ? jsonEncode(task.tags) : null,
+        task.recurrence?.toDatabase(),
+        task.parentTaskId,
       ],
     );
 

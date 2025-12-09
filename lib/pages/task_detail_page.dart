@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/task/task_bloc.dart';
+import '../blocs/template/template_bloc.dart';
 import '../models/task_model.dart';
 import 'task_edit_page.dart';
 
@@ -58,6 +59,55 @@ class TaskDetailPage extends StatelessWidget {
     );
   }
 
+  void _showSaveAsTemplateDialog(BuildContext context, Task task) {
+    final nameController = TextEditingController(text: task.title);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Save as Template'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Create a reusable template from this task.'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Template Name',
+                hintText: 'Enter template name',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                context.read<TemplateBloc>().add(CreateTemplateFromTask(
+                  task: task,
+                  templateName: nameController.text,
+                ));
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Template created successfully!'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -90,6 +140,11 @@ class TaskDetailPage extends StatelessWidget {
             backgroundColor: theme.scaffoldBackgroundColor,
             elevation: 0,
             actions: [
+              IconButton(
+                icon: const Icon(Icons.library_add_outlined),
+                onPressed: () => _showSaveAsTemplateDialog(context, task),
+                tooltip: 'Save as Template',
+              ),
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: () {

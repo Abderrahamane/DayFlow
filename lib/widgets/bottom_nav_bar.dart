@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:dayflow/utils/app_localizations.dart';
 import '../pages/todo_page.dart';
 import '../pages/notes_page.dart';
-import '../pages/reminders_page.dart';
 import '../pages/settings_page.dart';
+import '../pages/calendar_page.dart';
 import 'app_drawer.dart';
 import '../pages/habits_page.dart';
 
@@ -23,7 +23,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   final List<Widget> _pages = [
     const TodoPage(),
     const NotesPage(),
-    const RemindersPage(),
+    const CalendarPage(),
     const HabitsPage(),
     const SettingsPage(),
   ];
@@ -43,7 +43,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       case 1:
         return l10n.notes;
       case 2:
-        return l10n.reminders;
+        return 'Calendar';
       case 3:
         return l10n.habits;
       case 4:
@@ -116,10 +116,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
             activeIcon: const Icon(Icons.note),
             label: l10n.notes,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.alarm_outlined),
-            activeIcon: const Icon(Icons.alarm),
-            label: l10n.reminders,
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today_outlined),
+            activeIcon: Icon(Icons.calendar_today),
+            label: 'Calendar',
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.track_changes_outlined),

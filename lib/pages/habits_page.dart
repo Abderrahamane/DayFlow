@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/habit/habit_bloc.dart';
 import '../models/habit_model.dart' as habit_model;
 import '../widgets/habit_card.dart';
+import '../utils/routes.dart';
 
 class HabitsPage extends StatefulWidget {
   const HabitsPage({super.key});
@@ -59,11 +60,21 @@ class _HabitsPageState extends State<HabitsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Today's Progress",
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "Today's Progress",
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton.icon(
+                            onPressed: () => Routes.navigateToHabitStats(context),
+                            icon: const Icon(Icons.bar_chart, size: 18),
+                            label: const Text('Stats'),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       Row(

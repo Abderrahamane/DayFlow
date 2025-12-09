@@ -102,15 +102,16 @@ class _NotePageWriteState extends State<NotePageWrite>
     }
     if (widget.note != null) {
       // Update existing note
-      widget.note!
-        ..title = titleController.text
-        ..content = contentController.text
-        ..updatedAt = now
-        ..isPinned  = _isPinned; // Save the pin status
-      return widget.note;
+      return widget.note!.copyWith(
+        title: titleController.text,
+        content: contentController.text,
+        updatedAt: now,
+        isPinned: _isPinned,
+      );
     } else {
       // Create new note
       final newNote = Note(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: titleController.text,
         content: contentController.text,
         createdAt: now,

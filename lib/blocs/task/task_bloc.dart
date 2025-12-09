@@ -65,13 +65,26 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     ToggleTaskCompletionEvent event,
     Emitter<TaskState> emit,
   ) async {
+    final task = state.tasks.firstWhere((t) => t.id == event.taskId);
+    final newCompletedState = !task.isCompleted;
+
     await _repository.toggleTaskCompletion(event.taskId);
-    final tasks = state.tasks.map((task) {
-      if (task.id == event.taskId) {
-        return task.copyWith(isCompleted: !task.isCompleted);
+
+    var tasks = state.tasks.map((t) {
+      if (t.id == event.taskId) {
+        return t.copyWith(isCompleted: newCompletedState);
       }
-      return task;
+      return t;
     }).toList();
+
+    // If task is recurring and was just completed, create next occurrence
+    if (newCompletedState && task.isRecurring) {
+      final nextTask = task.createNextOccurrence(_uuid.v4());
+      if (nextTask != null) {
+        await _repository.upsertTask(nextTask);
+        tasks = [...tasks, nextTask];
+      }
+    }
 
     emit(state.copyWith(tasks: tasks));
   }

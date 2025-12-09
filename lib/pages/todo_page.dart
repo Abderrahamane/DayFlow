@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/task/task_bloc.dart';
 import '../models/task_model.dart';
+import '../models/recurrence_model.dart';
 import '../utils/date_utils.dart';
+import '../utils/routes.dart';
 import '../widgets/quote_card.dart';
 import '../widgets/task_card.dart';
+import '../widgets/recurrence_picker_widget.dart';
 
 class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
@@ -129,10 +132,30 @@ class _TodoPageState extends State<TodoPage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openTaskSheet,
-        backgroundColor: primary,
-        child: const Icon(Icons.add, size: 28, color: Colors.white),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'pomodoro_fab',
+            onPressed: () => Routes.navigateToPomodoro(context),
+            backgroundColor: Colors.deepOrange,
+            child: const Icon(Icons.timer, size: 20, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton.small(
+            heroTag: 'templates_fab',
+            onPressed: () => Routes.navigateToTemplates(context),
+            backgroundColor: theme.colorScheme.secondary,
+            child: const Icon(Icons.library_books, size: 20, color: Colors.white),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: 'add_task_fab',
+            onPressed: _openTaskSheet,
+            backgroundColor: primary,
+            child: const Icon(Icons.add, size: 28, color: Colors.white),
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -155,6 +178,8 @@ class _TaskEditorState extends State<_TaskEditor> {
   late final TextEditingController _tagsController;
   DateTime? _selectedDate;
   TaskPriority _priority = TaskPriority.medium;
+  RecurrencePattern? _recurrence;
+  bool _showRecurrence = false;
 
   @override
   void initState() {
@@ -167,6 +192,8 @@ class _TaskEditorState extends State<_TaskEditor> {
     );
     _selectedDate = widget.task?.dueDate;
     _priority = widget.task?.priority ?? TaskPriority.medium;
+    _recurrence = widget.task?.recurrence;
+    _showRecurrence = widget.task?.recurrence != null;
   }
 
   @override
@@ -228,6 +255,8 @@ class _TaskEditorState extends State<_TaskEditor> {
       priority: _priority,
       tags: tags.isEmpty ? null : tags,
       subtasks: widget.task?.subtasks,
+      recurrence: _recurrence,
+      parentTaskId: widget.task?.parentTaskId,
     );
 
     bloc.add(AddOrUpdateTask(task));
@@ -336,6 +365,35 @@ class _TaskEditorState extends State<_TaskEditor> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
+                // Recurrence section
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.repeat,
+                    color: _recurrence?.isRecurring == true
+                        ? theme.colorScheme.primary
+                        : null,
+                  ),
+                  title: Text(
+                    _recurrence?.isRecurring == true
+                        ? _recurrence!.description
+                        : 'Add recurrence',
+                  ),
+                  trailing: Icon(
+                    _showRecurrence
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                  ),
+                  onTap: () => setState(() => _showRecurrence = !_showRecurrence),
+                ),
+                if (_showRecurrence) ...[
+                  const SizedBox(height: 8),
+                  RecurrencePickerWidget(
+                    initialPattern: _recurrence,
+                    onChanged: (pattern) => setState(() => _recurrence = pattern),
+                  ),
+                ],
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
