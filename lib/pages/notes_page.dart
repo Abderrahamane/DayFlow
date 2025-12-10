@@ -382,52 +382,152 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _showColorPicker(BuildContext context, Note note) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Choose Color'),
-        content: Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: NoteColors.colors.map((color) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.pop(ctx);
-                context.read<NoteBloc>().add(ChangeNoteColorEvent(note.id, color));
-              },
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: note.color == color
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.grey.shade300,
-                    width: note.color == color ? 3 : 1,
-                  ),
-                ),
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
               ),
-            );
-          }).toList(),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '🎨 Choose Color',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 20),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: NoteColors.colors.length,
+              itemBuilder: (context, index) {
+                final color = NoteColors.colors[index];
+                final isSelected = note.color == color ||
+                    (note.color == null && color == const Color(0xFFFFFFFF));
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    context.read<NoteBloc>().add(ChangeNoteColorEvent(
+                          note.id,
+                          color == const Color(0xFFFFFFFF) ? null : color,
+                        ));
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.grey.shade300,
+                        width: isSelected ? 3 : 1,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: color.withAlpha(128),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: isSelected
+                        ? Icon(
+                            Icons.check,
+                            size: 24,
+                            color: NoteColors.getContrastText(color),
+                          )
+                        : null,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
   }
 
   void _showLockOptions(BuildContext context, Note note) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Lock Note'),
-        content: Column(
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.fingerprint),
-              title: const Text('Use Biometrics'),
-              subtitle: const Text('Fingerprint or Face ID'),
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Lock icon
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withAlpha(26),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.lock_outline,
+                size: 36,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Secure Your Note',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Choose how you want to protect this note',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+            ),
+            const SizedBox(height: 24),
+            // Biometric option
+            _LockOptionCard(
+              icon: Icons.fingerprint,
+              title: 'Biometrics',
+              subtitle: 'Use fingerprint or face unlock',
+              color: Colors.green,
               onTap: () async {
                 final canAuth = await BiometricService.canAuthenticate();
                 if (canAuth) {
@@ -435,44 +535,121 @@ class _NotesPageState extends State<NotesPage> {
                   context.read<NoteBloc>().add(
                         LockNoteEvent(note.id, useBiometric: true),
                       );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('🔒 Note locked with biometrics'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Biometrics not available'),
+                      content: Text('Biometrics not available on this device'),
+                      behavior: SnackBarBehavior.floating,
                     ),
                   );
                 }
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.pin),
-              title: const Text('Use PIN'),
-              subtitle: const Text('4-digit code'),
+            const SizedBox(height: 12),
+            // PIN option
+            _LockOptionCard(
+              icon: Icons.pin,
+              title: 'PIN Code',
+              subtitle: 'Set a 4-digit security code',
+              color: Colors.blue,
               onTap: () {
                 Navigator.pop(ctx);
                 _showSetPinDialog(context, note);
               },
             ),
+            const SizedBox(height: 12),
+            // Both option
+            _LockOptionCard(
+              icon: Icons.security,
+              title: 'Both',
+              subtitle: 'Use biometrics with PIN backup',
+              color: Colors.purple,
+              onTap: () async {
+                final canAuth = await BiometricService.canAuthenticate();
+                if (canAuth) {
+                  Navigator.pop(ctx);
+                  _showSetPinDialogWithBiometric(context, note);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Biometrics not available, using PIN only'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  Navigator.pop(ctx);
+                  _showSetPinDialog(context, note);
+                }
+              },
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  void _showSetPinDialog(BuildContext context, Note note) {
+  void _showSetPinDialogWithBiometric(BuildContext context, Note note) {
     final pinController = TextEditingController();
+    final confirmController = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Set PIN'),
-        content: TextField(
-          controller: pinController,
-          keyboardType: TextInputType.number,
-          obscureText: true,
-          maxLength: 4,
-          decoration: const InputDecoration(
-            hintText: 'Enter 4-digit PIN',
-          ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(Icons.security, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 12),
+            const Text('Set Backup PIN'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Set a PIN as backup for biometrics',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: pinController,
+              keyboardType: TextInputType.number,
+              obscureText: true,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, letterSpacing: 8),
+              decoration: InputDecoration(
+                hintText: '••••',
+                counterText: '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: confirmController,
+              keyboardType: TextInputType.number,
+              obscureText: true,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, letterSpacing: 8),
+              decoration: InputDecoration(
+                hintText: 'Confirm',
+                counterText: '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -481,14 +658,121 @@ class _NotesPageState extends State<NotesPage> {
           ),
           FilledButton(
             onPressed: () {
-              if (pinController.text.length == 4) {
+              if (pinController.text.length == 4 &&
+                  pinController.text == confirmController.text) {
+                Navigator.pop(ctx);
+                context.read<NoteBloc>().add(
+                      LockNoteEvent(note.id,
+                          pin: pinController.text, useBiometric: true),
+                    );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('🔒 Note locked with biometrics + PIN'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (pinController.text != confirmController.text) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('PINs do not match'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            child: const Text('Lock Note'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSetPinDialog(BuildContext context, Note note) {
+    final pinController = TextEditingController();
+    final confirmController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Icon(Icons.pin, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 12),
+            const Text('Set PIN'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Enter a 4-digit PIN to lock this note',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: pinController,
+              keyboardType: TextInputType.number,
+              obscureText: true,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, letterSpacing: 8),
+              decoration: InputDecoration(
+                hintText: '••••',
+                counterText: '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: confirmController,
+              keyboardType: TextInputType.number,
+              obscureText: true,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, letterSpacing: 8),
+              decoration: InputDecoration(
+                hintText: 'Confirm',
+                counterText: '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (pinController.text.length == 4 &&
+                  pinController.text == confirmController.text) {
                 Navigator.pop(ctx);
                 context.read<NoteBloc>().add(
                       LockNoteEvent(note.id, pin: pinController.text),
                     );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('🔒 Note locked with PIN'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (pinController.text != confirmController.text) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('PINs do not match'),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
               }
             },
-            child: const Text('Set'),
+            child: const Text('Lock Note'),
           ),
         ],
       ),
@@ -964,6 +1248,74 @@ class _FilterSheet extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _LockOptionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _LockOptionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade200),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color.withAlpha(26),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.grey,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey.shade400),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

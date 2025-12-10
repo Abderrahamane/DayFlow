@@ -179,38 +179,54 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             ),
           ],
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Category & Tags row
-                    _CategoryTagsRow(
-                      category: _selectedCategory,
-                      tags: _tags,
-                      textColor: textColor,
-                      onCategoryTap: _showCategoryPicker,
-                      onTagTap: _showTagEditor,
-                    ),
-                    const SizedBox(height: 16),
+        body: Theme(
+          data: theme.copyWith(
+            inputDecorationTheme: InputDecorationTheme(
+              filled: false,
+              fillColor: Colors.transparent,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: EdgeInsets.zero,
+            ),
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: textColor,
+              selectionColor: textColor.withAlpha(77),
+              selectionHandleColor: textColor,
+            ),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Category & Tags row
+                      _CategoryTagsRow(
+                        category: _selectedCategory,
+                        tags: _tags,
+                        textColor: textColor,
+                        onCategoryTap: _showCategoryPicker,
+                        onTagTap: _showTagEditor,
+                      ),
+                      const SizedBox(height: 16),
 
-                    // Title
-                    TextField(
-                      controller: _titleController,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: textColor,
+                      // Title
+                      TextField(
+                        controller: _titleController,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                        cursorColor: textColor,
+                        decoration: InputDecoration(
+                          hintText: 'Title',
+                          hintStyle: TextStyle(color: textColor.withAlpha(100)),
+                        ),
+                        maxLines: null,
                       ),
-                      decoration: InputDecoration(
-                        hintText: 'Title',
-                        hintStyle: TextStyle(color: textColor.withAlpha(128)),
-                        border: InputBorder.none,
-                      ),
-                      maxLines: null,
-                    ),
 
                     const SizedBox(height: 8),
 
@@ -226,26 +242,26 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                           });
                         },
                       )
-                    else
-                      TextField(
-                        controller: _contentController,
-                        focusNode: _contentFocusNode,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: textColor,
-                          fontWeight: _isBold ? FontWeight.bold : null,
-                          fontStyle: _isItalic ? FontStyle.italic : null,
-                          decoration: _isUnderline
-                              ? TextDecoration.underline
-                              : null,
+                      else
+                        TextField(
+                          controller: _contentController,
+                          focusNode: _contentFocusNode,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: textColor,
+                            fontWeight: _isBold ? FontWeight.bold : null,
+                            fontStyle: _isItalic ? FontStyle.italic : null,
+                            decoration: _isUnderline
+                                ? TextDecoration.underline
+                                : null,
+                          ),
+                          cursorColor: textColor,
+                          decoration: InputDecoration(
+                            hintText: 'Start writing...',
+                            hintStyle: TextStyle(color: textColor.withAlpha(100)),
+                          ),
+                          maxLines: null,
+                          minLines: 10,
                         ),
-                        decoration: InputDecoration(
-                          hintText: 'Start writing...',
-                          hintStyle: TextStyle(color: textColor.withAlpha(128)),
-                          border: InputBorder.none,
-                        ),
-                        maxLines: null,
-                        minLines: 10,
-                      ),
 
                     const SizedBox(height: 24),
 
@@ -253,6 +269,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                     if (_attachments.isNotEmpty)
                       _AttachmentsList(
                         attachments: _attachments,
+                        textColor: textColor,
                         onRemove: (attachment) {
                           setState(() {
                             _attachments.remove(attachment);
@@ -295,6 +312,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             ),
           ],
         ),
+        ),
       ),
     );
   }
@@ -303,58 +321,100 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (ctx) => Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(
-              'Background Color',
+              '🎨 Choose Background',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(height: 20),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: NoteColors.colors.map((color) {
+            const SizedBox(height: 8),
+            Text(
+              'Select a color that matches your mood',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+            ),
+            const SizedBox(height: 24),
+            // Color grid
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 5,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: NoteColors.colors.length,
+              itemBuilder: (context, index) {
+                final color = NoteColors.colors[index];
+                final isSelected = _selectedColor == color ||
+                    (_selectedColor == null && color == const Color(0xFFFFFFFF));
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      _selectedColor = color;
+                      _selectedColor = color == const Color(0xFFFFFFFF) ? null : color;
                       _hasChanges = true;
                     });
                     Navigator.pop(ctx);
                   },
-                  child: Container(
-                    width: 48,
-                    height: 48,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
                       color: color,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: _selectedColor == color
+                        color: isSelected
                             ? Theme.of(context).colorScheme.primary
                             : Colors.grey.shade300,
-                        width: _selectedColor == color ? 3 : 1,
+                        width: isSelected ? 3 : 1,
                       ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: color.withAlpha(128),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ]
+                          : null,
                     ),
-                    child: _selectedColor == color
-                        ? const Icon(Icons.check, size: 24)
+                    child: isSelected
+                        ? Icon(
+                            Icons.check,
+                            size: 24,
+                            color: NoteColors.getContrastText(color),
+                          )
                         : null,
                   ),
                 );
-              }).toList(),
+              },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+            // Reset button
             Center(
-              child: TextButton(
+              child: TextButton.icon(
                 onPressed: () {
                   setState(() {
                     _selectedColor = null;
@@ -362,9 +422,11 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                   });
                   Navigator.pop(ctx);
                 },
-                child: const Text('Reset to default'),
+                icon: const Icon(Icons.refresh),
+                label: const Text('Reset to default'),
               ),
             ),
+            const SizedBox(height: 8),
           ],
         ),
       ),
@@ -713,27 +775,61 @@ class _CategoryTagsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final chipBgColor = textColor.withAlpha(20);
+    final borderColor = textColor.withAlpha(51);
+
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
-        ActionChip(
-          avatar: category != null
-              ? Text(category!.icon)
-              : Icon(Icons.category_outlined, size: 16, color: textColor),
-          label: Text(
-            category?.displayName ?? 'Add category',
-            style: TextStyle(color: textColor),
+        // Category chip
+        GestureDetector(
+          onTap: onCategoryTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: chipBgColor,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (category != null)
+                  Text(category!.icon, style: const TextStyle(fontSize: 14))
+                else
+                  Icon(Icons.category_outlined, size: 16, color: textColor),
+                const SizedBox(width: 6),
+                Text(
+                  category?.displayName ?? 'Add category',
+                  style: TextStyle(color: textColor, fontSize: 13),
+                ),
+              ],
+            ),
           ),
-          onPressed: onCategoryTap,
         ),
-        ActionChip(
-          avatar: Icon(Icons.tag, size: 16, color: textColor),
-          label: Text(
-            tags.isEmpty ? 'Add tags' : tags.map((t) => '#$t').join(' '),
-            style: TextStyle(color: textColor),
+        // Tags chip
+        GestureDetector(
+          onTap: onTagTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: chipBgColor,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.tag, size: 16, color: textColor),
+                const SizedBox(width: 6),
+                Text(
+                  tags.isEmpty ? 'Add tags' : tags.map((t) => '#$t').join(' '),
+                  style: TextStyle(color: textColor, fontSize: 13),
+                ),
+              ],
+            ),
           ),
-          onPressed: onTagTap,
         ),
       ],
     );
@@ -842,10 +938,12 @@ class _ChecklistEditorState extends State<_ChecklistEditor> {
                 controller: _newItemController,
                 focusNode: _focusNode,
                 style: TextStyle(color: widget.textColor),
+                cursorColor: widget.textColor,
                 decoration: InputDecoration(
                   hintText: 'Add item',
-                  hintStyle: TextStyle(color: widget.textColor.withAlpha(128)),
+                  hintStyle: TextStyle(color: widget.textColor.withAlpha(100)),
                   border: InputBorder.none,
+                  filled: false,
                 ),
                 onSubmitted: _addItem,
               ),
@@ -855,7 +953,7 @@ class _ChecklistEditorState extends State<_ChecklistEditor> {
 
         // Checked items (collapsed section)
         if (checkedItems.isNotEmpty) ...[
-          const Divider(height: 32),
+          Divider(height: 32, color: widget.textColor.withAlpha(51)),
           Text(
             '${checkedItems.length} completed',
             style: TextStyle(
@@ -924,9 +1022,12 @@ class _ChecklistItemTile extends StatelessWidget {
                 decoration:
                     item.isChecked ? TextDecoration.lineThrough : null,
               ),
-              decoration: const InputDecoration(
+              cursorColor: textColor,
+              decoration: InputDecoration(
                 border: InputBorder.none,
+                filled: false,
                 isDense: true,
+                contentPadding: EdgeInsets.zero,
               ),
               onChanged: onTextChanged,
             ),
@@ -939,10 +1040,12 @@ class _ChecklistItemTile extends StatelessWidget {
 
 class _AttachmentsList extends StatelessWidget {
   final List<NoteAttachment> attachments;
+  final Color textColor;
   final Function(NoteAttachment) onRemove;
 
   const _AttachmentsList({
     required this.attachments,
+    required this.textColor,
     required this.onRemove,
   });
 
@@ -959,6 +1062,7 @@ class _AttachmentsList extends StatelessWidget {
             'Images',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: textColor,
                 ),
           ),
           const SizedBox(height: 8),
@@ -1021,6 +1125,7 @@ class _AttachmentsList extends StatelessWidget {
             'Files',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: textColor,
                 ),
           ),
           const SizedBox(height: 8),
@@ -1030,15 +1135,15 @@ class _AttachmentsList extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withAlpha(26),
+                    color: textColor.withAlpha(26),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(file.type.icon),
+                  child: Icon(file.type.icon, color: textColor),
                 ),
-                title: Text(file.name),
-                subtitle: Text(file.formattedSize),
+                title: Text(file.name, style: TextStyle(color: textColor)),
+                subtitle: Text(file.formattedSize, style: TextStyle(color: textColor.withAlpha(153))),
                 trailing: IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, color: textColor.withAlpha(179)),
                   onPressed: () => onRemove(file),
                 ),
               )),

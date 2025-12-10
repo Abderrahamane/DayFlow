@@ -520,38 +520,84 @@ class ChecklistItem {
   }
 }
 
-/// Predefined note colors
+/// Predefined note colors - Beautiful pastel and modern colors
 class NoteColors {
+  // Beautiful light pastel colors for notes
   static const List<Color> colors = [
-    Color(0xFFFFFFFF), // White
-    Color(0xFFFFF3E0), // Light Orange
-    Color(0xFFFCE4EC), // Light Pink
-    Color(0xFFF3E5F5), // Light Purple
-    Color(0xFFE8EAF6), // Light Indigo
-    Color(0xFFE3F2FD), // Light Blue
-    Color(0xFFE0F7FA), // Light Cyan
-    Color(0xFFE8F5E9), // Light Green
-    Color(0xFFFFFDE7), // Light Yellow
-    Color(0xFFEFEBE9), // Light Brown
-    Color(0xFFECEFF1), // Light Blue Grey
-    Color(0xFFF5F5F5), // Light Grey
+    Color(0xFFFFFFFF), // White (default)
+    Color(0xFFFFF8E1), // Warm Cream
+    Color(0xFFFFECB3), // Soft Gold
+    Color(0xFFFFE0B2), // Peach
+    Color(0xFFFFCCBC), // Coral Light
+    Color(0xFFF8BBD9), // Rose Pink
+    Color(0xFFE1BEE7), // Lavender
+    Color(0xFFD1C4E9), // Soft Purple
+    Color(0xFFC5CAE9), // Periwinkle
+    Color(0xFFBBDEFB), // Sky Blue
+    Color(0xFFB2EBF2), // Aqua
+    Color(0xFFB2DFDB), // Mint
+    Color(0xFFC8E6C9), // Sage Green
+    Color(0xFFDCEDC8), // Light Lime
+    Color(0xFFF0F4C3), // Soft Yellow
+    Color(0xFFD7CCC8), // Warm Taupe
   ];
 
-  static const List<Color> darkColors = [
-    Color(0xFF263238), // Dark Blue Grey
-    Color(0xFF4E342E), // Dark Brown
-    Color(0xFF1B5E20), // Dark Green
-    Color(0xFF0D47A1), // Dark Blue
-    Color(0xFF4A148C), // Dark Purple
-    Color(0xFFB71C1C), // Dark Red
-    Color(0xFFE65100), // Dark Orange
-    Color(0xFF424242), // Dark Grey
+  // Gradient colors for more visual appeal
+  static const List<List<Color>> gradients = [
+    [Color(0xFFFF9A9E), Color(0xFFFECFEF)], // Pink gradient
+    [Color(0xFFA18CD1), Color(0xFFFBC2EB)], // Purple gradient
+    [Color(0xFF667EEA), Color(0xFF764BA2)], // Indigo gradient
+    [Color(0xFF11998E), Color(0xFF38EF7D)], // Green gradient
+    [Color(0xFFFDC830), Color(0xFFF37335)], // Orange gradient
+    [Color(0xFF00C6FB), Color(0xFF005BEA)], // Blue gradient
   ];
+
+  // Dark mode colors
+  static const List<Color> darkColors = [
+    Color(0xFF1E1E1E), // Near Black
+    Color(0xFF2D2D30), // Dark Grey
+    Color(0xFF3E2723), // Dark Brown
+    Color(0xFF1A237E), // Deep Indigo
+    Color(0xFF311B92), // Deep Purple
+    Color(0xFF880E4F), // Deep Pink
+    Color(0xFF004D40), // Deep Teal
+    Color(0xFF1B5E20), // Deep Green
+    Color(0xFF0D47A1), // Deep Blue
+    Color(0xFFBF360C), // Deep Orange
+  ];
+
+  // Named color presets with better names
+  static const Map<String, Color> namedColors = {
+    'Default': Color(0xFFFFFFFF),
+    'Cream': Color(0xFFFFF8E1),
+    'Peach': Color(0xFFFFE0B2),
+    'Rose': Color(0xFFF8BBD9),
+    'Lavender': Color(0xFFE1BEE7),
+    'Sky': Color(0xFFBBDEFB),
+    'Mint': Color(0xFFB2DFDB),
+    'Sage': Color(0xFFC8E6C9),
+    'Lemon': Color(0xFFF0F4C3),
+    'Coral': Color(0xFFFFCCBC),
+  };
 
   static Color getContrastText(Color backgroundColor) {
-    // Calculate luminance
+    // Calculate luminance for better contrast detection
     final luminance = backgroundColor.computeLuminance();
-    return luminance > 0.5 ? Colors.black87 : Colors.white;
+    return luminance > 0.5 ? const Color(0xFF1A1A1A) : Colors.white;
+  }
+
+  static Color getSecondaryText(Color backgroundColor) {
+    final luminance = backgroundColor.computeLuminance();
+    return luminance > 0.5
+        ? const Color(0xFF1A1A1A).withAlpha(153)
+        : Colors.white.withAlpha(179);
+  }
+
+  static Color getBorderColor(Color backgroundColor) {
+    final luminance = backgroundColor.computeLuminance();
+    return luminance > 0.5
+        ? Colors.black.withAlpha(26)
+        : Colors.white.withAlpha(51);
   }
 }
 
