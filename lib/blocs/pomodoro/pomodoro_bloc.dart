@@ -49,12 +49,14 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       final sessions = await _repository.fetchTodaySessions();
       final stats = await _repository.calculateStats();
       final history = await _repository.fetchSessions();
+      final settings = await _repository.getSettings();
 
       emit(state.copyWith(
         status: isTimerActive ? state.status : PomodoroStatus.idle,
         todaySessions: sessions,
         stats: stats,
         sessionHistory: history.take(50).toList(), // Last 50 sessions
+        settings: settings,
       ));
     } catch (e) {
       if (!isTimerActive) {
@@ -184,7 +186,11 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     }
   }
 
-  void _onUpdateSettings(UpdateSettings event, Emitter<PomodoroState> emit) {
+  Future<void> _onUpdateSettings(
+    UpdateSettings event,
+    Emitter<PomodoroState> emit,
+  ) async {
+    await _repository.saveSettings(event.settings);
     emit(state.copyWith(settings: event.settings));
   }
 

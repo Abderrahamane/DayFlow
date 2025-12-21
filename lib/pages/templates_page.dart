@@ -72,13 +72,6 @@ class _TemplatesPageState extends State<TemplatesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Task Templates'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => _showTemplateEditor(),
-            tooltip: 'Create Template',
-          ),
-        ],
       ),
       body: BlocBuilder<TemplateBloc, TemplateState>(
         builder: (context, state) {
@@ -206,14 +199,6 @@ class _TemplatesPageState extends State<TemplatesPage> {
                   : 'Create templates for quick task creation',
               style: theme.textTheme.bodyMedium,
             ),
-            if (state.searchQuery.isEmpty) ...[
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () => _showTemplateEditor(),
-                icon: const Icon(Icons.add),
-                label: const Text('Create Template'),
-              ),
-            ],
           ],
         ),
       );

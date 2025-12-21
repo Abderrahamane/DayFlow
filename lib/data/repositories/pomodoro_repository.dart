@@ -1,12 +1,33 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/pomodoro_model.dart';
 import '../local/app_database.dart';
 
 class PomodoroRepository {
   final AppDatabase _db;
+  static const String _settingsKey = 'pomodoro_settings';
 
   PomodoroRepository(this._db);
 
   Future<void> _ensureDb() async => _db.init();
+
+  Future<PomodoroSettings> getSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final settingsJson = prefs.getString(_settingsKey);
+    if (settingsJson != null) {
+      try {
+        return PomodoroSettings.fromJson(jsonDecode(settingsJson));
+      } catch (e) {
+        return const PomodoroSettings();
+      }
+    }
+    return const PomodoroSettings();
+  }
+
+  Future<void> saveSettings(PomodoroSettings settings) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_settingsKey, jsonEncode(settings.toJson()));
+  }
 
   Future<List<PomodoroSession>> fetchSessions() async {
     await _ensureDb();
