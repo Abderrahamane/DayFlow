@@ -12,7 +12,20 @@
           "package_name": "com.example.dayflow"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "618409045853-0obhr5li5smsehscvv4kcsos4p5n79qh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dayflow",
+            "certificate_hash": "7c7aa29daec52c8ff75f888286e50eb7cabc62c1"
+          }
+        },
+        {
+          "client_id": "618409045853-an9pivvj8b4mh0crph4enk34jl2325ua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBeDx7Upk85BCcKNrlG2zBRzU49-8V9wMM"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "618409045853-an9pivvj8b4mh0crph4enk34jl2325ua.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
