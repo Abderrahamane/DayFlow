@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/task/task_bloc.dart';
 import '../blocs/habit/habit_bloc.dart';
-import '../models/task_model.dart';
-import '../models/habit_model.dart';
 import 'task_card.dart';
 import 'habit_card.dart';
-import '../utils/date_utils.dart';
 
 class TaskSearchDelegate extends SearchDelegate {
   @override
@@ -159,7 +156,7 @@ class HabitSearchDelegate extends SearchDelegate {
                 onTap: () {
                   // Open habit details
                 },
-                onToggleComplete: () {
+                onToggle: () {
                   final today = getDateKey(DateTime.now());
                   context.read<HabitBloc>().add(
                     ToggleHabitCompletionEvent(
@@ -168,9 +165,6 @@ class HabitSearchDelegate extends SearchDelegate {
                     ),
                   );
                 },
-                onDelete: () => context
-                    .read<HabitBloc>()
-                    .add(DeleteHabitEvent(habit.id)),
               ),
             );
           },
