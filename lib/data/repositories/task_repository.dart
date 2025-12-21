@@ -1,78 +1,31 @@
-import 'dart:convert';
 import 'package:dayflow/models/task_model.dart';
-import 'package:dayflow/models/recurrence_model.dart';
 import 'package:dayflow/services/mixpanel_service.dart';
-
-import '../local/app_database.dart';
+import 'package:dayflow/services/firestore_service.dart';
 
 class TaskRepository {
-  final AppDatabase _db;
+  final FirestoreService _firestoreService;
 
-  TaskRepository(this._db);
-
-  Future<void> _ensureDb() async => _db.init();
+  TaskRepository(this._firestoreService);
 
   Future<List<Task>> fetchTasks() async {
-    await _ensureDb();
-    final taskResult = _db.rawDb.select('SELECT * FROM tasks');
-    final subtaskResult = _db.rawDb.select('SELECT * FROM subtasks');
+    final collection = _firestoreService.tasks;
+    if (collection == null) return [];
 
-    return taskResult.map((row) {
-      final relatedSubtasks = subtaskResult
-          .where((s) => s['taskId'] == row['id'])
-          .map((s) => Subtask(
-                id: s['id'] as String,
-                title: s['title'] as String,
-                isCompleted: (s['isCompleted'] as int) == 1,
-              ))
-          .toList();
-
-      final recurrenceData = row['recurrenceData'] as String?;
-
-      return Task(
-        id: row['id'] as String,
-        title: row['title'] as String,
-        description: row['description'] as String?,
-        isCompleted: (row['isCompleted'] as int) == 1,
-        createdAt:
-            DateTime.fromMillisecondsSinceEpoch(row['createdAt'] as int),
-        dueDate: row['dueDate'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(row['dueDate'] as int)
-            : null,
-        priority: TaskPriority.values[row['priority'] as int],
-        tags: row['tagsJson'] != null
-            ? List<String>.from(jsonDecode(row['tagsJson'] as String))
-            : null,
-        subtasks: relatedSubtasks.isEmpty ? null : relatedSubtasks,
-        recurrence: recurrenceData != null && recurrenceData.isNotEmpty
-            ? RecurrencePattern.fromDatabase(recurrenceData)
-            : null,
-        parentTaskId: row['parentTaskId'] as String?,
-      );
+    final snapshot = await collection.get();
+    return snapshot.docs.map((doc) {
+      return Task.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
     }).toList();
   }
 
   Future<void> upsertTask(Task task) async {
-    await _ensureDb();
+    final collection = _firestoreService.tasks;
+    if (collection == null) return;
 
-    final isNew = _db.rawDb
-        .select('SELECT id FROM tasks WHERE id = ?', [task.id]).isEmpty;
+    final docRef = collection.doc(task.id);
+    final docSnapshot = await docRef.get();
+    final isNew = !docSnapshot.exists;
 
-    _db.rawDb.execute(
-      'INSERT OR REPLACE INTO tasks (id, title, description, isCompleted, createdAt, dueDate, priority, tagsJson, recurrenceData, parentTaskId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [
-        task.id,
-        task.title,
-        task.description,
-        task.isCompleted ? 1 : 0,
-        task.createdAt.millisecondsSinceEpoch,
-        task.dueDate?.millisecondsSinceEpoch,
-        task.priority.index,
-        task.tags != null ? jsonEncode(task.tags) : null,
-        task.recurrence?.toDatabase(),
-        task.parentTaskId,
-      ],
-    );
+    await docRef.set(task.toFirestore());
 
     // Analytics Call
     MixpanelService.instance.trackEvent(
@@ -86,30 +39,13 @@ class TaskRepository {
         "subtasks_count": task.subtasks?.length ?? 0,
       },
     );
-
-    // Handle subtasks
-    _db.rawDb.execute('DELETE FROM subtasks WHERE taskId = ?', [task.id]);
-
-    if (task.subtasks != null) {
-      final stmt = _db.rawDb.prepare(
-        'INSERT OR REPLACE INTO subtasks (id, taskId, title, isCompleted) VALUES (?, ?, ?, ?)',
-      );
-      for (final subtask in task.subtasks!) {
-        stmt.execute([
-          subtask.id,
-          task.id,
-          subtask.title,
-          subtask.isCompleted ? 1 : 0,
-        ]);
-      }
-      stmt.dispose();
-    }
   }
 
   Future<void> deleteTask(String id) async {
-    await _ensureDb();
+    final collection = _firestoreService.tasks;
+    if (collection == null) return;
 
-    _db.rawDb.execute('DELETE FROM tasks WHERE id = ?', [id]);
+    await collection.doc(id).delete();
 
     // Analytics
     MixpanelService.instance.trackEvent("Task Deleted", {
@@ -118,21 +54,22 @@ class TaskRepository {
   }
 
   Future<void> toggleTaskCompletion(String id) async {
-    await _ensureDb();
-    final before = _db.rawDb
-        .select('SELECT isCompleted FROM tasks WHERE id = ?', [id])
-        .first['isCompleted'] as int;
+    final collection = _firestoreService.tasks;
+    if (collection == null) return;
 
-    _db.rawDb.execute(
-      'UPDATE tasks SET isCompleted = CASE WHEN isCompleted = 1 THEN 0 ELSE 1 END WHERE id = ?',
-      [id],
-    );
+    final docRef = collection.doc(id);
+    final doc = await docRef.get();
+    if (!doc.exists) return;
 
-    final completed = before == 0;
+    final data = doc.data() as Map<String, dynamic>;
+    final currentStatus = data['isCompleted'] as bool? ?? false;
+    final newStatus = !currentStatus;
+
+    await docRef.update({'isCompleted': newStatus});
 
     // ✅ Correct Analytics
     MixpanelService.instance.trackEvent(
-      completed ? "Task Completed" : "Task Uncompleted",
+      newStatus ? "Task Completed" : "Task Uncompleted",
       {
         "task_id": id,
       },
@@ -140,22 +77,31 @@ class TaskRepository {
   }
 
   Future<void> toggleSubtask(String taskId, String subtaskId) async {
-    await _ensureDb();
+    final collection = _firestoreService.tasks;
+    if (collection == null) return;
 
-    final before = _db.rawDb
-        .select('SELECT isCompleted FROM subtasks WHERE id = ?', [subtaskId])
-        .first['isCompleted'] as int;
+    final docRef = collection.doc(taskId);
+    final doc = await docRef.get();
+    if (!doc.exists) return;
 
-    _db.rawDb.execute(
-      'UPDATE subtasks SET isCompleted = CASE WHEN isCompleted = 1 THEN 0 ELSE 1 END WHERE id = ?',
-      [subtaskId],
-    );
+    final task = Task.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+    if (task.subtasks == null) return;
 
-    final completed = before == 0;
+    final updatedSubtasks = task.subtasks!.map((s) {
+      if (s.id == subtaskId) {
+        return s.copyWith(isCompleted: !s.isCompleted);
+      }
+      return s;
+    }).toList();
+
+    final updatedTask = task.copyWith(subtasks: updatedSubtasks);
+    await docRef.set(updatedTask.toFirestore());
+
+    final subtask = updatedSubtasks.firstWhere((s) => s.id == subtaskId);
 
     // Analytics
     MixpanelService.instance.trackEvent(
-      completed ? "Subtask Completed" : "Subtask Uncompleted",
+      subtask.isCompleted ? "Subtask Completed" : "Subtask Uncompleted",
       {
         "task_id": taskId,
         "subtask_id": subtaskId,

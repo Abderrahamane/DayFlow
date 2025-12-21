@@ -30,6 +30,7 @@ import 'package:dayflow/services/notification_servise.dart';
 
 import 'package:dayflow/services/mixpanel_service.dart';
 import 'blocs/navigation/navigation_cubit.dart';
+import 'package:dayflow/services/firestore_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +53,8 @@ void main() async {
   // Initialize database and repositories
   final database = AppDatabase();
   await database.init();
-  final taskRepository = TaskRepository(database);
+  final firestoreService = FirestoreService();
+  final taskRepository = TaskRepository(firestoreService);
   final habitRepository = HabitRepository(database);
   final reminderRepository = ReminderRepository(database);
   final noteRepository = NoteRepository(database);
