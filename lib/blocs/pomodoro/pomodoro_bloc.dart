@@ -22,6 +22,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     on<ResumeSession>(_onResumeSession);
     on<StopSession>(_onStopSession);
     on<CompleteSession>(_onCompleteSession);
+    on<ExtendSession>(_onExtendSession);
     on<SkipToNextSession>(_onSkipToNext);
     on<TimerTick>(_onTimerTick);
     on<UpdateSettings>(_onUpdateSettings);
@@ -138,8 +139,10 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
 
     await _repository.saveSession(completedSession);
 
-    // Show notification
-    _showSessionCompleteNotification(completedSession.type);
+    // Notification is already shown when timer ends (ringing state)
+    // But if we auto-complete (e.g. skip ringing), we might want to show it?
+    // For now, let's assume notification was shown at ringing state.
+    // _showSessionCompleteNotification(completedSession.type);
 
     // Update completed sessions count
     final newCompletedCount = completedSession.type == PomodoroSessionType.work
@@ -180,10 +183,35 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
 
   void _onTimerTick(TimerTick event, Emitter<PomodoroState> emit) {
     if (state.remainingSeconds <= 1) {
-      add(CompleteSession());
+      _timer?.cancel();
+
+      // Show notification
+      _showSessionCompleteNotification(state.currentSession?.type ?? PomodoroSessionType.work);
+
+      emit(state.copyWith(
+        status: PomodoroStatus.ringing,
+        remainingSeconds: 0,
+      ));
     } else {
       emit(state.copyWith(remainingSeconds: state.remainingSeconds - 1));
     }
+  }
+
+  void _onExtendSession(ExtendSession event, Emitter<PomodoroState> emit) {
+    if (state.currentSession == null) return;
+
+    final extendedDuration = state.currentSession!.durationMinutes + 5;
+    final updatedSession = state.currentSession!.copyWith(
+      durationMinutes: extendedDuration,
+    );
+
+    emit(state.copyWith(
+      status: PomodoroStatus.running,
+      currentSession: updatedSession,
+      remainingSeconds: 5 * 60,
+    ));
+
+    _startTimer();
   }
 
   Future<void> _onUpdateSettings(

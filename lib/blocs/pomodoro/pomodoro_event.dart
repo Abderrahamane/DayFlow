@@ -26,6 +26,8 @@ class StopSession extends PomodoroEvent {}
 
 class CompleteSession extends PomodoroEvent {}
 
+class ExtendSession extends PomodoroEvent {}
+
 class SkipToNextSession extends PomodoroEvent {}
 
 class TimerTick extends PomodoroEvent {}

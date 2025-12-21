@@ -36,7 +36,6 @@ class _PomodoroPageState extends State<PomodoroPage>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -54,41 +53,47 @@ class _PomodoroPageState extends State<PomodoroPage>
           ),
         ],
       ),
-      body: BlocBuilder<PomodoroBloc, PomodoroState>(
-        builder: (context, state) {
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // Stats cards
-                _StatsRow(state: state),
-                const SizedBox(height: 32),
+      body: BlocListener<PomodoroBloc, PomodoroState>(
+        listenWhen: (previous, current) =>
+            previous.status != PomodoroStatus.ringing &&
+            current.status == PomodoroStatus.ringing,
+        listener: (context, state) => _showAlarmDialog(context),
+        child: BlocBuilder<PomodoroBloc, PomodoroState>(
+          builder: (context, state) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  // Stats cards
+                  _StatsRow(state: state),
+                  const SizedBox(height: 32),
 
-                // Timer display
-                _TimerDisplay(
-                  state: state,
-                  pulseController: _pulseController,
-                ),
-                const SizedBox(height: 32),
+                  // Timer display
+                  _TimerDisplay(
+                    state: state,
+                    pulseController: _pulseController,
+                  ),
+                  const SizedBox(height: 32),
 
-                // Session type indicator
-                _SessionTypeIndicator(state: state),
-                const SizedBox(height: 24),
+                  // Session type indicator
+                  _SessionTypeIndicator(state: state),
+                  const SizedBox(height: 24),
 
-                // Controls
-                _TimerControls(state: state),
-                const SizedBox(height: 32),
+                  // Controls
+                  _TimerControls(state: state),
+                  const SizedBox(height: 32),
 
-                // Linked task
-                _LinkedTaskCard(state: state),
-                const SizedBox(height: 24),
+                  // Linked task
+                  _LinkedTaskCard(state: state),
+                  const SizedBox(height: 24),
 
-                // Today's sessions
-                _TodaySessionsList(sessions: state.todaySessions),
-              ],
-            ),
-          );
-        },
+                  // Today's sessions
+                  _TodaySessionsList(sessions: state.todaySessions),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -101,6 +106,33 @@ class _PomodoroPageState extends State<PomodoroPage>
       builder: (_) => BlocProvider.value(
         value: context.read<PomodoroBloc>(),
         child: const _HistorySheet(),
+      ),
+    );
+  }
+
+  void _showAlarmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Timer Finished!'),
+        content: const Text('What would you like to do?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.read<PomodoroBloc>().add(ExtendSession());
+              Navigator.pop(context);
+            },
+            child: const Text('Extend (+5m)'),
+          ),
+          FilledButton(
+            onPressed: () {
+              context.read<PomodoroBloc>().add(CompleteSession());
+              Navigator.pop(context);
+            },
+            child: const Text('Stop'),
+          ),
+        ],
       ),
     );
   }
