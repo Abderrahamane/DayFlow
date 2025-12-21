@@ -28,85 +28,33 @@ class TaskFilterBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => _showFilterSheet(context),
-                icon: const Icon(Icons.filter_list),
-                label: Text(_getFilterLabel(currentFilter)),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  alignment: Alignment.centerLeft,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.sort,
-                  size: 18,
-                  color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                Text(
+                  _getFilterLabel(currentFilter),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: TaskSort.values.map((sort) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: InkWell(
-                            onTap: () => onSortChanged(sort),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: currentSort == sort
-                                    ? theme.colorScheme.primary.withOpacity(0.1)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: currentSort == sort
-                                      ? theme.colorScheme.primary
-                                      : theme.dividerColor,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Text(
-                                sort.displayName,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: currentSort == sort
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                  color: currentSort == sort
-                                      ? theme.colorScheme.primary
-                                      : theme.textTheme.bodyMedium?.color
-                                      ?.withOpacity(0.7),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                Text(
+                  'Sorted by ${currentSort.displayName}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
             ),
+          ),
+          IconButton.filledTonal(
+            onPressed: () => _showFilterSheet(context),
+            icon: const Icon(Icons.tune),
+            tooltip: 'Filter & Sort',
           ),
         ],
       ),
@@ -132,6 +80,7 @@ class TaskFilterBar extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
         final theme = Theme.of(context);
         return Container(
@@ -144,13 +93,32 @@ class TaskFilterBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: theme.dividerColor.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               Text(
-                'Filter Tasks',
+                'Filter & Sort',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
+              Text(
+                'Filter By',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 12),
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
@@ -210,6 +178,31 @@ class TaskFilterBar extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 24),
+              Text(
+                'Sort By',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: TaskSort.values.map((sort) {
+                  return _FilterChip(
+                    label: sort.displayName,
+                    isSelected: currentSort == sort,
+                    onTap: () {
+                      onSortChanged(sort);
+                      Navigator.pop(context);
+                    },
+                    theme: theme,
+                    icon: Icons.sort,
+                  );
+                }).toList(),
+              ),
               const SizedBox(height: 20),
             ],
           ),
@@ -250,10 +243,10 @@ class _FilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? chipColor
-              : chipColor.withOpacity(0.1),
+              : chipColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? chipColor : chipColor.withOpacity(0.3),
+            color: isSelected ? chipColor : chipColor.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
@@ -282,8 +275,8 @@ class _FilterChip extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white.withOpacity(0.25)
-                      : chipColor.withOpacity(0.15),
+                      ? Colors.white.withValues(alpha: 0.25)
+                      : chipColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
