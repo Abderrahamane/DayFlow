@@ -10,6 +10,7 @@ import '../pages/calendar_page.dart';
 import 'app_drawer.dart';
 import '../pages/habits_page.dart';
 import 'search_delegates.dart';
+import '../pages/notifications_page.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key});
@@ -98,12 +99,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 IconButton(
                   icon: const Icon(Icons.notifications_outlined),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.noNotifications),
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                      ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const NotificationsPage()),
                     );
                   },
                   tooltip: l10n.notifications,

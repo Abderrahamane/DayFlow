@@ -16,6 +16,7 @@ import 'blocs/calendar/calendar_bloc.dart';
 import 'blocs/template/template_bloc.dart';
 import 'blocs/habit_stats/habit_stats_bloc.dart';
 import 'blocs/pomodoro/pomodoro_bloc.dart';
+import 'blocs/notification/notification_bloc.dart';
 import 'data/local/app_database.dart';
 import 'data/repositories/habit_repository.dart';
 import 'data/repositories/task_repository.dart';
@@ -23,6 +24,7 @@ import 'data/repositories/reminder_repository.dart';
 import 'data/repositories/note_repository.dart';
 import 'data/repositories/task_template_repository.dart';
 import 'data/repositories/pomodoro_repository.dart';
+import 'data/repositories/notification_repository.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
 import 'utils/routes.dart';
@@ -60,6 +62,7 @@ void main() async {
   final noteRepository = NoteRepository(database, firestoreService);
   final templateRepository = TaskTemplateRepository(database);
   final pomodoroRepository = PomodoroRepository(database, firestoreService);
+  final notificationRepository = NotificationRepository(database, firestoreService);
 
   runApp(
     MultiRepositoryProvider(
@@ -70,6 +73,7 @@ void main() async {
         RepositoryProvider.value(value: noteRepository),
         RepositoryProvider.value(value: templateRepository),
         RepositoryProvider.value(value: pomodoroRepository),
+        RepositoryProvider.value(value: notificationRepository),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -105,7 +109,10 @@ void main() async {
             create: (_) => HabitStatsBloc(habitRepository)..add(LoadHabitStats()),
           ),
           BlocProvider(
-            create: (_) => PomodoroBloc(pomodoroRepository)..add(LoadPomodoroData()),
+            create: (_) => PomodoroBloc(pomodoroRepository, notificationRepository),
+          ),
+          BlocProvider(
+            create: (_) => NotificationBloc(notificationRepository),
           ),
         ],
         child: const DayFlowApp(),

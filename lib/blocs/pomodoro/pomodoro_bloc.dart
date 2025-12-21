@@ -4,7 +4,9 @@ import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/repositories/pomodoro_repository.dart';
+import '../../data/repositories/notification_repository.dart';
 import '../../models/pomodoro_model.dart';
+import '../../models/notification_model.dart';
 import '../../services/notification_servise.dart';
 
 part 'pomodoro_event.dart';
@@ -12,10 +14,11 @@ part 'pomodoro_state.dart';
 
 class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
   final PomodoroRepository _repository;
+  final NotificationRepository _notificationRepository;
   final _uuid = const Uuid();
   Timer? _timer;
 
-  PomodoroBloc(this._repository) : super(const PomodoroState()) {
+  PomodoroBloc(this._repository, this._notificationRepository) : super(const PomodoroState()) {
     on<LoadPomodoroData>(_onLoadData);
     on<StartSession>(_onStartSession);
     on<PauseSession>(_onPauseSession);
@@ -296,10 +299,19 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         break;
     }
 
+    // Show system notification
     NotificationService().showNotification(
       title: title,
       body: body,
     );
+
+    // Save to in-app notification history
+    _notificationRepository.saveNotification(AppNotification(
+      id: _uuid.v4(),
+      title: title,
+      body: body,
+      timestamp: DateTime.now(),
+    ));
   }
 }
 

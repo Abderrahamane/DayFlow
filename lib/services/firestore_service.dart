@@ -47,4 +47,10 @@ class FirestoreService {
     if (uid == null) return null;
     return users.doc(uid).collection('templates');
   }
+
+  CollectionReference? get notifications {
+    final uid = currentUserId;
+    if (uid == null) return null;
+    return users.doc(uid).collection('notifications');
+  }
 }
