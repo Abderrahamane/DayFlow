@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/theme/theme_cubit.dart';
 import '../theme/app_theme.dart';
-import '../utils/routes.dart';
 import '../utils/app_localizations.dart';
+import '../services/firebase_auth_service.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -40,7 +40,7 @@ class AppDrawer extends StatelessWidget {
                     width: 64,
                     height: 64,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
@@ -63,7 +63,7 @@ class AppDrawer extends StatelessWidget {
                     l10n.yourSmartDailyPlanner,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -195,10 +195,19 @@ class AppDrawer extends StatelessWidget {
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context); // Close drawer
-              Routes.navigateToWelcome(context);
+            onPressed: () async {
+              await FirebaseAuthService().logout();
+              if (context.mounted) {
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(context); // Close drawer
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.logoutSuccess),
+                    duration: const Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
             },
             child: Text(l10n.logout),
           ),
@@ -227,7 +236,7 @@ class _DrawerItem extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -247,7 +256,7 @@ class _DrawerItem extends StatelessWidget {
         subtitle,
         style: TextStyle(
           fontSize: 12,
-          color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+          color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
         ),
       ),
       onTap: onTap,
