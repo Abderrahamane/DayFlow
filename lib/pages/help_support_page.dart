@@ -64,16 +64,6 @@ class HelpSupportPage extends StatelessWidget {
                 const Divider(height: 1, indent: 72),
                 _buildContactOption(
                   context,
-                  icon: Icons.chat_bubble_outline,
-                  title: l10n.liveChat,
-                  subtitle: l10n.chatWithTeam,
-                  onTap: () {
-                    _showComingSoon(context);
-                  },
-                ),
-                const Divider(height: 1, indent: 72),
-                _buildContactOption(
-                  context,
                   icon: Icons.bug_report_outlined,
                   title: l10n.reportProblem,
                   subtitle: l10n.letUsKnow,
@@ -405,12 +395,5 @@ class HelpSupportPage extends StatelessWidget {
     );
   }
 
-  void _showComingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Coming soon!'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
+
 }
