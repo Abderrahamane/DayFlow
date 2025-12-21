@@ -131,31 +131,25 @@ class HelpSupportPage extends StatelessWidget {
               children: [
                 _buildResourceItem(
                   context,
-                  icon: Icons.menu_book,
-                  title: l10n.userGuide,
-                  subtitle: l10n.learnHowToUse,
-                  onTap: () {
-                    _showComingSoon(context);
-                  },
-                ),
-                const Divider(height: 1, indent: 72),
-                _buildResourceItem(
-                  context,
                   icon: Icons.video_library,
                   title: l10n.videoTutorials,
                   subtitle: l10n.watchGuides,
-                  onTap: () {
-                    _showComingSoon(context);
-                  },
-                ),
-                const Divider(height: 1, indent: 72),
-                _buildResourceItem(
-                  context,
-                  icon: Icons.tips_and_updates,
-                  title: l10n.tipsTricks,
-                  subtitle: l10n.getMostOut,
-                  onTap: () {
-                    _showComingSoon(context);
+                  onTap: () async {
+                    final Uri url = Uri.parse('https://youtu.be/elg7eKegv0o?si=ttgE-ZxvK9ZuP5cl');
+                    try {
+                      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                        throw Exception('Could not launch $url');
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Could not open video link'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    }
                   },
                 ),
               ],
