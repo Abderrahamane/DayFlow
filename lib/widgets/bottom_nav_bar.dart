@@ -9,6 +9,7 @@ import '../pages/settings_page.dart';
 import '../pages/calendar_page.dart';
 import 'app_drawer.dart';
 import '../pages/habits_page.dart';
+import 'search_delegates.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key});
@@ -77,13 +78,21 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.comingSoon),
-                        duration: const Duration(seconds: 2),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                    if (currentIndex == 0) {
+                      showSearch(context: context, delegate: TaskSearchDelegate());
+                    } else if (currentIndex == 3) {
+                      showSearch(context: context, delegate: HabitSearchDelegate());
+                    } else if (currentIndex == 4) {
+                      showSearch(context: context, delegate: SettingsSearchDelegate());
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(l10n.comingSoon),
+                          duration: const Duration(seconds: 2),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
                   },
                   tooltip: l10n.search,
                 ),

@@ -6,11 +6,13 @@ class HabitState extends Equatable {
   final List<Habit> habits;
   final HabitStatus status;
   final String? errorMessage;
+  final String searchQuery;
 
   const HabitState({
     this.habits = const [],
     this.status = HabitStatus.initial,
     this.errorMessage,
+    this.searchQuery = '',
   });
 
   int get completedToday =>
@@ -19,18 +21,29 @@ class HabitState extends Equatable {
   double get todayCompletionPercentage =>
       habits.isEmpty ? 0 : (completedToday / habits.length) * 100;
 
+  List<Habit> get visibleHabits {
+    if (searchQuery.isEmpty) return habits;
+    final query = searchQuery.toLowerCase();
+    return habits.where((h) {
+      return h.name.toLowerCase().contains(query) ||
+          (h.description?.toLowerCase().contains(query) ?? false);
+    }).toList();
+  }
+
   HabitState copyWith({
     List<Habit>? habits,
     HabitStatus? status,
     String? errorMessage,
+    String? searchQuery,
   }) {
     return HabitState(
       habits: habits ?? this.habits,
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 
   @override
-  List<Object?> get props => [habits, status, errorMessage];
+  List<Object?> get props => [habits, status, errorMessage, searchQuery];
 }

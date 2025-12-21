@@ -20,6 +20,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<ToggleSubtaskCompletionEvent>(_onToggleSubtask);
     on<ChangeTaskFilter>(_onChangeFilter);
     on<ChangeTaskSort>(_onChangeSort);
+    on<SearchTasks>(_onSearchTasks);
   }
 
   Future<void> _onLoadTasks(LoadTasks event, Emitter<TaskState> emit) async {
@@ -116,5 +117,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   void _onChangeSort(ChangeTaskSort event, Emitter<TaskState> emit) {
     emit(state.copyWith(sort: event.sort));
+  }
+
+  void _onSearchTasks(SearchTasks event, Emitter<TaskState> emit) {
+    emit(state.copyWith(searchQuery: event.query));
   }
 }
