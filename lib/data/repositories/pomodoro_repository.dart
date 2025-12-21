@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/services/firestore_service.dart';
 import '../../models/pomodoro_model.dart';
@@ -17,6 +18,24 @@ class PomodoroRepository {
 
   Future<PomodoroSettings> getSettings() async {
     final prefs = await SharedPreferences.getInstance();
+
+    if (_isRemote) {
+      try {
+        final doc = await _firestoreService.users.doc(_firestoreService.currentUserId).get();
+        if (doc.exists && doc.data() != null) {
+          final data = doc.data() as Map<String, dynamic>;
+          if (data.containsKey('pomodoroSettings')) {
+            final settings = PomodoroSettings.fromJson(data['pomodoroSettings']);
+            // Update local cache
+            await prefs.setString(_settingsKey, jsonEncode(settings.toJson()));
+            return settings;
+          }
+        }
+      } catch (e) {
+        // Fallback to local if remote fails
+      }
+    }
+
     final settingsJson = prefs.getString(_settingsKey);
     if (settingsJson != null) {
       try {
@@ -30,7 +49,18 @@ class PomodoroRepository {
 
   Future<void> saveSettings(PomodoroSettings settings) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_settingsKey, jsonEncode(settings.toJson()));
+    final json = settings.toJson();
+    await prefs.setString(_settingsKey, jsonEncode(json));
+
+    if (_isRemote) {
+      try {
+        await _firestoreService.users.doc(_firestoreService.currentUserId).set({
+          'pomodoroSettings': json,
+        }, SetOptions(merge: true));
+      } catch (e) {
+        // Ignore remote save errors
+      }
+    }
   }
 
   Future<List<PomodoroSession>> fetchSessions() async {

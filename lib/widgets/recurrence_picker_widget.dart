@@ -242,14 +242,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
             leading: Radio<RecurrenceEndType>(
               value: RecurrenceEndType.occurrences,
               groupValue: _endType,
-              onChanged: (_) {
-                setState(() {
-                  _endType = RecurrenceEndType.occurrences;
-                  _maxOccurrences = 10;
-                  _endDate = null;
-                });
-                _notifyChange();
-              },
+              onChanged: (_) => _setMaxOccurrences(),
             ),
             title: Row(
               children: [
@@ -361,7 +354,11 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
 
   void _setMaxOccurrences() {
     setState(() {
-      _maxOccurrences = _maxOccurrences ?? 10;
+      final int? value = int.tryParse(_occurrencesController.text);
+      _maxOccurrences = value ?? 10;
+      if (value == null) {
+        _occurrencesController.text = _maxOccurrences.toString();
+      }
       _endDate = null;
       _endType = RecurrenceEndType.occurrences;
     });
