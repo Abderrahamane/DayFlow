@@ -326,13 +326,18 @@ class HelpSupportPage extends StatelessWidget {
       if (await canLaunchUrl(emailUri)) {
         await launchUrl(emailUri, mode: LaunchMode.externalApplication);
       } else {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not open email app'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+        // Try launching anyway as canLaunchUrl can return false negatives on some Android versions
+        try {
+          await launchUrl(emailUri, mode: LaunchMode.externalApplication);
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Could not open email app. Please ensure an email app is installed.'),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         }
       }
     } catch (e) {
