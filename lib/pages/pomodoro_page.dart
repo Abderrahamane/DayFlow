@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../utils/app_localizations.dart';
 import '../blocs/pomodoro/pomodoro_bloc.dart';
 import '../blocs/task/task_bloc.dart';
 import '../models/pomodoro_model.dart';
@@ -37,19 +38,21 @@ class _PomodoroPageState extends State<PomodoroPage>
   @override
   Widget build(BuildContext context) {
 
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pomodoro Timer'),
+        title: Text(l10n.pomodoroTimer),
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () => _showHistory(context),
-            tooltip: 'Session History',
+            tooltip: l10n.sessionHistory,
           ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => _showSettings(context),
-            tooltip: 'Settings',
+            tooltip: l10n.settings,
           ),
         ],
       ),
@@ -111,26 +114,27 @@ class _PomodoroPageState extends State<PomodoroPage>
   }
 
   void _showAlarmDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Timer Finished!'),
-        content: const Text('What would you like to do?'),
+        title: Text(l10n.timerFinished),
+        content: Text(l10n.whatWouldYouLikeToDo),
         actions: [
           TextButton(
             onPressed: () {
               context.read<PomodoroBloc>().add(ExtendSession());
               Navigator.pop(context);
             },
-            child: const Text('Extend (+5m)'),
+            child: Text(l10n.extend5m),
           ),
           FilledButton(
             onPressed: () {
               context.read<PomodoroBloc>().add(CompleteSession());
               Navigator.pop(context);
             },
-            child: const Text('Stop'),
+            child: Text(l10n.stop),
           ),
         ],
       ),
@@ -158,6 +162,7 @@ class _StatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Row(
       children: [
@@ -165,7 +170,7 @@ class _StatsRow extends StatelessWidget {
           child: _StatCard(
             icon: Icons.check_circle,
             value: '${state.todayWorkSessions}',
-            label: 'Today',
+            label: l10n.remindersToday,
             color: AppTheme.successColor,
           ),
         ),
@@ -174,7 +179,7 @@ class _StatsRow extends StatelessWidget {
           child: _StatCard(
             icon: Icons.timer,
             value: '${state.todayTotalMinutes}m',
-            label: 'Focus Time',
+            label: l10n.focusTime,
             color: theme.colorScheme.primary,
           ),
         ),
@@ -183,7 +188,7 @@ class _StatsRow extends StatelessWidget {
           child: _StatCard(
             icon: Icons.local_fire_department,
             value: '${state.stats.currentStreak}',
-            label: 'Streak',
+            label: l10n.streak,
             color: Colors.orange,
           ),
         ),
@@ -433,6 +438,7 @@ class _TimerControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     if (state.isIdle) {
       return Column(
@@ -464,7 +470,7 @@ class _TimerControls extends StatelessWidget {
             onPressed: () =>
                 context.read<PomodoroBloc>().add(const StartSession()),
             icon: const Icon(Icons.play_arrow, size: 28),
-            label: const Text('Start Focus', style: TextStyle(fontSize: 18)),
+            label: Text(l10n.startFocus, style: const TextStyle(fontSize: 18)),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             ),
@@ -542,12 +548,13 @@ class _LinkedTaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     if (state.linkedTaskId == null) {
       return OutlinedButton.icon(
         onPressed: () => _showTaskPicker(context),
         icon: const Icon(Icons.link),
-        label: const Text('Link to a Task'),
+        label: Text(l10n.linkToTask),
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
@@ -570,13 +577,13 @@ class _LinkedTaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Working on:',
+                  l10n.workingOn,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.primary,
                   ),
                 ),
                 Text(
-                  state.linkedTaskTitle ?? 'Task',
+                  state.linkedTaskTitle ?? l10n.task,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -605,6 +612,7 @@ class _TodaySessionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final workSessions = sessions
         .where((s) => s.type == PomodoroSessionType.work && s.completed)
         .toList();
@@ -625,14 +633,14 @@ class _TodaySessionsList extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'No sessions yet today',
+              l10n.noSessionsToday,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.textTheme.bodyMedium?.color?.withAlpha(179),
               ),
             ),
             const SizedBox(height: 4),
             Text(
-              'Start a focus session to get productive!',
+              l10n.startFocusSessionMsg,
               style: theme.textTheme.bodySmall,
             ),
           ],
@@ -644,7 +652,7 @@ class _TodaySessionsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Today's Sessions",
+          l10n.todaysSessions,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -676,7 +684,7 @@ class _TodaySessionsList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          session.linkedTaskTitle ?? 'Focus Session',
+                          session.linkedTaskTitle ?? l10n.focusSession,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -714,6 +722,7 @@ class _TaskPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.6,
@@ -735,7 +744,7 @@ class _TaskPickerSheet extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(20),
             child: Text(
-              'Select a Task',
+              l10n.selectTask,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -748,7 +757,7 @@ class _TaskPickerSheet extends StatelessWidget {
                     state.tasks.where((t) => !t.isCompleted).toList();
 
                 if (incompleteTasks.isEmpty) {
-                  return const Center(child: Text('No pending tasks'));
+                  return Center(child: Text(l10n.noPendingTasks));
                 }
 
                 return ListView.builder(
@@ -760,7 +769,7 @@ class _TaskPickerSheet extends StatelessWidget {
                       leading: const Icon(Icons.task_alt),
                       title: Text(task.title),
                       subtitle: task.dueDate != null
-                          ? Text('Due: ${_formatDate(task.dueDate!)}')
+                          ? Text('${l10n.duePrefix}${_formatDate(task.dueDate!)}')
                           : null,
                       onTap: () {
                         context.read<PomodoroBloc>().add(LinkTaskToSession(
@@ -791,6 +800,7 @@ class _HistorySheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
@@ -814,7 +824,7 @@ class _HistorySheet extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Session History',
+                  l10n.sessionHistory,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -823,7 +833,7 @@ class _HistorySheet extends StatelessWidget {
                 BlocBuilder<PomodoroBloc, PomodoroState>(
                   builder: (context, state) {
                     return Text(
-                      '${state.stats.totalWorkSessions} sessions',
+                      '${state.stats.totalWorkSessions}${l10n.sessionsSuffix}',
                       style: theme.textTheme.bodyMedium,
                     );
                   },
@@ -839,7 +849,7 @@ class _HistorySheet extends StatelessWidget {
                     .toList();
 
                 if (sessions.isEmpty) {
-                  return const Center(child: Text('No sessions yet'));
+                  return Center(child: Text(l10n.noSessionsYet));
                 }
 
                 return ListView.builder(
@@ -880,7 +890,7 @@ class _HistorySheet extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  session.linkedTaskTitle ?? 'Focus Session',
+                                  session.linkedTaskTitle ?? l10n.focusSession,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -929,6 +939,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
@@ -952,7 +963,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
             child: Row(
               children: [
                 Text(
-                  'Timer Settings',
+                  l10n.timerSettings,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -965,7 +976,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                         .add(UpdateSettings(_settings));
                     Navigator.pop(context);
                   },
-                  child: const Text('Save'),
+                  child: Text(l10n.save),
                 ),
               ],
             ),
@@ -975,7 +986,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
                 _SettingSlider(
-                  label: 'Work Duration',
+                  label: l10n.workDuration,
                   value: _settings.workDuration.toDouble(),
                   min: 5,
                   max: 60,
@@ -984,7 +995,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                       () => _settings = _settings.copyWith(workDuration: v.round())),
                 ),
                 _SettingSlider(
-                  label: 'Short Break',
+                  label: l10n.shortBreak,
                   value: _settings.shortBreakDuration.toDouble(),
                   min: 1,
                   max: 15,
@@ -993,7 +1004,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                       () => _settings = _settings.copyWith(shortBreakDuration: v.round())),
                 ),
                 _SettingSlider(
-                  label: 'Long Break',
+                  label: l10n.longBreak,
                   value: _settings.longBreakDuration.toDouble(),
                   min: 10,
                   max: 30,
@@ -1002,7 +1013,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                       () => _settings = _settings.copyWith(longBreakDuration: v.round())),
                 ),
                 _SettingSlider(
-                  label: 'Sessions Before Long Break',
+                  label: l10n.sessionsBeforeLongBreak,
                   value: _settings.sessionsBeforeLongBreak.toDouble(),
                   min: 2,
                   max: 8,
@@ -1012,22 +1023,22 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                 ),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: const Text('Auto-start Breaks'),
-                  subtitle: const Text('Automatically start break after work session'),
+                  title: Text(l10n.autoStartBreaks),
+                  subtitle: Text(l10n.autoStartBreaksDesc),
                   value: _settings.autoStartBreaks,
                   onChanged: (v) => setState(
                       () => _settings = _settings.copyWith(autoStartBreaks: v)),
                 ),
                 SwitchListTile(
-                  title: const Text('Auto-start Work'),
-                  subtitle: const Text('Automatically start work after break'),
+                  title: Text(l10n.autoStartWork),
+                  subtitle: Text(l10n.autoStartWorkDesc),
                   value: _settings.autoStartWork,
                   onChanged: (v) => setState(
                       () => _settings = _settings.copyWith(autoStartWork: v)),
                 ),
                 SwitchListTile(
-                  title: const Text('Sound'),
-                  subtitle: const Text('Play sound when session ends'),
+                  title: Text(l10n.sound),
+                  subtitle: Text(l10n.soundDesc),
                   value: _settings.soundEnabled,
                   onChanged: (v) => setState(
                       () => _settings = _settings.copyWith(soundEnabled: v)),
