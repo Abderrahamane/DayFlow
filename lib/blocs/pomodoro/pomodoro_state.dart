@@ -7,6 +7,7 @@ enum PomodoroStatus {
   running,
   paused,
   completed,
+  ringing,
 }
 
 class PomodoroState extends Equatable {
@@ -36,6 +37,7 @@ class PomodoroState extends Equatable {
 
   bool get isRunning => status == PomodoroStatus.running;
   bool get isPaused => status == PomodoroStatus.paused;
+  bool get isRinging => status == PomodoroStatus.ringing;
   bool get isIdle => status == PomodoroStatus.idle || status == PomodoroStatus.initial;
 
   String get formattedTime {
@@ -100,4 +102,3 @@ class PomodoroState extends Equatable {
         linkedTaskTitle,
       ];
 }
-
