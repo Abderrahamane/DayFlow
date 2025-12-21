@@ -59,7 +59,7 @@ class ReminderNotificationHelper {
       // Save to notification history if repository is provided
       if (notificationRepository != null) {
         await notificationRepository.saveNotification(AppNotification(
-          id: const Uuid().v4(),
+          id: 'reminder_history_$notificationId',
           title: reminder.title,
           body: reminder.description ?? 'Time for your reminder!',
           timestamp: scheduledDateTime,
