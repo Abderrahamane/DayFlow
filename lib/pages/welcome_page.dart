@@ -532,7 +532,7 @@ class _PulsingButtonState extends State<_PulsingButton> with SingleTickerProvide
                   borderRadius: BorderRadius.circular(16),
                 ),
                 elevation: _isPressed ? 2 : 8,
-                shadowColor: Colors.black.withOpacity(0.3),
+                shadowColor: Colors.black.withValues(alpha: 0.3),
               ),
               child: Text(
                 widget.text,

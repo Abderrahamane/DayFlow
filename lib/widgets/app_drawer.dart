@@ -1,11 +1,13 @@
 // lib/widgets/app_drawer.dart (WITH LOCALIZATION)
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../blocs/theme/theme_cubit.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_localizations.dart';
 import '../services/firebase_auth_service.dart';
+import '../utils/routes.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -158,19 +160,64 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ),
 
-                  // Logout Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        _showLogoutDialog(context);
-                      },
-                      icon: const Icon(Icons.logout),
-                      label: Text(l10n.logout),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
+                  const SizedBox(height: 16),
+
+                  // Auth Buttons
+                  StreamBuilder<User?>(
+                    stream: FirebaseAuthService().authStateChanges,
+                    builder: (context, snapshot) {
+                      final isLoggedIn = snapshot.hasData;
+
+                      if (isLoggedIn) {
+                        return SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              _showLogoutDialog(context);
+                            },
+                            icon: const Icon(Icons.logout),
+                            label: Text(l10n.logout),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: FilledButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, Routes.signup);
+                                },
+                                icon: const Icon(Icons.person_add),
+                                label: Text(l10n.signup),
+                                style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, Routes.login);
+                                },
+                                icon: const Icon(Icons.login),
+                                label: Text(l10n.login),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                 ],
               ),

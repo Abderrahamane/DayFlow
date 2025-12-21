@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'blocs/habit/habit_bloc.dart';
 import 'blocs/language/language_cubit.dart';
 import 'blocs/task/task_bloc.dart';
@@ -149,11 +150,39 @@ class DayFlowApp extends StatelessWidget {
   }
 }
 
-class AuthChecker extends StatelessWidget {
+class AuthChecker extends StatefulWidget {
   const AuthChecker({Key? key}) : super(key: key);
 
   @override
+  State<AuthChecker> createState() => _AuthCheckerState();
+}
+
+class _AuthCheckerState extends State<AuthChecker> {
+  bool _isLoading = true;
+  bool _hasCompletedOnboarding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _hasCompletedOnboarding = prefs.getBool('hasCompletedQuestionFlow') ?? false;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const SplashScreen();
+    }
+
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
@@ -186,10 +215,17 @@ class AuthChecker extends StatelessWidget {
           return const SplashScreen();
         }
 
+        // Not logged in
         Future.microtask(() {
           final currentRoute = ModalRoute.of(context)?.settings.name;
-          if (currentRoute != Routes.welcome) {
-            Navigator.pushReplacementNamed(context, Routes.welcome);
+          if (_hasCompletedOnboarding) {
+            if (currentRoute != Routes.home) {
+              Navigator.pushReplacementNamed(context, Routes.home);
+            }
+          } else {
+            if (currentRoute != Routes.welcome) {
+              Navigator.pushReplacementNamed(context, Routes.welcome);
+            }
           }
         });
         return const SplashScreen();
