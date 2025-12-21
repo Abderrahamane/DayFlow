@@ -42,7 +42,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
                 hasReachedMax: notifications.length < 10,
               ));
       }
-    } catch (_) {
+    } catch (e) {
+      print('❌ Error loading notifications: $e');
       emit(state.copyWith(status: NotificationStatus.failure));
     }
   }
@@ -68,4 +69,3 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     ));
   }
 }
-

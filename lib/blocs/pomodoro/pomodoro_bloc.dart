@@ -184,12 +184,12 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     ));
   }
 
-  void _onTimerTick(TimerTick event, Emitter<PomodoroState> emit) {
+  Future<void> _onTimerTick(TimerTick event, Emitter<PomodoroState> emit) async {
     if (state.remainingSeconds <= 1) {
       _timer?.cancel();
 
       // Show notification
-      _showSessionCompleteNotification(state.currentSession?.type ?? PomodoroSessionType.work);
+      await _showSessionCompleteNotification(state.currentSession?.type ?? PomodoroSessionType.work);
 
       emit(state.copyWith(
         status: PomodoroStatus.ringing,
@@ -280,7 +280,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     }
   }
 
-  void _showSessionCompleteNotification(PomodoroSessionType type) {
+  Future<void> _showSessionCompleteNotification(PomodoroSessionType type) async {
     String title;
     String body;
 
@@ -306,12 +306,16 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     );
 
     // Save to in-app notification history
-    _notificationRepository.saveNotification(AppNotification(
-      id: _uuid.v4(),
-      title: title,
-      body: body,
-      timestamp: DateTime.now(),
-    ));
+    try {
+      await _notificationRepository.saveNotification(AppNotification(
+        id: _uuid.v4(),
+        title: title,
+        body: body,
+        timestamp: DateTime.now(),
+      ));
+    } catch (e) {
+      print('❌ Error in _showSessionCompleteNotification: $e');
+    }
   }
 }
 
