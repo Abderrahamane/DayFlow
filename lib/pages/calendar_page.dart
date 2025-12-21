@@ -131,7 +131,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                   Icon(
                     Icons.error_outline,
                     size: 64,
-                    color: theme.colorScheme.error.withOpacity(0.7),
+                    color: theme.colorScheme.error.withValues(alpha: 0.7),
                   ),
                   const SizedBox(height: 16),
                   Text('Failed to load calendar', style: theme.textTheme.titleLarge),
@@ -154,7 +154,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
               // Divider
               Container(
                 height: 1,
-                color: theme.dividerColor.withOpacity(0.3),
+                color: theme.dividerColor.withValues(alpha: 0.3),
               ),
 
               // Tab bar for tasks and habits
@@ -163,7 +163,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                 child: TabBar(
                   controller: _tabController,
                   labelColor: theme.colorScheme.primary,
-                  unselectedLabelColor: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                  unselectedLabelColor: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                   indicatorColor: theme.colorScheme.primary,
                   tabs: [
                     Tab(
@@ -246,7 +246,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
         outsideDaysVisible: false,
         weekendTextStyle: TextStyle(color: theme.colorScheme.primary),
         todayDecoration: BoxDecoration(
-          color: theme.colorScheme.primary.withOpacity(0.3),
+          color: theme.colorScheme.primary.withValues(alpha: 0.3),
           shape: BoxShape.circle,
         ),
         todayTextStyle: TextStyle(
@@ -287,7 +287,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
       daysOfWeekStyle: DaysOfWeekStyle(
         weekdayStyle: theme.textTheme.labelMedium!.copyWith(
           fontWeight: FontWeight.w600,
-          color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+          color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
         ),
         weekendStyle: theme.textTheme.labelMedium!.copyWith(
           fontWeight: FontWeight.w600,
@@ -506,13 +506,13 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
               size: 40,
-              color: theme.colorScheme.primary.withOpacity(0.7),
+              color: theme.colorScheme.primary.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -526,7 +526,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
           Text(
             subtitle,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -584,7 +584,7 @@ class _TaskCalendarItem extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -602,7 +602,7 @@ class _TaskCalendarItem extends StatelessWidget {
           style: TextStyle(
             decoration: task.isCompleted ? TextDecoration.lineThrough : null,
             color: task.isCompleted
-                ? theme.textTheme.bodyMedium?.color?.withOpacity(0.5)
+                ? theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5)
                 : null,
           ),
         ),
@@ -616,7 +616,7 @@ class _TaskCalendarItem extends StatelessWidget {
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: _getPriorityColor().withOpacity(0.1),
+            color: _getPriorityColor().withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -661,7 +661,7 @@ class _HabitCalendarItem extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -673,7 +673,7 @@ class _HabitCalendarItem extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: habit.color.withOpacity(0.2),
+            color: habit.color.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -687,7 +687,7 @@ class _HabitCalendarItem extends StatelessWidget {
         subtitle: Text(
           '${habit.currentStreak} day streak',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+            color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
           ),
         ),
         trailing: Icon(
@@ -725,7 +725,7 @@ class _SummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -739,7 +739,7 @@ class _SummaryCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -766,7 +766,7 @@ class _SummaryCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: color.withOpacity(0.1),
+              backgroundColor: color.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation(color),
               minHeight: 6,
             ),
@@ -820,7 +820,7 @@ class _PriorityRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: progress,
-                backgroundColor: color.withOpacity(0.1),
+                backgroundColor: color.withValues(alpha: 0.1),
                 valueColor: AlwaysStoppedAnimation(color),
                 minHeight: 8,
               ),
@@ -862,7 +862,7 @@ class _HabitSummaryItem extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isCompleted ? AppTheme.successColor : theme.dividerColor.withOpacity(0.3),
+          color: isCompleted ? AppTheme.successColor : theme.dividerColor.withValues(alpha: 0.3),
           width: isCompleted ? 2 : 1,
         ),
       ),
@@ -883,7 +883,7 @@ class _HabitSummaryItem extends StatelessWidget {
                 Text(
                   '${habit.currentStreak} day streak',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                    color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                   ),
                 ),
               ],

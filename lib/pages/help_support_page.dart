@@ -28,7 +28,7 @@ class HelpSupportPage extends StatelessWidget {
                   Icon(
                     Icons.support_agent,
                     size: 64,
-                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -42,7 +42,7 @@ class HelpSupportPage extends StatelessWidget {
                     l10n.findAnswers,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -58,7 +58,7 @@ class HelpSupportPage extends StatelessWidget {
                   context,
                   icon: Icons.email_outlined,
                   title: l10n.emailSupport,
-                  subtitle: 'support@dayflow.app',
+                  subtitle: 'houriabdo10@gmail.com',
                   onTap: () => _launchEmail(context),
                 ),
                 const Divider(height: 1, indent: 72),
@@ -214,7 +214,7 @@ class HelpSupportPage extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withOpacity(0.1),
+          color: theme.colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
@@ -232,12 +232,12 @@ class HelpSupportPage extends StatelessWidget {
       subtitle: Text(
         subtitle,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
       trailing: Icon(
         Icons.chevron_right,
-        color: theme.colorScheme.onSurface.withOpacity(0.4),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
       ),
       onTap: onTap,
     );
@@ -261,7 +261,7 @@ class HelpSupportPage extends StatelessWidget {
         Text(
           answer,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
             height: 1.5,
           ),
         ),
@@ -283,7 +283,7 @@ class HelpSupportPage extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: theme.colorScheme.secondary.withOpacity(0.1),
+          color: theme.colorScheme.secondary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
@@ -301,28 +301,30 @@ class HelpSupportPage extends StatelessWidget {
       subtitle: Text(
         subtitle,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
       trailing: Icon(
         Icons.chevron_right,
-        color: theme.colorScheme.onSurface.withOpacity(0.4),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
       ),
       onTap: onTap,
     );
   }
 
-  Future<void> _launchEmail(BuildContext context) async {
+  Future<void> _launchEmail(BuildContext context, {String? subject, String? body}) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
-      path: 'support@dayflow.app',
-      query: 'subject=DayFlow Support Request&body=Hi DayFlow Team,\n\n',
+      path: 'houriabdo10@gmail.com',
+      query: _encodeQueryParameters({
+        'subject': subject ?? 'DayFlow Support Request',
+        'body': body ?? 'Hi DayFlow Team,\n\n',
+      }),
     );
-    final l10n = AppLocalizations.of(context);
 
     try {
       if (await canLaunchUrl(emailUri)) {
-        await launchUrl(emailUri);
+        await launchUrl(emailUri, mode: LaunchMode.externalApplication);
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -343,6 +345,12 @@ class HelpSupportPage extends StatelessWidget {
         );
       }
     }
+  }
+
+  String? _encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
   }
 
   void _showReportDialog(BuildContext context) {
@@ -384,12 +392,10 @@ class HelpSupportPage extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('✓ Problem report submitted. We\'ll review it soon!'),
-                  backgroundColor: Colors.green,
-                  behavior: SnackBarBehavior.floating,
-                ),
+              _launchEmail(
+                context,
+                subject: 'Problem Report: ${problemController.text}',
+                body: 'Problem Type: ${problemController.text}\n\nDescription:\n${descriptionController.text}',
               );
             },
 
