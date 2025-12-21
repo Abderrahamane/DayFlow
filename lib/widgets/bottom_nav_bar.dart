@@ -56,47 +56,51 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // Hide AppBar for Notes (1) and Calendar (2) pages as they have their own
+    final bool showAppBar = _currentIndex != 1 && _currentIndex != 2;
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(_getPageTitle(context)),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-          tooltip: l10n.openMenu,
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.comingSoon),
-                  duration: const Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
+      appBar: showAppBar
+          ? AppBar(
+              title: Text(_getPageTitle(context)),
+              leading: IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+                tooltip: l10n.openMenu,
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.comingSoon),
+                        duration: const Duration(seconds: 2),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  tooltip: l10n.search,
                 ),
-              );
-            },
-            tooltip: l10n.search,
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.noNotifications),
-                  duration: const Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
+                IconButton(
+                  icon: const Icon(Icons.notifications_outlined),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.noNotifications),
+                        duration: const Duration(seconds: 2),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  tooltip: l10n.notifications,
                 ),
-              );
-            },
-            tooltip: l10n.notifications,
-          ),
-        ],
-      ),
+              ],
+            )
+          : null,
       drawer: const AppDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),

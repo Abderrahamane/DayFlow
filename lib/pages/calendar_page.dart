@@ -52,6 +52,11 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+          tooltip: 'Open Menu',
+        ),
         title: const Text('Calendar'),
         centerTitle: true,
         actions: [

@@ -32,54 +32,19 @@ class TaskFilterBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Column(
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                _FilterChip(
-                  label: 'All',
-                  count: totalTasks,
-                  isSelected: currentFilter == TaskFilter.all,
-                  onTap: () => onFilterChanged(TaskFilter.all),
-                  theme: theme,
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => _showFilterSheet(context),
+                icon: const Icon(Icons.filter_list),
+                label: Text(_getFilterLabel(currentFilter)),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  alignment: Alignment.centerLeft,
                 ),
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: 'Pending',
-                  count: pendingTasks,
-                  isSelected: currentFilter == TaskFilter.pending,
-                  onTap: () => onFilterChanged(TaskFilter.pending),
-                  theme: theme,
-                  color: Colors.orange.shade400,
-                ),
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: 'Completed',
-                  count: completedTasks,
-                  isSelected: currentFilter == TaskFilter.completed,
-                  onTap: () => onFilterChanged(TaskFilter.completed),
-                  theme: theme,
-                  color: Colors.green.shade400,
-                ),
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: 'Today',
-                  isSelected: currentFilter == TaskFilter.today,
-                  onTap: () => onFilterChanged(TaskFilter.today),
-                  theme: theme,
-                  icon: Icons.today,
-                ),
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: 'Overdue',
-                  count: overdueTasks,
-                  isSelected: currentFilter == TaskFilter.overdue,
-                  onTap: () => onFilterChanged(TaskFilter.overdue),
-                  theme: theme,
-                  color: Colors.red.shade400,
-                ),
-              ],
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -145,6 +110,111 @@ class TaskFilterBar extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  String _getFilterLabel(TaskFilter filter) {
+    switch (filter) {
+      case TaskFilter.all:
+        return 'All Tasks';
+      case TaskFilter.pending:
+        return 'Pending Tasks';
+      case TaskFilter.completed:
+        return 'Completed Tasks';
+      case TaskFilter.today:
+        return "Today's Tasks";
+      case TaskFilter.overdue:
+        return 'Overdue Tasks';
+    }
+  }
+
+  void _showFilterSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Filter Tasks',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  _FilterChip(
+                    label: 'All',
+                    count: totalTasks,
+                    isSelected: currentFilter == TaskFilter.all,
+                    onTap: () {
+                      onFilterChanged(TaskFilter.all);
+                      Navigator.pop(context);
+                    },
+                    theme: theme,
+                  ),
+                  _FilterChip(
+                    label: 'Pending',
+                    count: pendingTasks,
+                    isSelected: currentFilter == TaskFilter.pending,
+                    onTap: () {
+                      onFilterChanged(TaskFilter.pending);
+                      Navigator.pop(context);
+                    },
+                    theme: theme,
+                    color: Colors.orange.shade400,
+                  ),
+                  _FilterChip(
+                    label: 'Completed',
+                    count: completedTasks,
+                    isSelected: currentFilter == TaskFilter.completed,
+                    onTap: () {
+                      onFilterChanged(TaskFilter.completed);
+                      Navigator.pop(context);
+                    },
+                    theme: theme,
+                    color: Colors.green.shade400,
+                  ),
+                  _FilterChip(
+                    label: 'Today',
+                    isSelected: currentFilter == TaskFilter.today,
+                    onTap: () {
+                      onFilterChanged(TaskFilter.today);
+                      Navigator.pop(context);
+                    },
+                    theme: theme,
+                    icon: Icons.today,
+                  ),
+                  _FilterChip(
+                    label: 'Overdue',
+                    count: overdueTasks,
+                    isSelected: currentFilter == TaskFilter.overdue,
+                    onTap: () {
+                      onFilterChanged(TaskFilter.overdue);
+                      Navigator.pop(context);
+                    },
+                    theme: theme,
+                    color: Colors.red.shade400,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 }

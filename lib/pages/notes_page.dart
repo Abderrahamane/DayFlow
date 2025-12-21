@@ -141,6 +141,11 @@ class _NotesPageState extends State<NotesPage> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+          tooltip: 'Open Menu',
+        ),
         title: _isSearching
             ? TextField(
                 controller: _searchController,
