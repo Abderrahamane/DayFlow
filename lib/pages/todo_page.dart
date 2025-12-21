@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/task/task_bloc.dart';
+import '../blocs/navigation/navigation_cubit.dart';
 import '../models/task_model.dart';
 import '../models/recurrence_model.dart';
 import '../utils/date_utils.dart';
@@ -23,6 +24,34 @@ class _TodoPageState extends State<TodoPage> {
   void initState() {
     super.initState();
     context.read<TaskBloc>().add(LoadTasks());
+
+    // Check for navigation actions
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkNavigationAction();
+    });
+  }
+
+  void _checkNavigationAction() {
+    final navigationState = context.read<NavigationCubit>().state;
+    if (navigationState.action == NavigationAction.openCreateTask) {
+      final date = navigationState.data as DateTime?;
+      // Clear the action so it doesn't trigger again
+      context.read<NavigationCubit>().clearAction();
+
+      // Open task sheet with pre-filled date if available
+      if (date != null) {
+        // Create a temporary task with the selected date
+        final task = Task(
+          id: '',
+          title: '',
+          dueDate: date,
+          createdAt: DateTime.now(),
+        );
+        _openTaskSheet(task: task);
+      } else {
+        _openTaskSheet();
+      }
+    }
   }
 
   String _formattedHeaderDate() => formattedHeaderDate();
@@ -61,7 +90,7 @@ class _TodoPageState extends State<TodoPage> {
                           _formattedHeaderDate(),
                           style: theme.textTheme.labelLarge?.copyWith(
                             color:
-                                theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                                theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                           ),
                         ),
                       ),
@@ -427,7 +456,7 @@ class _EmptyTasks extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -447,7 +476,7 @@ class _EmptyTasks extends StatelessWidget {
             Text(
               'Create your first task to start organizing your day.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../blocs/calendar/calendar_bloc.dart';
 import '../blocs/task/task_bloc.dart';
+import '../blocs/navigation/navigation_cubit.dart';
 import '../models/task_model.dart';
 import '../models/habit_model.dart';
 import '../theme/app_theme.dart';
@@ -536,11 +537,10 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
 
   void _showAddTaskSheet(BuildContext context) {
     // Navigate to task creation with the selected date
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navigate to Tasks page to add a task'),
-        behavior: SnackBarBehavior.floating,
-      ),
+    context.read<NavigationCubit>().setIndex(
+      0,
+      action: NavigationAction.openCreateTask,
+      data: context.read<CalendarBloc>().state.selectedDate,
     );
   }
 }
@@ -898,4 +898,6 @@ class _HabitSummaryItem extends StatelessWidget {
     );
   }
 }
+
+
 

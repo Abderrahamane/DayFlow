@@ -55,7 +55,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final currentIndex = context.watch<NavigationCubit>().state;
+    final navigationState = context.watch<NavigationCubit>().state;
+    final currentIndex = navigationState.index;
 
     // Hide AppBar for Notes (1) and Calendar (2) pages as they have their own
     final bool showAppBar = currentIndex != 1 && currentIndex != 2;
