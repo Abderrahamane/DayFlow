@@ -83,7 +83,7 @@ class AppDrawer extends StatelessWidget {
                     subtitle: l10n.manageTodos,
                     onTap: () {
                       Navigator.pop(context);
-                      // Navigate to tasks if needed
+                      Navigator.pushNamed(context, Routes.todo);
                     },
                   ),
                   _DrawerItem(
@@ -92,6 +92,7 @@ class AppDrawer extends StatelessWidget {
                     subtitle: l10n.quickIdeas,
                     onTap: () {
                       Navigator.pop(context);
+                      Navigator.pushNamed(context, Routes.notes);
                     },
                   ),
                   _DrawerItem(
@@ -100,6 +101,7 @@ class AppDrawer extends StatelessWidget {
                     subtitle: l10n.neverMissTasks,
                     onTap: () {
                       Navigator.pop(context);
+                      Navigator.pushNamed(context, Routes.reminders);
                     },
                   ),
                   _DrawerItem(
@@ -108,10 +110,7 @@ class AppDrawer extends StatelessWidget {
                     subtitle: l10n.trackDailyHabits,
                     onTap: () {
                       Navigator.pop(context);
-                      // TODO: Navigate to habits page
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.habitsPageComingSoon)),
-                      );
+                      Navigator.pushNamed(context, Routes.habits);
                     },
                   ),
                   const Divider(height: 32, indent: 16, endIndent: 16),
@@ -121,9 +120,7 @@ class AppDrawer extends StatelessWidget {
                     subtitle: l10n.viewProgress,
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.statisticsComingSoon)),
-                      );
+                      Navigator.pushNamed(context, Routes.habitStats);
                     },
                   ),
                   _DrawerItem(
@@ -132,6 +129,7 @@ class AppDrawer extends StatelessWidget {
                     subtitle: l10n.customizeExperience,
                     onTap: () {
                       Navigator.pop(context);
+                      Navigator.pushNamed(context, Routes.settings);
                     },
                   ),
                 ],
