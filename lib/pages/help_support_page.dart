@@ -64,6 +64,14 @@ class HelpSupportPage extends StatelessWidget {
                 const Divider(height: 1, indent: 72),
                 _buildContactOption(
                   context,
+                  icon: Icons.phone_outlined,
+                  title: 'Call Us',
+                  subtitle: '+213 552 276 587',
+                  onTap: () => _launchPhone(context),
+                ),
+                const Divider(height: 1, indent: 72),
+                _buildContactOption(
+                  context,
                   icon: Icons.bug_report_outlined,
                   title: l10n.reportProblem,
                   subtitle: l10n.letUsKnow,
@@ -296,6 +304,37 @@ class HelpSupportPage extends StatelessWidget {
     );
   }
 
+  Future<void> _launchPhone(BuildContext context) async {
+    final Uri phoneUri = Uri(
+      scheme: 'tel',
+      path: '+213552276587',
+    );
+
+    try {
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open phone app.'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _launchEmail(BuildContext context, {String? subject, String? body}) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
@@ -397,3 +436,4 @@ class HelpSupportPage extends StatelessWidget {
 
 
 }
+
