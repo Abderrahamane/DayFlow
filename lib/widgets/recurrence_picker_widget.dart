@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/recurrence_model.dart';
 
+enum RecurrenceEndType { never, date, occurrences }
+
 class RecurrencePickerWidget extends StatefulWidget {
   final RecurrencePattern? initialPattern;
   final ValueChanged<RecurrencePattern?> onChanged;
@@ -23,6 +25,9 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
   DateTime? _endDate;
   int? _maxOccurrences;
 
+  late RecurrenceEndType _endType;
+  late TextEditingController _occurrencesController;
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +38,24 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
     _dayOfMonth = pattern?.dayOfMonth;
     _endDate = pattern?.endDate;
     _maxOccurrences = pattern?.maxOccurrences;
+
+    if (_endDate != null) {
+      _endType = RecurrenceEndType.date;
+    } else if (_maxOccurrences != null) {
+      _endType = RecurrenceEndType.occurrences;
+    } else {
+      _endType = RecurrenceEndType.never;
+    }
+
+    _occurrencesController = TextEditingController(
+      text: _maxOccurrences?.toString() ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _occurrencesController.dispose();
+    super.dispose();
   }
 
   void _notifyChange() {
@@ -186,10 +209,17 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           // End date option
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Radio<bool>(
-              value: _endDate != null,
-              groupValue: _endDate != null || _maxOccurrences == null,
-              onChanged: (_) => _selectEndDate(),
+            leading: Radio<RecurrenceEndType>(
+              value: RecurrenceEndType.date,
+              groupValue: _endType,
+              onChanged: (_) {
+                setState(() {
+                  _endType = RecurrenceEndType.date;
+                  _endDate = DateTime.now().add(const Duration(days: 30));
+                  _maxOccurrences = null;
+                });
+                _notifyChange();
+              },
             ),
             title: Text(_endDate != null
                 ? 'On ${_formatDate(_endDate!)}'
@@ -209,10 +239,17 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           // Max occurrences option
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Radio<bool>(
-              value: _maxOccurrences != null,
-              groupValue: _maxOccurrences != null,
-              onChanged: (_) => _setMaxOccurrences(),
+            leading: Radio<RecurrenceEndType>(
+              value: RecurrenceEndType.occurrences,
+              groupValue: _endType,
+              onChanged: (_) {
+                setState(() {
+                  _endType = RecurrenceEndType.occurrences;
+                  _maxOccurrences = 10;
+                  _endDate = null;
+                });
+                _notifyChange();
+              },
             ),
             title: Row(
               children: [
@@ -226,9 +263,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
                       isDense: true,
                       contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     ),
-                    controller: TextEditingController(
-                      text: _maxOccurrences?.toString() ?? '',
-                    ),
+                    controller: _occurrencesController,
                     onChanged: (v) {
                       setState(() => _maxOccurrences = int.tryParse(v));
                       _notifyChange();
@@ -244,13 +279,14 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           // Never ends option
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Radio<bool>(
-              value: _endDate == null && _maxOccurrences == null,
-              groupValue: true,
+            leading: Radio<RecurrenceEndType>(
+              value: RecurrenceEndType.never,
+              groupValue: _endType,
               onChanged: (_) {
                 setState(() {
                   _endDate = null;
                   _maxOccurrences = null;
+                  _endType = RecurrenceEndType.never;
                 });
                 _notifyChange();
               },
@@ -260,6 +296,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
               setState(() {
                 _endDate = null;
                 _maxOccurrences = null;
+                _endType = RecurrenceEndType.never;
               });
               _notifyChange();
             },
@@ -316,6 +353,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
       setState(() {
         _endDate = date;
         _maxOccurrences = null;
+        _endType = RecurrenceEndType.date;
       });
       _notifyChange();
     }
@@ -325,6 +363,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
     setState(() {
       _maxOccurrences = _maxOccurrences ?? 10;
       _endDate = null;
+      _endType = RecurrenceEndType.occurrences;
     });
     _notifyChange();
   }
@@ -407,4 +446,3 @@ class _DayButton extends StatelessWidget {
     );
   }
 }
-
