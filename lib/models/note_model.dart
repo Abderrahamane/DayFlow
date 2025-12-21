@@ -215,6 +215,66 @@ class Note {
     );
   }
 
+  // Firestore serialization
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'content': content,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'colorValue': color?.value,
+      'tags': tags,
+      'isPinned': isPinned,
+      'type': type.name,
+      'attachments': attachments?.map((a) => a.toJson()).toList(),
+      'checklistItems': checklistItems?.map((c) => c.toJson()).toList(),
+      'isLocked': isLocked,
+      'lockPin': lockPin,
+      'useBiometric': useBiometric,
+      'category': category?.name,
+    };
+  }
+
+  factory Note.fromFirestore(Map<String, dynamic> data, String docId) {
+    return Note(
+      id: docId,
+      title: data['title'] ?? '',
+      content: data['content'] ?? '',
+      createdAt: data['createdAt'] != null
+          ? DateTime.parse(data['createdAt'])
+          : DateTime.now(),
+      updatedAt: data['updatedAt'] != null
+          ? DateTime.parse(data['updatedAt'])
+          : null,
+      color: data['colorValue'] != null ? Color(data['colorValue']) : null,
+      tags: data['tags'] != null ? List<String>.from(data['tags']) : null,
+      isPinned: data['isPinned'] ?? false,
+      type: NoteType.values.firstWhere(
+        (t) => t.name == data['type'],
+        orElse: () => NoteType.text,
+      ),
+      attachments: data['attachments'] != null
+          ? (data['attachments'] as List)
+              .map((a) => NoteAttachment.fromJson(a))
+              .toList()
+          : null,
+      checklistItems: data['checklistItems'] != null
+          ? (data['checklistItems'] as List)
+              .map((c) => ChecklistItem.fromJson(c))
+              .toList()
+          : null,
+      isLocked: data['isLocked'] ?? false,
+      lockPin: data['lockPin'],
+      useBiometric: data['useBiometric'] ?? false,
+      category: data['category'] != null
+          ? NoteCategory.values.firstWhere(
+              (c) => c.name == data['category'],
+              orElse: () => NoteCategory.personal,
+            )
+          : null,
+    );
+  }
+
   /// Get preview of content (first 100 characters)
   String get contentPreview {
     if (content.isEmpty) return '';
