@@ -91,7 +91,10 @@ void main() async {
             create: (_) => HabitBloc(habitRepository)..add(LoadHabits()),
           ),
           BlocProvider(
-            create: (_) => ReminderBloc(reminderRepository)..add(LoadReminders()),
+            create: (_) => ReminderBloc(
+              reminderRepository,
+              notificationRepository: notificationRepository,
+            )..add(LoadReminders()),
           ),
           BlocProvider(
             create: (_) => NoteBloc(noteRepository)..add(LoadNotes()),
