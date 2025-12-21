@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:dayflow/services/mixpanel_service.dart';
 import 'package:dayflow/models/habit_model.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +22,21 @@ class HabitRepository {
       final collection = _firestoreService.habits;
       if (collection == null) return [];
 
-      final snapshot = await collection.get();
-      return snapshot.docs.map((doc) {
-        return Habit.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
+      try {
+        final snapshot = await collection.get(const firestore.GetOptions(source: firestore.Source.serverAndCache));
+        return snapshot.docs.map((doc) {
+          return Habit.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
+      } catch (e) {
+        try {
+          final snapshot = await collection.get(const firestore.GetOptions(source: firestore.Source.cache));
+          return snapshot.docs.map((doc) {
+            return Habit.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+          }).toList();
+        } catch (_) {
+          return [];
+        }
+      }
     } else {
       await _ensureDb();
       final habitRows = _localDb.rawDb.select('SELECT * FROM habits');

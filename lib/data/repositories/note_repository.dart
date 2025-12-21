@@ -1,4 +1,5 @@
 import 'package:dayflow/services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import '../../models/note_model.dart';
 import '../local/app_database.dart';
 
@@ -17,10 +18,21 @@ class NoteRepository {
       final collection = _firestoreService.notes;
       if (collection == null) return [];
 
-      final snapshot = await collection.get();
-      return snapshot.docs.map((doc) {
-        return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
+      try {
+        final snapshot = await collection.orderBy('isPinned', descending: true).orderBy('updatedAt', descending: true).get(const firestore.GetOptions(source: firestore.Source.serverAndCache));
+        return snapshot.docs.map((doc) {
+          return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
+      } catch (e) {
+        try {
+          final snapshot = await collection.orderBy('isPinned', descending: true).orderBy('updatedAt', descending: true).get(const firestore.GetOptions(source: firestore.Source.cache));
+          return snapshot.docs.map((doc) {
+            return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+          }).toList();
+        } catch (_) {
+          return [];
+        }
+      }
     } else {
       await _ensureDb();
       final result = _localDb.rawDb.select('SELECT * FROM notes ORDER BY isPinned DESC, updatedAt DESC, createdAt DESC');

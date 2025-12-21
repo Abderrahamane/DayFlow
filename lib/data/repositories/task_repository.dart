@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:dayflow/models/task_model.dart';
 import 'package:dayflow/models/recurrence_model.dart';
 import 'package:dayflow/services/mixpanel_service.dart';
@@ -20,10 +21,22 @@ class TaskRepository {
       final collection = _firestoreService.tasks;
       if (collection == null) return [];
 
-      final snapshot = await collection.get();
-      return snapshot.docs.map((doc) {
-        return Task.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
+      try {
+        final snapshot = await collection.get(const firestore.GetOptions(source: firestore.Source.serverAndCache));
+        return snapshot.docs.map((doc) {
+          return Task.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
+      } catch (e) {
+        // Fallback to cache if server fails
+        try {
+          final snapshot = await collection.get(const firestore.GetOptions(source: firestore.Source.cache));
+          return snapshot.docs.map((doc) {
+            return Task.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+          }).toList();
+        } catch (_) {
+          return [];
+        }
+      }
     } else {
       await _ensureDb();
       final taskResult = _localDb.rawDb.select('SELECT * FROM tasks');

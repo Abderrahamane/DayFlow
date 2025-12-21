@@ -5,6 +5,13 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  FirestoreService() {
+    _firestore.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
+  }
+
   String? get currentUserId => _auth.currentUser?.uid;
 
   // Collections
@@ -41,4 +48,3 @@ class FirestoreService {
     return users.doc(uid).collection('templates');
   }
 }
-
