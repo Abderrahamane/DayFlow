@@ -97,10 +97,10 @@ class PomodoroSettings {
 
   factory PomodoroSettings.fromJson(Map<String, dynamic> json) {
     return PomodoroSettings(
-      workDuration: json['workDuration'] ?? 25,
-      shortBreakDuration: json['shortBreakDuration'] ?? 5,
-      longBreakDuration: json['longBreakDuration'] ?? 15,
-      sessionsBeforeLongBreak: json['sessionsBeforeLongBreak'] ?? 4,
+      workDuration: (json['workDuration'] as num?)?.toInt() ?? 25,
+      shortBreakDuration: (json['shortBreakDuration'] as num?)?.toInt() ?? 5,
+      longBreakDuration: (json['longBreakDuration'] as num?)?.toInt() ?? 15,
+      sessionsBeforeLongBreak: (json['sessionsBeforeLongBreak'] as num?)?.toInt() ?? 4,
       autoStartBreaks: json['autoStartBreaks'] ?? false,
       autoStartWork: json['autoStartWork'] ?? false,
       soundEnabled: json['soundEnabled'] ?? true,
@@ -237,7 +237,7 @@ class PomodoroSession {
       ),
       startTime: DateTime.parse(data['startTime']),
       endTime: data['endTime'] != null ? DateTime.parse(data['endTime']) : null,
-      durationMinutes: data['durationMinutes'] ?? 25,
+      durationMinutes: (data['durationMinutes'] as num?)?.toInt() ?? 25,
       completed: data['completed'] ?? false,
       linkedTaskId: data['linkedTaskId'],
       linkedTaskTitle: data['linkedTaskTitle'],
