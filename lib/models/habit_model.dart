@@ -188,7 +188,7 @@ class Habit {
       'linkedTaskTags': linkedTaskTags,
       'completionHistory': completionHistory,
       'createdAt': createdAt.toIso8601String(),
-      'color': color.value,
+      'colorValue': color.value,
     };
   }
 
@@ -202,17 +202,17 @@ class Habit {
         (f) => f.name == data['frequency'],
         orElse: () => HabitFrequency.daily,
       ),
-      goalCount: data['goalCount'] ?? 7,
-      linkedTaskTags: data['linkedTaskTags'] != null 
-          ? List<String>.from(data['linkedTaskTags']) 
+      goalCount: data['goalCount'] ?? 1,
+      linkedTaskTags: data['linkedTaskTags'] != null
+          ? List<String>.from(data['linkedTaskTags'])
           : [],
-      completionHistory: data['completionHistory'] != null 
-          ? Map<String, bool>.from(data['completionHistory']) 
+      completionHistory: data['completionHistory'] != null
+          ? Map<String, bool>.from(data['completionHistory'])
           : {},
-      createdAt: data['createdAt'] != null 
-          ? DateTime.parse(data['createdAt']) 
+      createdAt: data['createdAt'] != null
+          ? DateTime.parse(data['createdAt'])
           : DateTime.now(),
-      color: data['color'] != null ? Color(data['color']) : Colors.blue,
+      color: Color(data['colorValue'] ?? 0xFF2196F3),
     );
   }
 }
@@ -233,4 +233,3 @@ enum HabitFrequency {
     }
   }
 }
-

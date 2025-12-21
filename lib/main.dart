@@ -54,12 +54,12 @@ void main() async {
   final database = AppDatabase();
   await database.init();
   final firestoreService = FirestoreService();
-  final taskRepository = TaskRepository(firestoreService);
-  final habitRepository = HabitRepository(database);
+  final taskRepository = TaskRepository(database, firestoreService);
+  final habitRepository = HabitRepository(database, firestoreService);
   final reminderRepository = ReminderRepository(database);
-  final noteRepository = NoteRepository(database);
+  final noteRepository = NoteRepository(database, firestoreService);
   final templateRepository = TaskTemplateRepository(database);
-  final pomodoroRepository = PomodoroRepository(database);
+  final pomodoroRepository = PomodoroRepository(database, firestoreService);
 
   runApp(
     MultiRepositoryProvider(

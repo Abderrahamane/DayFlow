@@ -214,6 +214,35 @@ class PomodoroSession {
       linkedTaskTitle: row['linkedTaskTitle'] as String?,
     );
   }
+
+  // Firestore serialization
+  Map<String, dynamic> toFirestore() {
+    return {
+      'type': type.name,
+      'startTime': startTime.toIso8601String(),
+      'endTime': endTime?.toIso8601String(),
+      'durationMinutes': durationMinutes,
+      'completed': completed,
+      'linkedTaskId': linkedTaskId,
+      'linkedTaskTitle': linkedTaskTitle,
+    };
+  }
+
+  factory PomodoroSession.fromFirestore(Map<String, dynamic> data, String docId) {
+    return PomodoroSession(
+      id: docId,
+      type: PomodoroSessionType.values.firstWhere(
+        (t) => t.name == data['type'],
+        orElse: () => PomodoroSessionType.work,
+      ),
+      startTime: DateTime.parse(data['startTime']),
+      endTime: data['endTime'] != null ? DateTime.parse(data['endTime']) : null,
+      durationMinutes: data['durationMinutes'] ?? 25,
+      completed: data['completed'] ?? false,
+      linkedTaskId: data['linkedTaskId'],
+      linkedTaskTitle: data['linkedTaskTitle'],
+    );
+  }
 }
 
 class PomodoroStats {
