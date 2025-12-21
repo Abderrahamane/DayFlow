@@ -142,13 +142,13 @@ class ReminderNotificationHelper {
 
   /// Reschedule all active reminders (useful after app restart)
   static Future<void> rescheduleAllReminders(
-      List<ReminderModel> reminders) async {
+      List<ReminderModel> reminders, {NotificationRepository? notificationRepository}) async {
     debugPrint('🔄 Rescheduling ${reminders.length} reminders...');
     
     int scheduled = 0;
     for (final reminder in reminders) {
       if (shouldScheduleReminder(reminder)) {
-        await scheduleReminderNotification(reminder);
+        await scheduleReminderNotification(reminder, notificationRepository: notificationRepository);
         scheduled++;
       }
     }

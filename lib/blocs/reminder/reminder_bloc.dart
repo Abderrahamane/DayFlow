@@ -30,6 +30,7 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       // Reschedule all active reminders when loading
       await ReminderNotificationHelper.rescheduleAllReminders(
         reminders.where((r) => r.id != null).toList(),
+        notificationRepository: notificationRepository,
       );
       
       emit(_groupRemindersByDate(reminders));
