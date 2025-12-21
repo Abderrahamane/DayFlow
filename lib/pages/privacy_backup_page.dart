@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/utils/app_localizations.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dayflow/data/repositories/task_repository.dart';
+import 'package:dayflow/services/firebase_auth_service.dart';
+import 'package:dayflow/utils/routes.dart';
 
 class PrivacyBackupPage extends StatefulWidget {
   const PrivacyBackupPage({Key? key}) : super(key: key);
@@ -178,7 +184,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                   Icon(
                     Icons.cloud_done,
                     size: 64,
-                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -193,7 +199,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                         ? l10n.lastBackup + ': ${_formatDate(_lastBackup!)}'
                         : l10n.noBackupsYet,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -254,7 +260,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -283,7 +289,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -312,7 +318,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -419,7 +425,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
@@ -438,12 +444,12 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
       subtitle: Text(
         subtitle,
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
       ),
       trailing: Icon(
         Icons.chevron_right,
-        color: theme.colorScheme.onSurface.withOpacity(0.4),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
       ),
       onTap: onTap,
     );
@@ -466,6 +472,87 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
     }
   }
 
+  Future<void> _clearCache() async {
+    try {
+      // Clear Firestore persistence
+      await FirebaseFirestore.instance.clearPersistence();
+
+      // Clear temporary directory
+      final tempDir = await getTemporaryDirectory();
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✓ Cache cleared successfully'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to clear cache: $e'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteAllData() async {
+    try {
+      // Clear local database
+      final taskRepository = context.read<TaskRepository>();
+      taskRepository.localDb.clearAllData();
+
+      // Clear SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      // Clear Firestore persistence
+      await FirebaseFirestore.instance.clearPersistence();
+
+      // Sign out if logged in
+      final authService = FirebaseAuthService();
+      if (authService.isLoggedIn()) {
+        await authService.logout();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('All data deleted'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+        // Navigate to welcome screen
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.welcome,
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete data: $e'),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
   void _showClearCacheDialog(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     showDialog(
@@ -481,13 +568,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('✓ Cache cleared successfully'),
-                  backgroundColor: Colors.green,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              _clearCache();
             },
             child: Text(l10n.clear),
           ),
@@ -514,13 +595,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('All data deleted'),
-                  backgroundColor: Colors.red,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              _deleteAllData();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: Text(l10n.allDataDeleted),

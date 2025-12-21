@@ -1,4 +1,3 @@
-
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -204,6 +203,17 @@ class AppDatabase {
         linkedTaskTitle TEXT
       );
     ''');
+  }
+
+  void clearAllData() {
+    _db.execute('DELETE FROM tasks');
+    _db.execute('DELETE FROM subtasks');
+    _db.execute('DELETE FROM habits');
+    _db.execute('DELETE FROM habit_completions');
+    _db.execute('DELETE FROM notes');
+    _db.execute('DELETE FROM reminders');
+    _db.execute('DELETE FROM task_templates');
+    _db.execute('DELETE FROM pomodoro_sessions');
   }
 
   void close() {

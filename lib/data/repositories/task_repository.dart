@@ -280,4 +280,6 @@ class TaskRepository {
       );
     }
   }
+
+  AppDatabase get localDb => _localDb;
 }
