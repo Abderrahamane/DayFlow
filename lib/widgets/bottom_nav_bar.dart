@@ -75,27 +75,26 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 tooltip: l10n.openMenu,
               ),
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    if (currentIndex == 0) {
-                      showSearch(context: context, delegate: TaskSearchDelegate());
-                    } else if (currentIndex == 3) {
-                      showSearch(context: context, delegate: HabitSearchDelegate());
-                    } else if (currentIndex == 4) {
-                      showSearch(context: context, delegate: SettingsSearchDelegate());
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.comingSoon),
-                          duration: const Duration(seconds: 2),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                    }
-                  },
-                  tooltip: l10n.search,
-                ),
+                if (currentIndex != 4)
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      if (currentIndex == 0) {
+                        showSearch(context: context, delegate: TaskSearchDelegate());
+                      } else if (currentIndex == 3) {
+                        showSearch(context: context, delegate: HabitSearchDelegate());
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.comingSoon),
+                            duration: const Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
+                    },
+                    tooltip: l10n.search,
+                  ),
                 IconButton(
                   icon: const Icon(Icons.notifications_outlined),
                   onPressed: () {
