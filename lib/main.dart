@@ -29,6 +29,7 @@ import 'utils/routes.dart';
 import 'package:dayflow/services/notification_servise.dart';
 
 import 'package:dayflow/services/mixpanel_service.dart';
+import 'blocs/navigation/navigation_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,7 +71,12 @@ void main() async {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider(
+            create: (_) => ThemeCubit(),
+          ),
+          BlocProvider(
+            create: (_) => NavigationCubit(),
+          ),
           BlocProvider<LanguageCubit>(create: (_) => languageCubit),
           BlocProvider(
             create: (_) => TaskBloc(taskRepository)..add(LoadTasks()),

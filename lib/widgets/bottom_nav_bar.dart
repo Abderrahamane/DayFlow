@@ -1,6 +1,8 @@
 // lib/widgets/bottom_nav_bar.dart (WITH LOCALIZATION)
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dayflow/utils/app_localizations.dart';
+import '../blocs/navigation/navigation_cubit.dart';
 import '../pages/todo_page.dart';
 import '../pages/notes_page.dart';
 import '../pages/settings_page.dart';
@@ -16,7 +18,6 @@ class MainNavigationShell extends StatefulWidget {
 }
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
-  int _currentIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // Pages corresponding to bottom nav items
@@ -29,15 +30,13 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    context.read<NavigationCubit>().setIndex(index);
   }
 
   // Get page title based on current index - localized
-  String _getPageTitle(BuildContext context) {
+  String _getPageTitle(BuildContext context, int index) {
     final l10n = AppLocalizations.of(context);
-    switch (_currentIndex) {
+    switch (index) {
       case 0:
         return l10n.tasks;
       case 1:
@@ -56,14 +55,16 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final currentIndex = context.watch<NavigationCubit>().state;
+
     // Hide AppBar for Notes (1) and Calendar (2) pages as they have their own
-    final bool showAppBar = _currentIndex != 1 && _currentIndex != 2;
+    final bool showAppBar = currentIndex != 1 && currentIndex != 2;
 
     return Scaffold(
       key: _scaffoldKey,
       appBar: showAppBar
           ? AppBar(
-              title: Text(_getPageTitle(context)),
+              title: Text(_getPageTitle(context, currentIndex)),
               leading: IconButton(
                 icon: const Icon(Icons.menu),
                 onPressed: () {
@@ -104,10 +105,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       drawer: const AppDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: _pages[_currentIndex],
+        child: _pages[currentIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(

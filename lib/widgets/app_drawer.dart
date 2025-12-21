@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../blocs/navigation/navigation_cubit.dart';
 import '../blocs/theme/theme_cubit.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_localizations.dart';
@@ -82,8 +83,8 @@ class AppDrawer extends StatelessWidget {
                     title: l10n.tasks,
                     subtitle: l10n.manageTodos,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(0);
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, Routes.todo);
                     },
                   ),
                   _DrawerItem(
@@ -91,17 +92,17 @@ class AppDrawer extends StatelessWidget {
                     title: l10n.notes,
                     subtitle: l10n.quickIdeas,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(1);
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, Routes.notes);
                     },
                   ),
                   _DrawerItem(
-                    icon: Icons.alarm_outlined,
-                    title: l10n.reminders,
-                    subtitle: l10n.neverMissTasks,
+                    icon: Icons.calendar_today_outlined,
+                    title: 'Calendar',
+                    subtitle: 'Plan your schedule',
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(2);
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, Routes.reminders);
                     },
                   ),
                   _DrawerItem(
@@ -109,8 +110,8 @@ class AppDrawer extends StatelessWidget {
                     title: l10n.habits,
                     subtitle: l10n.trackDailyHabits,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(3);
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, Routes.habits);
                     },
                   ),
                   const Divider(height: 32, indent: 16, endIndent: 16),
@@ -128,8 +129,8 @@ class AppDrawer extends StatelessWidget {
                     title: l10n.settings,
                     subtitle: l10n.customizeExperience,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(4);
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, Routes.settings);
                     },
                   ),
                 ],
