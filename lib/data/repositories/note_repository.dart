@@ -17,7 +17,7 @@ class NoteRepository {
       final collection = _firestoreService.notes;
       if (collection == null) return [];
 
-      final snapshot = await collection.orderBy('isPinned', descending: true).orderBy('updatedAt', descending: true).get();
+      final snapshot = await collection.get();
       return snapshot.docs.map((doc) {
         return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
@@ -49,7 +49,7 @@ class NoteRepository {
       final collection = _firestoreService.notes;
       if (collection == null) return [];
 
-      final snapshot = await collection.where('category', isEqualTo: category.name).orderBy('isPinned', descending: true).orderBy('updatedAt', descending: true).get();
+      final snapshot = await collection.where('category', isEqualTo: category.name).get();
       return snapshot.docs.map((doc) {
         return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
@@ -68,7 +68,7 @@ class NoteRepository {
       final collection = _firestoreService.notes;
       if (collection == null) return [];
 
-      final snapshot = await collection.where('tags', arrayContains: tag).orderBy('isPinned', descending: true).orderBy('updatedAt', descending: true).get();
+      final snapshot = await collection.where('tags', arrayContains: tag).get();
       return snapshot.docs.map((doc) {
         return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
@@ -240,7 +240,7 @@ class NoteRepository {
       final collection = _firestoreService.notes;
       if (collection == null) return [];
 
-      final snapshot = await collection.where('isLocked', isEqualTo: true).orderBy('updatedAt', descending: true).get();
+      final snapshot = await collection.where('isLocked', isEqualTo: true).get();
       return snapshot.docs.map((doc) {
         return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
@@ -258,7 +258,7 @@ class NoteRepository {
       final collection = _firestoreService.notes;
       if (collection == null) return [];
 
-      final snapshot = await collection.where('type', isEqualTo: NoteType.checklist.name).orderBy('isPinned', descending: true).orderBy('updatedAt', descending: true).get();
+      final snapshot = await collection.where('type', isEqualTo: NoteType.checklist.name).get();
       return snapshot.docs.map((doc) {
         return Note.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
       }).toList();

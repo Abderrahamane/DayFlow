@@ -90,12 +90,14 @@ class PomodoroRepository {
 
       final snapshot = await collection
           .where('linkedTaskId', isEqualTo: taskId)
-          .orderBy('startTime', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) {
+      final sessions = snapshot.docs.map((doc) {
         return PomodoroSession.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
+
+      sessions.sort((a, b) => b.startTime.compareTo(a.startTime));
+      return sessions;
     } else {
       await _ensureDb();
       final result = _localDb.rawDb.select(
@@ -155,12 +157,13 @@ class PomodoroRepository {
       final snapshot = await collection
           .where('completed', isEqualTo: true)
           .where('type', isEqualTo: PomodoroSessionType.work.name)
-          .orderBy('startTime', descending: true)
           .get();
 
       allSessions = snapshot.docs.map((doc) {
         return PomodoroSession.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
       }).toList();
+
+      allSessions.sort((a, b) => b.startTime.compareTo(a.startTime));
     } else {
       await _ensureDb();
       final result = _localDb.rawDb.select(
