@@ -1,7 +1,7 @@
 // lib/widgets/bottom_nav_bar.dart (WITH LOCALIZATION)
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dayflow/utils/app_localizations.dart';
+import 'package:dayflow/utils/navigation_localizations.dart';
 import '../blocs/navigation/navigation_cubit.dart';
 import '../pages/todo_page.dart';
 import '../pages/notes_page.dart';
@@ -37,26 +37,26 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
 
   // Get page title based on current index - localized
   String _getPageTitle(BuildContext context, int index) {
-    final l10n = AppLocalizations.of(context);
+    final navL10n = NavigationLocalizations.of(context);
     switch (index) {
       case 0:
-        return l10n.tasks;
+        return navL10n.tasks;
       case 1:
-        return l10n.notes;
+        return navL10n.notes;
       case 2:
-        return 'Calendar';
+        return navL10n.calendar;
       case 3:
-        return l10n.habits;
+        return navL10n.habits;
       case 4:
-        return l10n.settings;
+        return navL10n.settings;
       default:
-        return l10n.tasks;
+        return navL10n.tasks;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final navL10n = NavigationLocalizations.of(context);
     final navigationState = context.watch<NavigationCubit>().state;
     final currentIndex = navigationState.index;
 
@@ -73,7 +73,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                 onPressed: () {
                   _scaffoldKey.currentState?.openDrawer();
                 },
-                tooltip: l10n.openMenu,
+                tooltip: navL10n.openMenu,
               ),
               actions: [
                 if (currentIndex != 4)
@@ -87,14 +87,14 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(l10n.comingSoon),
+                            content: Text(navL10n.comingSoon),
                             duration: const Duration(seconds: 2),
                             behavior: SnackBarBehavior.floating,
                           ),
                         );
                       }
                     },
-                    tooltip: l10n.search,
+                    tooltip: navL10n.search,
                   ),
                 IconButton(
                   icon: const Icon(Icons.notifications_outlined),
@@ -104,7 +104,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                       MaterialPageRoute(builder: (context) => const NotificationsPage()),
                     );
                   },
-                  tooltip: l10n.notifications,
+                  tooltip: navL10n.notifications,
                 ),
               ],
             )
@@ -121,27 +121,27 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           BottomNavigationBarItem(
             icon: const Icon(Icons.check_circle_outline),
             activeIcon: const Icon(Icons.check_circle),
-            label: l10n.tasks,
+            label: navL10n.tasks,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.note_outlined),
             activeIcon: const Icon(Icons.note),
-            label: l10n.notes,
+            label: navL10n.notes,
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today_outlined),
-            activeIcon: Icon(Icons.calendar_today),
-            label: 'Calendar',
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.calendar_today_outlined),
+            activeIcon: const Icon(Icons.calendar_today),
+            label: navL10n.calendar,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.track_changes_outlined),
             activeIcon: const Icon(Icons.track_changes),
-            label: l10n.habits,
+            label: navL10n.habits,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.settings_outlined),
             activeIcon: const Icon(Icons.settings),
-            label: l10n.settings,
+            label: navL10n.settings,
           ),
         ],
       ),

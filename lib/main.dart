@@ -29,6 +29,8 @@ import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
 import 'utils/calendar_localizations.dart';
 import 'utils/habit_localizations.dart';
+import 'utils/habit_stats_localizations.dart';
+import 'utils/navigation_localizations.dart';
 import 'utils/routes.dart';
 import 'package:dayflow/services/notification_servise.dart';
 
@@ -142,6 +144,8 @@ class DayFlowApp extends StatelessWidget {
                 AppLocalizations.delegate,
                 CalendarLocalizations.delegate,
                 HabitLocalizations.delegate,
+                HabitStatsLocalizations.delegate,
+                NavigationLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,

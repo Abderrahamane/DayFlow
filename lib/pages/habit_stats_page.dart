@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../blocs/habit_stats/habit_stats_bloc.dart';
 import '../models/habit_model.dart';
 import '../theme/app_theme.dart';
-import '../utils/habit_localizations.dart';
+import '../utils/habit_stats_localizations.dart';
 
 class HabitStatsPage extends StatefulWidget {
   const HabitStatsPage({super.key});
@@ -33,7 +33,7 @@ class _HabitStatsPageState extends State<HabitStatsPage>
   }
 
   void _showExportOptions(HabitStatsState state) {
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -96,7 +96,7 @@ class _HabitStatsPageState extends State<HabitStatsPage>
   }
 
   void _exportAsText(HabitStatsState state) {
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final buffer = StringBuffer();
     buffer.writeln(habitL10n.habitStatisticsReport);
     buffer.writeln('${habitL10n.generated}${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())}');
@@ -111,8 +111,8 @@ class _HabitStatsPageState extends State<HabitStatsPage>
     for (final habit in state.habits) {
       buffer.writeln('');
       buffer.writeln('${habit.icon} ${habit.name}');
-      buffer.writeln(habitL10n.currentStreak(habit.currentStreak));
-      buffer.writeln(habitL10n.longestStreak(habit.longestStreak));
+      buffer.writeln(habitL10n.currentStreakParam(habit.currentStreak));
+      buffer.writeln(habitL10n.longestStreakParam(habit.longestStreak));
       buffer.writeln(habitL10n.sevenDayRate(habit.getCompletionRate(7)));
       buffer.writeln(habitL10n.thirtyDayRate(habit.getCompletionRate(30)));
     }
@@ -130,7 +130,7 @@ class _HabitStatsPageState extends State<HabitStatsPage>
   }
 
   void _shareStats(HabitStatsState state) {
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(habitL10n.shareFunctionality),
@@ -142,7 +142,7 @@ class _HabitStatsPageState extends State<HabitStatsPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -241,6 +241,7 @@ class _OverviewTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -257,7 +258,7 @@ class _OverviewTab extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   icon: Icons.percent,
-                  title: 'Completion Rate',
+                  title: habitL10n.completionRate,
                   value: '${state.overallCompletionRate.toStringAsFixed(1)}%',
                   color: theme.colorScheme.primary,
                 ),
@@ -266,7 +267,7 @@ class _OverviewTab extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   icon: Icons.local_fire_department,
-                  title: 'Active Streaks',
+                  title: habitL10n.activeStreaks,
                   value: '${state.totalStreakDays}',
                   color: Colors.orange,
                 ),
@@ -279,7 +280,7 @@ class _OverviewTab extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   icon: Icons.check_circle,
-                  title: 'Total Done',
+                  title: habitL10n.totalDone,
                   value: '${state.totalCompletionsAllTime}',
                   color: AppTheme.successColor,
                 ),
@@ -288,7 +289,7 @@ class _OverviewTab extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   icon: Icons.track_changes,
-                  title: 'Habits',
+                  title: habitL10n.habits,
                   value: '${state.habits.length}',
                   color: theme.colorScheme.secondary,
                 ),
@@ -299,7 +300,7 @@ class _OverviewTab extends StatelessWidget {
 
           // Best performing habit
           if (state.bestPerformingHabit != null) ...[
-            Text('Best Performer',
+            Text(habitL10n.bestPerformer,
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
@@ -312,7 +313,7 @@ class _OverviewTab extends StatelessWidget {
           const SizedBox(height: 24),
 
           // All habits performance
-          Text('All Habits Performance',
+          Text(habitL10n.allHabitsPerformance,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
@@ -338,6 +339,7 @@ class _CompletionRateTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final stats = state.selectedHabitStats;
 
     return SingleChildScrollView(
@@ -358,7 +360,7 @@ class _CompletionRateTab extends StatelessWidget {
 
           if (stats != null) ...[
             // Completion rate chart
-            Text('Completion Rate',
+            Text(habitL10n.completionRate,
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -373,21 +375,21 @@ class _CompletionRateTab extends StatelessWidget {
               children: [
                 Expanded(
                   child: _RateCard(
-                    label: '7 Days',
+                    label: habitL10n.timeRange7Days,
                     rate: stats.completionRate7Days,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _RateCard(
-                    label: '30 Days',
+                    label: habitL10n.timeRange30Days,
                     rate: stats.completionRate30Days,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _RateCard(
-                    label: '90 Days',
+                    label: habitL10n.timeRange90Days,
                     rate: stats.completionRate90Days,
                   ),
                 ),
@@ -396,7 +398,7 @@ class _CompletionRateTab extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Day of week breakdown
-            Text('By Day of Week',
+            Text(habitL10n.byDayOfWeek,
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -420,6 +422,7 @@ class _StreaksTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final stats = state.selectedHabitStats;
 
     return SingleChildScrollView(
@@ -441,7 +444,7 @@ class _StreaksTab extends StatelessWidget {
                 Expanded(
                   child: _StatCard(
                     icon: Icons.local_fire_department,
-                    title: 'Current Streak',
+                    title: habitL10n.currentStreak,
                     value: '${stats.currentStreak} days',
                     color: Colors.orange,
                   ),
@@ -450,7 +453,7 @@ class _StreaksTab extends StatelessWidget {
                 Expanded(
                   child: _StatCard(
                     icon: Icons.emoji_events,
-                    title: 'Longest Streak',
+                    title: habitL10n.longestStreak,
                     value: '${stats.longestStreak} days',
                     color: Colors.amber,
                   ),
@@ -460,7 +463,7 @@ class _StreaksTab extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Streak history chart
-            Text('Streak History',
+            Text(habitL10n.streakHistory,
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -478,7 +481,7 @@ class _StreaksTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'No streak history yet',
+                  habitL10n.noStreakHistoryYet,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.textTheme.bodyMedium?.color?.withAlpha(128),
                   ),
@@ -487,7 +490,7 @@ class _StreaksTab extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Streak leaderboard
-            Text('Streak Leaderboard',
+            Text(habitL10n.streakLeaderboard,
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
@@ -520,6 +523,7 @@ class _HeatmapTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final stats = state.selectedHabitStats;
 
     return SingleChildScrollView(
@@ -535,11 +539,11 @@ class _HeatmapTab extends StatelessWidget {
           const SizedBox(height: 20),
 
           if (stats != null) ...[
-            Text('Activity Heatmap',
+            Text(habitL10n.activityHeatmap,
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Text('Last 90 days',
+            Text(habitL10n.last90Days,
                 style: theme.textTheme.bodySmall
                     ?.copyWith(color: theme.textTheme.bodyMedium?.color?.withAlpha(128))),
             const SizedBox(height: 16),
@@ -547,7 +551,7 @@ class _HeatmapTab extends StatelessWidget {
             const SizedBox(height: 24),
 
             // Monthly breakdown
-            Text('Monthly Activity',
+            Text(habitL10n.monthlyActivity,
                 style: theme.textTheme.titleMedium
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -570,7 +574,7 @@ class _TimeRangeSelector extends StatelessWidget {
   const _TimeRangeSelector({required this.currentRange});
 
   String _getLocalizedRangeName(BuildContext context, StatsTimeRange range) {
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     switch (range) {
       case StatsTimeRange.week7:
         return habitL10n.timeRange7Days;
@@ -782,6 +786,7 @@ class _HabitPerformanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final color = habit.color;
 
     return Container(
@@ -818,7 +823,7 @@ class _HabitPerformanceCard extends StatelessWidget {
                     Icon(Icons.local_fire_department,
                         size: 14, color: Colors.orange),
                     const SizedBox(width: 4),
-                    Text('${habit.currentStreak} day streak',
+                    Text('${habit.currentStreak} ${habitL10n.dayStreak}',
                         style: theme.textTheme.bodySmall),
                   ],
                 ),
@@ -835,7 +840,7 @@ class _HabitPerformanceCard extends StatelessWidget {
                   color: color,
                 ),
               ),
-              Text('completion', style: theme.textTheme.bodySmall),
+              Text(habitL10n.completion, style: theme.textTheme.bodySmall),
             ],
           ),
         ],
@@ -981,7 +986,7 @@ class _DayOfWeekChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final days = habitL10n.daysOfWeek;
     final maxValue =
         data.values.isEmpty ? 1 : data.values.reduce((a, b) => a > b ? a : b);
@@ -1040,7 +1045,6 @@ class _StreakHistoryChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final sortedStreaks = List<StreakPeriod>.from(streaks)
       ..sort((a, b) => a.startDate.compareTo(b.startDate));
 
@@ -1081,8 +1085,7 @@ class _MonthlyActivityChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final months = habitL10n.months;
     final maxValue =
         data.values.isEmpty ? 1 : data.values.reduce((a, b) => a > b ? a : b);
@@ -1142,7 +1145,7 @@ class _HeatmapGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final habitL10n = HabitLocalizations.of(context);
+    final habitL10n = HabitStatsLocalizations.of(context);
     final now = DateTime.now();
     final days = 90;
     final daysOfWeek = habitL10n.daysOfWeek;
