@@ -148,7 +148,7 @@ class SettingsLocalizations {
       'legal_info': 'المعلومات القانونية',
       'app_description': 'DayFlow هو مخططك اليومي النهائي المصمم لمساعدتك على البقاء منظمًا ومنتجًا ومركزًا.',
       'developed_by': 'تطوير بواسطة',
-      'team_members': 'أعضاء الفريق',
+      'team_members': 'عبد الرحمن حوري\nمحمد الأمين سعد\nلينا سلمى وضاح',
       'close': 'إغلاق',
       'coming_soon': 'قريباً',
       'feature_under_development': 'هذه الميزة قيد التطوير',

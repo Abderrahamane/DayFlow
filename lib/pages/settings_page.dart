@@ -754,9 +754,14 @@ class _SettingsPageState extends State<SettingsPage> {
                     await languageCubit.changeLanguage(languageCode);
                     if (!context.mounted) return;
                     Navigator.pop(context);
+
+                    // Load new localization for the snackbar
+                    final newL10n = await SettingsLocalizations.delegate.load(Locale(languageCode));
+
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${settingsL10n.languageChanged} $languageName'),
+                        content: Text('${newL10n.languageChanged} $languageName'),
                         duration: const Duration(seconds: 2),
                         behavior: SnackBarBehavior.floating,
                       ),
