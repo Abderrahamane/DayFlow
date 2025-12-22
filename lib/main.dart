@@ -37,6 +37,8 @@ import 'package:dayflow/services/notification_servise.dart';
 import 'package:dayflow/services/mixpanel_service.dart';
 import 'blocs/navigation/navigation_cubit.dart';
 import 'package:dayflow/services/firestore_service.dart';
+import 'utils/auth_localizations.dart';
+import 'utils/settings_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -146,6 +148,8 @@ class DayFlowApp extends StatelessWidget {
                 HabitLocalizations.delegate,
                 HabitStatsLocalizations.delegate,
                 NavigationLocalizations.delegate,
+                AuthLocalizations.delegate,
+                SettingsLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
