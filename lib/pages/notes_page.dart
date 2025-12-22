@@ -292,7 +292,7 @@ class _NotesPageState extends State<NotesPage> {
 
     if (note.useBiometric) {
       final success = await BiometricService.authenticate(
-        reason: l10n.authenticateToViewNote,
+        reason: l10n.translate('authenticate_to_view_note'),
       );
       if (success) return true;
     }
@@ -311,14 +311,14 @@ class _NotesPageState extends State<NotesPage> {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.enterPin),
+        title: Text(l10n.translate('enter_pin')),
         content: TextField(
           controller: pinController,
           keyboardType: TextInputType.number,
           obscureText: true,
           maxLength: 4,
           decoration: InputDecoration(
-            hintText: l10n.enter4DigitPin,
+            hintText: l10n.translate('enter_4_digit_pin'),
           ),
         ),
         actions: [
@@ -330,7 +330,7 @@ class _NotesPageState extends State<NotesPage> {
             onPressed: () {
               Navigator.pop(ctx, pinController.text == correctPin);
             },
-            child: Text(l10n.unlock),
+            child: Text(l10n.translate('unlock')),
           ),
         ],
       ),
@@ -339,41 +339,35 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _showNoteOptions(BuildContext context, Note note) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
+      builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(
-                  note.isPinned ? Icons.push_pin : Icons.push_pin_outlined),
-              title: Text(note.isPinned ? l10n.unpin : l10n.pinToTop),
+              title: Text(note.isPinned
+                  ? l10n.translate('unpin')
+                  : l10n.translate('pin_to_top')),
               onTap: () {
                 Navigator.pop(ctx);
                 context.read<NoteBloc>().add(ToggleNotePinEvent(note.id));
               },
             ),
             ListTile(
-              leading: const Icon(Icons.palette),
-              title: Text(l10n.changeColor),
+              title: Text(l10n.translate('change_color')),
               onTap: () {
                 Navigator.pop(ctx);
                 _showColorPicker(context, note);
               },
             ),
             ListTile(
-              leading: Icon(note.isLocked ? Icons.lock_open : Icons.lock),
-              title: Text(note.isLocked ? l10n.removeLock : l10n.lockNote),
+              title: Text(note.isLocked
+                  ? l10n.translate('remove_lock')
+                  : l10n.translate('lock_note')),
               onTap: () {
                 Navigator.pop(ctx);
                 if (note.isLocked) {
@@ -384,10 +378,7 @@ class _NotesPageState extends State<NotesPage> {
               },
             ),
             ListTile(
-              leading:
-                  Icon(Icons.delete_outline, color: theme.colorScheme.error),
-              title: Text(l10n.delete,
-                  style: TextStyle(color: theme.colorScheme.error)),
+              title: Text(l10n.translate('delete_note')),
               onTap: () {
                 Navigator.pop(ctx);
                 _confirmDelete(context, note);
@@ -424,7 +415,7 @@ class _NotesPageState extends State<NotesPage> {
             ),
             const SizedBox(height: 20),
             Text(
-              l10n.chooseColor,
+              l10n.translate('choose_color'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -547,8 +538,8 @@ class _NotesPageState extends State<NotesPage> {
             // Biometric option
             _LockOptionCard(
               icon: Icons.fingerprint,
-              title: l10n.biometrics,
-              subtitle: l10n.useFingerprintOrFace,
+              title: l10n.translate('biometrics'),
+              subtitle: l10n.translate('use_fingerprint_or_face'),
               color: Colors.green,
               onTap: () async {
                 final canAuth = await BiometricService.canAuthenticate();
@@ -559,14 +550,14 @@ class _NotesPageState extends State<NotesPage> {
                       );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(l10n.noteLockedWithBiometrics),
+                      content: Text(l10n.translate('note_locked_with_biometrics')),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(l10n.biometricsNotAvailable),
+                      content: Text(l10n.translate('biometrics_not_available')),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -577,8 +568,8 @@ class _NotesPageState extends State<NotesPage> {
             // PIN option
             _LockOptionCard(
               icon: Icons.pin,
-              title: l10n.pinCode,
-              subtitle: l10n.set4DigitSecurityCode,
+              title: l10n.translate('pin_code'),
+              subtitle: l10n.translate('set_4_digit_security_code'),
               color: Colors.blue,
               onTap: () {
                 Navigator.pop(ctx);
@@ -589,8 +580,8 @@ class _NotesPageState extends State<NotesPage> {
             // Both option
             _LockOptionCard(
               icon: Icons.security,
-              title: l10n.both,
-              subtitle: l10n.useBiometricsWithPinBackup,
+              title: l10n.translate('both'),
+              subtitle: l10n.translate('use_biometrics_with_pin_backup'),
               color: Colors.purple,
               onTap: () async {
                 final canAuth = await BiometricService.canAuthenticate();
@@ -600,7 +591,7 @@ class _NotesPageState extends State<NotesPage> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(l10n.biometricsNotAvailableUsingPin),
+                      content: Text(l10n.translate('biometrics_not_available_using_pin')),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -629,14 +620,14 @@ class _NotesPageState extends State<NotesPage> {
           children: [
             Icon(Icons.security, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 12),
-            Text(l10n.setBackupPin),
+            Text(l10n.translate('set_backup_pin')),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              l10n.setPinBackupForBiometrics,
+              l10n.translate('set_pin_backup_for_biometrics'),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey,
                   ),
@@ -666,7 +657,7 @@ class _NotesPageState extends State<NotesPage> {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 24, letterSpacing: 8),
               decoration: InputDecoration(
-                hintText: l10n.confirmPin,
+                hintText: l10n.translate('confirm_pin'),
                 counterText: '',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -691,14 +682,14 @@ class _NotesPageState extends State<NotesPage> {
                     );
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(l10n.noteLockedWithBiometrics),
+                    content: Text(l10n.translate('note_locked_with_biometrics')),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               } else if (pinController.text != confirmController.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(l10n.pinsDoNotMatch),
+                    content: Text(l10n.translate('pins_do_not_match')),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
@@ -724,14 +715,14 @@ class _NotesPageState extends State<NotesPage> {
           children: [
             Icon(Icons.pin, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 12),
-            Text(l10n.pinCode),
+            Text(l10n.translate('pin_code')),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              l10n.set4DigitSecurityCode,
+              l10n.translate('set_4_digit_security_code'),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey,
                   ),
@@ -761,7 +752,7 @@ class _NotesPageState extends State<NotesPage> {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 24, letterSpacing: 8),
               decoration: InputDecoration(
-                hintText: l10n.confirmPin,
+                hintText: l10n.translate('confirm_pin'),
                 counterText: '',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -792,7 +783,7 @@ class _NotesPageState extends State<NotesPage> {
               } else if (pinController.text != confirmController.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(l10n.pinsDoNotMatch),
+                    content: Text(l10n.translate('pins_do_not_match')),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
@@ -805,14 +796,14 @@ class _NotesPageState extends State<NotesPage> {
     );
   }
 
-  void _confirmDelete(BuildContext context, Note note) {
+  Future<void> _confirmDelete(BuildContext context, Note note) async {
     final l10n = AppLocalizations.of(context);
 
-    showDialog(
+    await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.deleteNote),
-        content: Text(l10n.deleteNoteConfirmMsg),
+        title: Text(l10n.translate('delete_note')),
+        content: Text(l10n.translate('delete_note_confirm_msg')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -896,7 +887,9 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              hasFilter ? l10n.noNotesMatchingFilters : l10n.noNotesYet,
+              hasFilter
+                  ? l10n.translate('no_notes_matching_filters')
+                  : l10n.translate('no_notes_yet'),
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -904,8 +897,8 @@ class _EmptyState extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               hasFilter
-                  ? l10n.tryAdjustingYourFilters
-                  : l10n.startCreatingNotes,
+                  ? l10n.translate('try_adjusting_your_filters')
+                  : l10n.translate('start_creating_notes'),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.textTheme.bodyMedium?.color?.withAlpha(179),
@@ -916,7 +909,7 @@ class _EmptyState extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onCreate,
                 icon: const Icon(Icons.add),
-                label: Text(l10n.createFirstNote),
+                label: Text(l10n.translate('create_first_note')),
               ),
             ],
           ],
@@ -955,7 +948,7 @@ class _NotesGrid extends StatelessWidget {
                 const Icon(Icons.push_pin, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  l10n.pinned,
+                  l10n.translate('pinned'),
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -970,7 +963,7 @@ class _NotesGrid extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 8),
             child: Text(
-              l10n.others,
+              l10n.translate('others'),
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -1068,7 +1061,7 @@ class _NoteCard extends StatelessWidget {
             const SizedBox(height: 8),
             // Title
             Text(
-              note.title.isEmpty ? l10n.untitled : note.title,
+              note.title.isEmpty ? l10n.translate('untitled') : note.title,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -1130,6 +1123,8 @@ class _ChecklistPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     final displayItems = items.take(4).toList();
     final remaining = items.length - 4;
 
@@ -1166,7 +1161,7 @@ class _ChecklistPreview extends StatelessWidget {
             )),
         if (remaining > 0)
           Text(
-            '+$remaining more',
+            '+$remaining ${l10n.translate('more')}',
             style: TextStyle(
               fontSize: 11,
               color: textColor.withAlpha(128),
@@ -1205,9 +1200,11 @@ class _FilterSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Text('By Type',
-                  style: theme.textTheme.labelLarge
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                l10n.byType,
+                style: theme.textTheme.labelLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -1225,9 +1222,11 @@ class _FilterSheet extends StatelessWidget {
                 }).toList(),
               ),
               const SizedBox(height: 16),
-              Text('By Category',
-                  style: theme.textTheme.labelLarge
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                l10n.byCategory,
+                style: theme.textTheme.labelLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -1246,9 +1245,11 @@ class _FilterSheet extends StatelessWidget {
               ),
               if (state.allTags.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                Text('By Tag',
-                    style: theme.textTheme.labelLarge
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  l10n.byTag,
+                  style: theme.textTheme.labelLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -1351,4 +1352,6 @@ class _LockOptionCard extends StatelessWidget {
     );
   }
 }
+
+
 

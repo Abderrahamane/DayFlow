@@ -531,23 +531,27 @@ class AppLocalizations {
   String get richTextNote => translate('rich_text_note');
   String get withFormattingOptions => translate('with_formatting_options');
   String get failedToLoadNotes => translate('failed_to_load_notes');
+
+  // Notes common
   String get retry => translate('retry');
   String get clearAll => translate('clear_all');
-  String get filterNotes => translate('filter_notes');
+  String get more => translate('more');
 
+  // Notes protection / locking
   String get authenticateToViewNote => translate('authenticate_to_view_note');
   String get enterPin => translate('enter_pin');
   String get enter4DigitPin => translate('enter_4_digit_pin');
   String get unlock => translate('unlock');
 
+  // Notes actions/options
   String get pinToTop => translate('pin_to_top');
   String get unpin => translate('unpin');
   String get changeColor => translate('change_color');
   String get lockNote => translate('lock_note');
   String get removeLock => translate('remove_lock');
-
   String get chooseColor => translate('choose_color');
 
+  // Notes lock options
   String get secureYourNote => translate('secure_your_note');
   String get chooseHowToProtectNote => translate('choose_how_to_protect_note');
   String get biometrics => translate('biometrics');
@@ -558,27 +562,33 @@ class AppLocalizations {
   String get set4DigitSecurityCode => translate('set_4_digit_security_code');
   String get both => translate('both');
   String get useBiometricsWithPinBackup => translate('use_biometrics_with_pin_backup');
-  String get biometricsNotAvailableUsingPin => translate('biometrics_not_available_using_pin');
-
+  String get biometricsNotAvailableUsingPin =>
+      translate('biometrics_not_available_using_pin');
   String get setBackupPin => translate('set_backup_pin');
   String get setPinBackupForBiometrics => translate('set_pin_backup_for_biometrics');
-  String get pin => translate('pin');
   String get confirmPin => translate('confirm_pin');
   String get pinsDoNotMatch => translate('pins_do_not_match');
-  String get pinMustBe4Digits => translate('pin_must_be_4_digits');
 
+  // Notes delete dialogs
   String get deleteNote => translate('delete_note');
   String get deleteNoteConfirmMsg => translate('delete_note_confirm_msg');
 
+  // Notes empty state
   String get noNotesYet => translate('no_notes_yet');
   String get noNotesMatchingFilters => translate('no_notes_matching_filters');
-  String get createFirstNote => translate('create_first_note');
-
-  // Notes sections & empty-state helper strings
-  String get pinned => translate('pinned');
-  String get others => translate('others');
   String get tryAdjustingYourFilters => translate('try_adjusting_your_filters');
   String get startCreatingNotes => translate('start_creating_notes');
+  String get createFirstNote => translate('create_first_note');
+
+  // Notes sections
+  String get pinned => translate('pinned');
+  String get others => translate('others');
+
+  // Notes filter sheet labels
+  String get filterNotes => translate('filter_notes');
+  String get byType => translate('by_type');
+  String get byCategory => translate('by_category');
+  String get byTag => translate('by_tag');
 
   // Note editor
   String get untitled => translate('untitled');
@@ -591,8 +601,34 @@ class AppLocalizations {
   String get startWritingHint => translate('start_writing_hint');
   String get resetToDefault => translate('reset_to_default');
   String get none => translate('none');
+  String get tags => translate('tags');
   String get addTagHint => translate('add_tag_hint');
+  String get done => translate('done');
+  String get selectBackground => translate('select_background');
+  String get selectColorMood => translate('select_color_mood');
+  String get selectCategory => translate('select_category');
+  String get addCategory => translate('add_category');
+  String get addTags => translate('add_tags');
+  String get addItem => translate('add_item');
+  String get completed => translate('completed');
+
+  // Note editor attachments
+  String get images => translate('images');
+  String get files => translate('files');
+
+  // Note editor actions
+  String get deleteNoteAction => translate('delete_note_action');
+  String get duplicateNote => translate('duplicate_note');
+  String get share => translate('share');
+  String get noteDuplicated => translate('note_duplicated');
+  String get copySuffix => translate('copy_suffix');
+  String get takePhoto => translate('take_photo');
+  String get chooseFromGallery => translate('choose_from_gallery');
 }
+
+// ------------------------------
+// Delegate + translation maps
+// ------------------------------
 
 class _AppLocalizationsDelegate
     extends LocalizationsDelegate<AppLocalizations> {
@@ -625,495 +661,6 @@ final Map<String, String> _enTranslations = {
   ...TemplatesTranslations.en,
   ...TaskDetailTranslations.en,
   ...NotesTranslations.en,
-  'app_name': 'DayFlow',
-  'welcome': 'Welcome',
-  'get_started': 'Get Started',
-  'sign_in': 'Sign In',
-  'already_have_account': 'Already have an account?',
-  'cancel': 'Cancel',
-  'save': 'Save',
-  'close': 'Close',
-  'change': 'Change',
-  'got_it': 'Got it',
-  'loading': 'Loading...',
-
-  'login': 'Login',
-  'signup': 'Sign Up',
-  'logout': 'Logout',
-  'email': 'Email',
-  'password': 'Password',
-  'full_name': 'Full Name',
-  'confirm_password': 'Confirm Password',
-  'forgot_password': 'Forgot Password?',
-  'reset_password': 'Reset Password',
-  'send_reset_link': 'Send Reset Link',
-  'back_to_login': 'Back to Login',
-  'create_account': 'Create Account',
-  'welcome_back': 'Welcome Back!',
-  'sign_in_to_continue': 'Sign in to continue to DayFlow',
-  'sign_up_to_get_started': 'Sign up to get started with DayFlow',
-  'dont_have_account': "Don't have an account?",
-  'continue_with_google': 'Continue with Google',
-  'verify_your_email': 'Verify Your Email',
-  'email_verification_sent': "We've sent a verification email to",
-  'resend_verification_email': 'Resend Verification Email',
-  'use_different_account': 'Use Different Account',
-  'checking_verification_status': 'Checking verification status...',
-
-  // Dialogs
-  'coming_soon': 'Coming Soon',
-  'feature_under_development': 'This feature is under development',
-  'working_hard_on_feature':
-      "We're working hard to bring you this feature soon!",
-  'logout_confirmation': 'Logout',
-  'are_you_sure_logout': 'Are you sure you want to logout?',
-  'logout_success': 'Logged out successfully',
-  'language_changed': 'Language changed to',
-  'theme_changed': 'Theme changed to',
-  'profile_updated': 'Profile updated successfully',
-  'password_changed': 'Password changed successfully',
-
-  // Validation
-  'please_enter_email': 'Please enter your email',
-  'please_enter_valid_email': 'Please enter a valid email',
-  'please_enter_password': 'Please enter your password',
-  'password_too_short': 'Password must be at least 6 characters',
-  'please_enter_name': 'Please enter your name',
-  'name_too_short': 'Name must be at least 3 characters',
-  'please_confirm_password': 'Please confirm your password',
-  'passwords_do_not_match': 'Passwords do not match',
-  'password_must_be_different': 'New password must be different',
-  'please_enter_current_password': 'Please enter current password',
-  'please_enter_new_password': 'Please enter new password',
-
-  // Input Placeholders
-  'enter_email': 'Enter your email',
-  'enter_password': 'Enter your password',
-  'enter_name': 'Enter your full name',
-  're_enter_password': 'Re-enter your password',
-  'enter_current_password': 'Enter current password',
-  'enter_new_password': 'Enter new password',
-
-  // About
-  'app_description': 'DayFlow is your smart daily planner, designed to help you organize tasks, capture ideas, and never miss a reminder.',
-  'developed_by': 'Developed by: Your Name',
-  'team_members': 'Team Members: Member1, Member2, Member3',
-
-  // Welcome Page
-  'your_smart_daily_planner': 'Your Smart Daily Planner',
-  'organize_tasks': 'Organize Tasks',
-  'capture_ideas': 'Capture Ideas',
-  'never_miss_reminders': 'Never Miss Reminders',
-
-  // Onboarding
-  'skip': 'Skip',
-  'next': 'Next',
-  'organize_your_tasks': 'Organize Your Tasks',
-  'organize_tasks_desc': 'Easily organize and prioritize your tasks in one place.',
-  'capture_your_ideas': 'Capture Your Ideas',
-  'capture_ideas_desc': 'Quickly jot down your ideas and inspirations.',
-  'set_smart_reminders': 'Set Smart Reminders',
-  'set_reminders_desc': 'Get reminded of your tasks and events at the right time.',
-  'track_your_habits': 'Track Your Habits',
-  'track_habits_desc': 'Monitor your habits and stay consistent.',
-
-  // Auth Pages
-  'remember_password': 'Remember Password?',
-  'check_your_email': 'Check Your Email',
-  'forgot_password_desc': 'Enter your email address and we\'ll send you a link to reset your password.',
-  'reset_email_sent': 'Reset Email Sent',
-  'resend_email': 'Resend Email',
-  'didnt_receive_email': 'Didn\'t receive the email?',
-  'check_spam_folder': 'Check your spam or junk folder.',
-  'email_verified_success': 'Email verified successfully!',
-  'verification_email_to': 'Verification email sent to',
-  'check_inbox_and_click': 'Check your inbox and click the verification link.',
-  'resend_in': 'Resend in {minutes} minutes',
-  'i_agree_to_the': 'I agree to the',
-  'terms_conditions': 'Terms and Conditions',
-  'and': 'and',
-  'privacy_policy': 'Privacy Policy',
-  'please_accept_terms': 'Please accept the terms and conditions to continue.',
-  'or': 'or',
-  'make_email_correct': 'Please make sure your email is correct.',
-  'wait_and_resend': 'Wait for a few minutes before resending the verification email.',
-
-  // Navigation & Drawer
-  'tasks': 'Tasks',
-  'notes': 'Notes',
-  'reminders': 'Reminders',
-  'habits': 'Habits',
-  'manage_todos': 'Manage Todos',
-  'quick_ideas': 'Quick Ideas',
-  'never_miss_tasks': 'Never Miss Tasks',
-  'track_daily_habits': 'Track Daily Habits',
-  'statistics': 'Statistics',
-  'view_progress': 'View Progress',
-  'customize_experience': 'Customize Experience',
-  'habits_page_coming_soon': 'Habits page is coming soon!',
-  'statistics_coming_soon': 'Statistics feature is coming soon!',
-  'open_menu': 'Open Menu',
-  'search': 'Search',
-
-  // Help & Support
-  'how_can_we_help': 'How can we help you?',
-  'find_answers': 'Find Answers',
-  'contact_us': 'Contact Us',
-  'email_support': 'Email Support',
-  'live_chat': 'Live Chat',
-  'chat_with_team': 'Chat with our team',
-  'report_problem': 'Report a Problem',
-  'let_us_know': 'Let us know how we can help you.',
-  'faq': 'FAQ',
-  'resources': 'Resources',
-  'user_guide': 'User Guide',
-  'learn_how_to_use': 'Learn how to use DayFlow',
-  'video_tutorials': 'Video Tutorials',
-  'watch_guides': 'Watch Guides',
-  'tips_tricks': 'Tips & Tricks',
-  'get_most_out': 'Get the most out of DayFlow',
-  'problem_type': 'Problem Type',
-  'description': 'Description',
-  'describe_issue': 'Please describe your issue or question.',
-  'submit': 'Submit',
-  'problem_report_submitted': 'Your problem report has been submitted.',
-  'faq_create_task': 'How to create a task?',
-  'faq_create_task_answer': 'To create a task, go to the Tasks tab and click on "Add Task".',
-  'faq_dark_mode': 'How to enable dark mode?',
-  'faq_dark_mode_answer': 'To enable dark mode, go to Settings > Appearance > Theme and select "Dark Mode".',
-  'faq_sync_data': 'How to sync data across devices?',
-  'faq_sync_data_answer': 'To sync data, make sure you are logged in with the same account on all devices and enable "Sync with Cloud" in Settings.',
-  'faq_set_reminders': 'How to set reminders?',
-  'faq_set_reminders_answer': 'To set reminders, go to the task details and select "Add Reminder".',
-  'faq_backup_data': 'How to backup data?',
-  'faq_backup_data_answer': 'To backup data, go to Settings > Backup & Sync and select "Backup Now".',
-  'faq_export_data': 'How to export data?',
-  'faq_export_data_answer': 'To export data, go to Settings > Backup & Sync and select "Export Data".',
-
-  // Pomodoro
-  'pomodoro_timer': 'Pomodoro Timer',
-  'session_history': 'Session History',
-  'timer_finished': 'Timer Finished',
-  'what_would_you_like_to_do': 'What would you like to do now?',
-  'extend_5m': 'Extend 5 minutes',
-  'stop': 'Stop',
-  'focus_time': 'Focus Time',
-  'streak': 'Streak',
-  'start_focus': 'Start Focus',
-  'link_to_task': 'Link to Task',
-  'working_on': 'Working on',
-  'no_sessions_today': 'No sessions recorded for today.',
-  'start_focus_session_msg': 'Start a focus session to improve your productivity.',
-  'todays_sessions': 'Today\'s Sessions',
-  'focus_session': 'Focus Session',
-  'select_task': 'Select Task',
-  'no_pending_tasks': 'No pending tasks found.',
-  'due_prefix': 'Due: ',
-  'sessions_suffix': ' sessions',
-  'sessions_label': 'Sessions',
-  'no_sessions_yet': 'No sessions recorded yet.',
-  'timer_settings': 'Timer Settings',
-  'work_duration': 'Work Duration',
-  'short_break': 'Short Break',
-  'long_break': 'Long Break',
-  'sessions_before_long_break': 'Sessions before long break',
-  'auto_start_breaks': 'Auto Start Breaks',
-  'auto_start_breaks_desc': 'Automatically start breaks after a session ends.',
-  'auto_start_work': 'Auto Start Work',
-  'auto_start_work_desc': 'Automatically start the next work session.',
-  'sound': 'Sound',
-  'sound_desc': 'Select the sound for the timer.',
-  'session_type_work': 'Work',
-  'session_type_short_break': 'Short Break',
-  'session_type_long_break': 'Long Break',
-  'min_suffix': 'min',
-  'minutes': 'minutes',
-
-  // Templates
-  'task_templates': 'Task Templates',
-  'search_templates': 'Search Templates',
-  'create_template': 'Create Template',
-  'edit_template': 'Edit Template',
-  'template_name': 'Template Name',
-  'template_name_hint': 'Enter a name for the template',
-  'default_priority': 'Default Priority',
-  'estimated_duration': 'Estimated Duration',
-  'category': 'Category',
-  'category_hint': 'Select a category for the task',
-  'save_template': 'Save Template',
-  'create_task_from_template': 'Create Task from Template',
-  'view': 'View',
-  'no_templates_found': 'No templates found.',
-  'no_templates_yet': 'No templates created yet.',
-  'create_first_template': 'Create your first template',
-  'delete_template': 'Delete Template',
-  'delete_template_confirmation': 'Are you sure you want to delete this template?',
-  'template_deleted': 'Template deleted successfully.',
-  'template_saved': 'Template saved successfully.',
-  'use_template': 'Use Template',
-  'popular_templates': 'Popular Templates',
-  'recent_templates': 'Recent Templates',
-  'all_templates': 'All Templates',
-  'icon': 'Icon',
-  'task_settings': 'Task Settings',
-  'subtasks': 'Subtasks',
-  'add': 'Add',
-
-  // Backup
-  'backup_status': 'Backup Status',
-  'last_backup': 'Last Backup',
-  'no_backups_yet': 'No backups found.',
-  'quick_actions': 'Quick Actions',
-  'backup_now': 'Backup Now',
-  'restore_backup': 'Restore Backup',
-  'sync_with_cloud': 'Sync with Cloud',
-  'backup_settings': 'Backup Settings',
-  'auto_backup': 'Auto Backup',
-  'auto_backup_daily': 'Auto Backup Daily',
-  'cloud_sync': 'Cloud Sync',
-  'sync_across_devices': 'Sync Across Devices',
-  'encrypt_data': 'Encrypt Data',
-  'secure_backups': 'Secure Backups',
-  'clear_cache': 'Clear Cache',
-  'free_up_storage': 'Free Up Storage',
-  'delete_all_data': 'Delete All Data',
-  'permanently_remove': 'Permanently Remove',
-  'processing': 'Processing...',
-  'backup_completed': 'Backup completed successfully.',
-  'backup_restored': 'Backup restored successfully.',
-  'synced_cloud': 'Data synced with cloud.',
-  'restore_confirm': 'Are you sure you want to restore this backup?',
-  'delete_data_confirm': 'Are you sure you want to delete all data?',
-  'clear_cache_confirm': 'Are you sure you want to clear the cache?',
-  'cache_cleared': 'Cache cleared.',
-  'all_data_deleted': 'All data deleted.',
-  'delete_all': 'Delete All',
-  'clear': 'Clear',
-  'restore': 'Restore',
-
-  // Terms & Privacy
-  'terms_of_service': 'Terms of Service',
-  'privacy_policy_title': 'Privacy Policy',
-  'last_updated': 'Last Updated',
-  'by_using_dayflow': 'By using DayFlow, you agree to our Terms of Service and Privacy Policy.',
-
-  // Reminders Page Localization
-  'remindersRetry': 'Retry',
-  'remindersNoRemindersTitle': 'No Reminders Yet',
-  'remindersNoRemindersSubtitle': 'You have not set any reminders yet.',
-  'remindersToday': 'Today\'s Reminders',
-  'remindersTomorrow': 'Tomorrow\'s Reminders',
-  'remindersUpcoming': 'Upcoming Reminders',
-  'remindersSomethingWrong': 'Something went wrong. Please try again.',
-
-  // Reminders model page Localization
-  'weekdayMonday': 'Monday',
-  'weekdayTuesday': 'Tuesday',
-  'weekdayWednesday': 'Wednesday',
-  'weekdayThursday': 'Thursday',
-  'weekdayFriday': 'Friday',
-  'weekdaySaturday': 'Saturday',
-  'weekdaySunday': 'Sunday',
-
-  // Reminder add dialog Localization
-  'reminderCreateTitle': 'Create Reminder',
-  'reminderTitle': 'Reminder Title',
-  'reminderEnterTitle': 'Enter a title for your reminder',
-  'reminderDescriptionOptional': 'Description (optional)',
-  'reminderEnterDescription': 'Enter a description for your reminder',
-  'reminderSelectTime': 'Select Time',
-  'reminderAdd': 'Add Reminder',
-  'reminderErrorTitleRequired': 'Title is required',
-  'reminderErrorTimeRequired': 'Time is required',
-  'reminderAdded': 'Reminder added successfully.',
-
-  // reminders item Localization
-  'reminderEditTitle': 'Edit Reminder',
-  'update': 'Update',
-  'editReminder': 'Edit Reminder',
-  'deleteReminder': 'Delete Reminder',
-  'enableReminder': 'Enable Reminder',
-  'disableReminder': 'Disable Reminder',
-  'reminderDeleteConfirmation': 'Are you sure you want to delete this reminder?',
-  'reminderUpdated': 'Reminder updated successfully.',
-  'reminderDeleted': 'Reminder deleted successfully.',
-  'delete': 'Delete',
-  'reminderInfoTaskLocked': 'This reminder is linked to a locked task.',
-  'task': 'Task',
-
-  // Tasks Page
-  'todays_list': 'Today\'s Tasks',
-  'failed_to_load_tasks': 'Failed to load tasks. Please try again.',
-  'create_new_task': 'Create New Task',
-  'edit_task': 'Edit Task',
-  'task_title': 'Task Title',
-  'required': 'Required',
-  'tags_hint': 'Enter tags separated by commas',
-  'set_due_date': 'Set Due Date',
-  'add_recurrence': 'Add Recurrence',
-  'add_task': 'Add Task',
-  'update_task': 'Update Task',
-  'task_added': 'Task added successfully.',
-  'task_updated': 'Task updated successfully.',
-  'no_tasks_yet': 'No tasks found. Create your first task!',
-  'create_first_task': 'Create your first task',
-
-  // Task Filter Bar
-  'sorted_by': 'Sorted by',
-  'filter_and_sort': 'Filter & Sort',
-  'all_tasks': 'All Tasks',
-  'pending_tasks': 'Pending Tasks',
-  'completed_tasks': 'Completed Tasks',
-  'todays_tasks': 'Today\'s Tasks',
-  'overdue_tasks': 'Overdue Tasks',
-  'filter_by': 'Filter by',
-  'sort_by': 'Sort by',
-  'apply': 'Apply',
-
-  // Priorities
-  'priority_none': 'No Priority',
-  'priority_low': 'Low Priority',
-  'priority_medium': 'Medium Priority',
-  'priority_high': 'High Priority',
-
-  // Sort Options
-  'sort_date_created': 'Sort by Date Created',
-  'sort_due_date': 'Sort by Due Date',
-  'sort_priority': 'Sort by Priority',
-  'sort_alphabetical': 'Sort Alphabetically',
-
-  // Recurrence
-  'repeat': 'Repeat',
-  'recurrence_none': 'Does not repeat',
-  'recurrence_daily': 'Daily',
-  'recurrence_weekly': 'Weekly',
-  'recurrence_monthly': 'Monthly',
-  'recurrence_custom': 'Custom',
-
-  // Recurrence Picker
-  'recurrence_repeat': 'Repeat',
-  'recurrence_every': 'Every',
-  'recurrence_day': 'day',
-  'recurrence_days': 'days',
-  'recurrence_week': 'week',
-  'recurrence_weeks': 'weeks',
-  'recurrence_month': 'month',
-  'recurrence_months': 'months',
-  'recurrence_on_these_days': 'On these days',
-  'recurrence_on_day': 'On day',
-  'recurrence_of_the_month': 'of the month',
-  'recurrence_ends': 'Ends',
-  'recurrence_on_specific_date': 'On specific date',
-  'recurrence_on_date': 'On date',
-  'recurrence_after': 'After',
-  'recurrence_occurrences': 'occurrences',
-  'recurrence_never': 'Never',
-  'recurrence_until': 'Until',
-  'recurrence_times': 'times',
-
-  // Task Card
-  'no_due_date': 'No due date',
-  'overdue_prefix': 'Overdue: ',
-  'due_today_prefix': 'Due today: ',
-
-  // Dialogs
-  'coming_soon': 'Coming Soon',
-
-  // Quote
-  'quote_text': 'The only way to do great work is to love what you do. - Steve Jobs',
-  'quote_author': 'Steve Jobs',
-
-  // Recurrence Descriptions
-  'recurrence_does_not_repeat': 'This task does not repeat.',
-  'recurrence_repeats_daily': 'This task repeats daily.',
-  'recurrence_repeats_every_days': 'This task repeats every {days} days.',
-  'recurrence_repeats_weekly_on': 'This task repeats weekly on {day}.',
-  'recurrence_repeats_weekly': 'This task repeats weekly.',
-  'recurrence_repeats_every_weeks': 'This task repeats every {weeks} weeks.',
-  'recurrence_repeats_monthly': 'This task repeats monthly.',
-  'recurrence_repeats_every_months': 'This task repeats every {months} months.',
-  'recurrence_custom_every_days': 'This task has a custom recurrence every {days} days.',
-
-  // Task Detail
-  'delete_task_question': 'Are you sure you want to delete this task?',
-  'delete_task_confirmation': 'Delete Task',
-  'save_as_template': 'Save as Template',
-  'create_template_from_task_desc': 'Create a template from this task',
-  'template_created_success': 'Template created successfully.',
-  'task_not_found': 'Task not found.',
-  'task_not_found_msg': 'The task you are looking for does not exist.',
-  'days_overdue': '{days} days overdue',
-  'due_today': 'Due today',
-  'days_left': '{days} days left',
-  'completed_count': 'Completed: {count}',
-
-  // Notes
-  'notes': 'Notes',
-  'search_notes_hint': 'Search notes...',
-  'create_new': 'Create New',
-  'text_note': 'Text Note',
-  'simple_text_note': 'Simple Text Note',
-  'checklist': 'Checklist',
-  'task_list_with_checkboxes': 'Task List with Checkboxes',
-  'rich_text_note': 'Rich Text Note',
-  'with_formatting_options': 'With formatting options',
-  'failed_to_load_notes': 'Failed to load notes. Please try again.',
-  'retry': 'Retry',
-  'clear_all': 'Clear All',
-
-  'authenticate_to_view_note': 'Authenticate to view note',
-  'enter_pin': 'Enter PIN',
-  'enter_4_digit_pin': 'Enter 4-digit PIN',
-  'unlock': 'Unlock',
-
-  'pin_to_top': 'Pin to Top',
-  'unpin': 'Unpin',
-  'change_color': 'Change Color',
-  'lock_note': 'Lock Note',
-  'remove_lock': 'Remove Lock',
-
-  'choose_color': 'Choose Color',
-
-  'secure_your_note': 'Secure your note',
-  'choose_how_to_protect_note': 'Choose how to protect your note',
-  'biometrics': 'Biometrics',
-  'use_fingerprint_or_face': 'Use fingerprint or face recognition',
-  'note_locked_with_biometrics': 'This note is locked with biometrics.',
-  'biometrics_not_available': 'Biometrics not available.',
-  'pin_code': 'PIN Code',
-  'set_4_digit_security_code': 'Set a 4-digit security code',
-  'both': 'Both',
-  'use_biometrics_with_pin_backup': 'Use biometrics with PIN backup',
-  'biometrics_not_available_using_pin': 'Biometrics not available, using PIN instead.',
-
-  'set_backup_pin': 'Set Backup PIN',
-  'set_pin_backup_for_biometrics': 'Set PIN backup for biometrics',
-  'pin': 'PIN',
-  'confirm_pin': 'Confirm PIN',
-  'pins_do_not_match': 'PINs do not match',
-  'pin_must_be_4_digits': 'PIN must be 4 digits',
-
-  'delete_note': 'Delete Note',
-  'delete_note_confirm_msg': 'Are you sure you want to delete this note?',
-
-  'no_notes_yet': 'No notes found. Create your first note!',
-  'no_notes_matching_filters': 'No notes matching the current filters.',
-  'create_first_note': 'Create your first note',
-
-  'filter_notes': 'Filter Notes',
-
-  // Note editor
-  'untitled': 'Untitled',
-  'note_created': 'Note created',
-  'note_updated': 'Note updated',
-  'discard_changes': 'Discard changes?',
-  'unsaved_changes_discard': 'You have unsaved changes. Discard them?',
-  'discard': 'Discard',
-  'title_hint': 'Title',
-  'start_writing_hint': 'Start writing your note...',
-  'reset_to_default': 'Reset to default',
-  'none': 'None',
-  'add_tag_hint': 'Add a tag',
 };
 
 // French Translations

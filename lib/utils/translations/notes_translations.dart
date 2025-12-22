@@ -70,6 +70,11 @@ class NotesTranslations {
     'all': 'All',
     'apply': 'Apply',
 
+    // Notes filter sheet
+    'by_type': 'By Type',
+    'by_category': 'By Category',
+    'by_tag': 'By Tag',
+
     // Note editor (minimal, used by NoteEditorPage too)
     'untitled': 'Untitled',
     'note_created': 'Note created',
@@ -83,11 +88,35 @@ class NotesTranslations {
     'none': 'None',
     'add_tag_hint': 'Add tag...',
 
+    // Note editor - fields & dialogs
+    'done': 'Done',
+    'select_background': 'Choose Background',
+    'select_color_mood': 'Select a color that matches your mood',
+    'select_category': 'Select Category',
+    'add_category': 'Add category',
+    'add_tags': 'Add tags',
+    'add_item': 'Add item',
+    'completed': 'completed',
+
+    // Note editor - more options / attachments
+    'delete_note_action': 'Delete note',
+    'duplicate_note': 'Duplicate note',
+    'share': 'Share',
+    'note_duplicated': 'Note duplicated',
+    'copy_suffix': '(Copy)',
+    'take_photo': 'Take Photo',
+    'choose_from_gallery': 'Choose from Gallery',
+
     // Notes sections & hints
     'pinned': 'Pinned',
     'others': 'Others',
     'try_adjusting_your_filters': 'Try adjusting your filters',
     'start_creating_notes': 'Start creating notes to organize your thoughts',
+    'more': 'more',
+
+    // Attachment section headers
+    'images': 'Images',
+    'files': 'Files',
   };
 
   static const Map<String, String> fr = {
@@ -161,6 +190,11 @@ class NotesTranslations {
     'all': 'Tous',
     'apply': 'Appliquer',
 
+    // Notes filter sheet
+    'by_type': 'Par type',
+    'by_category': 'Par catégorie',
+    'by_tag': 'Par tag',
+
     // Note editor (minimal)
     'untitled': 'Sans titre',
     'note_created': 'Note créée',
@@ -174,11 +208,35 @@ class NotesTranslations {
     'none': 'Aucun',
     'add_tag_hint': 'Ajouter un tag...',
 
+    // Note editor - fields & dialogs
+    'done': 'Terminé',
+    'select_background': 'Choisir l\'arrière-plan',
+    'select_color_mood': 'Sélectionnez une couleur qui correspond à votre humeur',
+    'select_category': 'Choisir une catégorie',
+    'add_category': 'Ajouter une catégorie',
+    'add_tags': 'Ajouter des tags',
+    'add_item': 'Ajouter un élément',
+    'completed': 'terminé(s)',
+
+    // Note editor - more options / attachments
+    'delete_note_action': 'Supprimer la note',
+    'duplicate_note': 'Dupliquer la note',
+    'share': 'Partager',
+    'note_duplicated': 'Note dupliquée',
+    'copy_suffix': '(Copie)',
+    'take_photo': 'Prendre une photo',
+    'choose_from_gallery': 'Choisir depuis la galerie',
+
     // Notes sections & hints
     'pinned': 'Épinglées',
     'others': 'Autres',
     'try_adjusting_your_filters': 'Essayez d\'ajuster vos filtres',
     'start_creating_notes': 'Commencez à créer des notes pour organiser vos idées',
+    'more': 'de plus',
+
+    // Attachment section headers
+    'images': 'Images',
+    'files': 'Fichiers',
   };
 
   static const Map<String, String> ar = {
@@ -252,23 +310,39 @@ class NotesTranslations {
     'all': 'الكل',
     'apply': 'تطبيق',
 
-    // Note editor (minimal)
-    'untitled': 'بدون عنوان',
-    'note_created': 'تم إنشاء الملاحظة',
-    'note_updated': 'تم تحديث الملاحظة',
-    'discard_changes': 'تجاهل التغييرات؟',
-    'unsaved_changes_discard': 'لديك تغييرات غير محفوظة. هل تريد تجاهلها؟',
-    'discard': 'تجاهل',
-    'title_hint': 'العنوان',
-    'start_writing_hint': 'ابدأ بالكتابة...',
-    'reset_to_default': 'إعادة تعيين',
-    'none': 'لا شيء',
-    'add_tag_hint': 'إضافة وسم...',
+    // Notes filter sheet
+    'by_type': 'حسب النوع',
+    'by_category': 'حسب الفئة',
+    'by_tag': 'حسب الوسم',
+
+    // Note editor - fields & dialogs
+    'done': 'تم',
+    'select_background': 'اختيار الخلفية',
+    'select_color_mood': 'اختر لوناً يناسب مزاجك',
+    'select_category': 'اختيار الفئة',
+    'add_category': 'إضافة فئة',
+    'add_tags': 'إضافة وسوم',
+    'add_item': 'إضافة عنصر',
+    'completed': 'مكتمل',
+
+    // Note editor - more options / attachments
+    'delete_note_action': 'حذف الملاحظة',
+    'duplicate_note': 'تكرار الملاحظة',
+    'share': 'مشاركة',
+    'note_duplicated': 'تم تكرار الملاحظة',
+    'copy_suffix': '(نسخة)',
+    'take_photo': 'التقاط صورة',
+    'choose_from_gallery': 'اختيار من المعرض',
 
     // Notes sections & hints
     'pinned': 'مثبّتة',
     'others': 'أخرى',
     'try_adjusting_your_filters': 'جرّب تعديل عوامل التصفية',
     'start_creating_notes': 'ابدأ بإنشاء ملاحظات لتنظيم أفكارك',
+    'more': 'أكثر',
+
+    // Attachment section headers
+    'images': 'الصور',
+    'files': 'الملفات',
   };
 }

@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 
 import '../blocs/note/note_bloc.dart';
 import '../models/note_model.dart';
+import '../utils/app_localizations.dart';
 
 class NoteEditorPage extends StatefulWidget {
   final Note? note;
@@ -69,10 +70,12 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   void _saveNote() {
+    final l10n = AppLocalizations.of(context);
+
     final note = Note(
       id: widget.note?.id ?? '',
       title: _titleController.text.trim().isEmpty
-          ? 'Untitled'
+          ? l10n.translate('untitled')
           : _titleController.text.trim(),
       content: _contentController.text.trim(),
       createdAt: widget.note?.createdAt ?? DateTime.now(),
@@ -93,28 +96,32 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(widget.note == null ? 'Note created' : 'Note updated'),
+        content: Text(widget.note == null
+            ? l10n.translate('note_created')
+            : l10n.translate('note_updated')),
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
   Future<bool> _onWillPop() async {
+    final l10n = AppLocalizations.of(context);
+
     if (!_hasChanges) return true;
 
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Discard changes?'),
-        content: const Text('You have unsaved changes. Discard them?'),
+        title: Text(l10n.translate('discard_changes')),
+        content: Text(l10n.translate('unsaved_changes_discard')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Discard'),
+            child: Text(l10n.translate('discard')),
           ),
         ],
       ),
@@ -125,6 +132,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final bgColor = _selectedColor ?? theme.scaffoldBackgroundColor;
     final textColor = NoteColors.getContrastText(bgColor);
 
@@ -171,7 +179,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             TextButton(
               onPressed: _hasChanges ? _saveNote : null,
               child: Text(
-                'Save',
+                l10n.save,
                 style: TextStyle(
                   color: _hasChanges ? textColor : textColor.withAlpha(128),
                 ),
@@ -222,7 +230,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                         ),
                         cursorColor: textColor,
                         decoration: InputDecoration(
-                          hintText: 'Title',
+                          hintText: l10n.translate('title_hint'),
                           hintStyle: TextStyle(color: textColor.withAlpha(100)),
                         ),
                         maxLines: null,
@@ -256,7 +264,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                           ),
                           cursorColor: textColor,
                           decoration: InputDecoration(
-                            hintText: 'Start writing...',
+                            hintText: l10n.translate('start_writing_hint'),
                             hintStyle: TextStyle(color: textColor.withAlpha(100)),
                           ),
                           maxLines: null,
@@ -318,6 +326,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   void _showColorPicker() {
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -344,17 +354,17 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             ),
             const SizedBox(height: 20),
             Text(
-              '🎨 Choose Background',
+              l10n.translate('select_background'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Select a color that matches your mood',
+              l10n.translate('select_color_mood'),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
-                  ),
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 24),
             // Color grid
@@ -412,7 +422,6 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
               },
             ),
             const SizedBox(height: 20),
-            // Reset button
             Center(
               child: TextButton.icon(
                 onPressed: () {
@@ -423,7 +432,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                   Navigator.pop(ctx);
                 },
                 icon: const Icon(Icons.refresh),
-                label: const Text('Reset to default'),
+                label: Text(l10n.translate('reset_to_default')),
               ),
             ),
             const SizedBox(height: 8),
@@ -434,6 +443,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   void _showCategoryPicker() {
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -448,7 +459,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Select Category',
+              l10n.translate('select_category'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -459,7 +470,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
               runSpacing: 8,
               children: [
                 FilterChip(
-                  label: const Text('None'),
+                  label: Text(l10n.translate('none')),
                   selected: _selectedCategory == null,
                   onSelected: (_) {
                     setState(() {
@@ -491,6 +502,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   void _showTagEditor() {
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -510,7 +523,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Tags',
+                l10n.translate('tags'),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -521,8 +534,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                   Expanded(
                     child: TextField(
                       controller: _tagController,
-                      decoration: const InputDecoration(
-                        hintText: 'Add tag...',
+                      decoration: InputDecoration(
+                        hintText: l10n.translate('add_tag_hint'),
                         prefixText: '# ',
                       ),
                       onSubmitted: (value) {
@@ -573,7 +586,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Done'),
+                  child: Text(l10n.translate('done')),
                 ),
               ),
             ],
@@ -585,6 +598,8 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
 
   void _showMoreOptions() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -599,7 +614,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           children: [
             ListTile(
               leading: const Icon(Icons.delete_outline),
-              title: const Text('Delete note'),
+              title: Text(l10n.translate('delete_note_action')),
               onTap: () {
                 Navigator.pop(ctx);
                 if (widget.note != null) {
@@ -612,7 +627,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             ),
             ListTile(
               leading: const Icon(Icons.copy),
-              title: const Text('Duplicate note'),
+              title: Text(l10n.translate('duplicate_note')),
               onTap: () {
                 Navigator.pop(ctx);
                 _duplicateNote();
@@ -620,7 +635,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             ),
             ListTile(
               leading: const Icon(Icons.share),
-              title: const Text('Share'),
+              title: Text(l10n.translate('share')),
               onTap: () {
                 Navigator.pop(ctx);
                 // TODO: Implement share
@@ -633,9 +648,11 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   }
 
   void _duplicateNote() {
+    final l10n = AppLocalizations.of(context);
+
     final note = Note(
       id: '',
-      title: '${_titleController.text} (Copy)',
+      title: '${_titleController.text} ${l10n.translate('copy_suffix')}',
       content: _contentController.text,
       createdAt: DateTime.now(),
       color: _selectedColor,
@@ -650,14 +667,16 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
 
     context.read<NoteBloc>().add(AddOrUpdateNote(note));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Note duplicated'),
+      SnackBar(
+        content: Text(l10n.translate('note_duplicated')),
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
   Future<void> _addImage() async {
+    final l10n = AppLocalizations.of(context);
+
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -672,12 +691,12 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Take Photo'),
+              title: Text(l10n.translate('take_photo')),
               onTap: () => Navigator.pop(ctx, ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Choose from Gallery'),
+              title: Text(l10n.translate('choose_from_gallery')),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
           ],
@@ -775,6 +794,7 @@ class _CategoryTagsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final chipBgColor = textColor.withAlpha(20);
     final borderColor = textColor.withAlpha(51);
 
@@ -801,7 +821,7 @@ class _CategoryTagsRow extends StatelessWidget {
                   Icon(Icons.category_outlined, size: 16, color: textColor),
                 const SizedBox(width: 6),
                 Text(
-                  category?.displayName ?? 'Add category',
+                  category?.displayName ?? l10n.translate('add_category'),
                   style: TextStyle(color: textColor, fontSize: 13),
                 ),
               ],
@@ -824,7 +844,7 @@ class _CategoryTagsRow extends StatelessWidget {
                 Icon(Icons.tag, size: 16, color: textColor),
                 const SizedBox(width: 6),
                 Text(
-                  tags.isEmpty ? 'Add tags' : tags.map((t) => '#$t').join(' '),
+                  tags.isEmpty ? l10n.translate('add_tags') : tags.map((t) => '#$t').join(' '),
                   style: TextStyle(color: textColor, fontSize: 13),
                 ),
               ],
@@ -913,6 +933,8 @@ class _ChecklistEditorState extends State<_ChecklistEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     final uncheckedItems = widget.items.where((i) => !i.isChecked).toList();
     final checkedItems = widget.items.where((i) => i.isChecked).toList();
 
@@ -940,7 +962,7 @@ class _ChecklistEditorState extends State<_ChecklistEditor> {
                 style: TextStyle(color: widget.textColor),
                 cursorColor: widget.textColor,
                 decoration: InputDecoration(
-                  hintText: 'Add item',
+                  hintText: l10n.translate('add_item'),
                   hintStyle: TextStyle(color: widget.textColor.withAlpha(100)),
                   border: InputBorder.none,
                   filled: false,
@@ -955,7 +977,7 @@ class _ChecklistEditorState extends State<_ChecklistEditor> {
         if (checkedItems.isNotEmpty) ...[
           Divider(height: 32, color: widget.textColor.withAlpha(51)),
           Text(
-            '${checkedItems.length} completed',
+            '${checkedItems.length} ${l10n.translate('completed')}',
             style: TextStyle(
               color: widget.textColor.withAlpha(128),
               fontWeight: FontWeight.w500,
@@ -1051,6 +1073,8 @@ class _AttachmentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     final images = attachments.where((a) => a.type == AttachmentType.image).toList();
     final files = attachments.where((a) => a.type != AttachmentType.image).toList();
 
@@ -1059,7 +1083,7 @@ class _AttachmentsList extends StatelessWidget {
       children: [
         if (images.isNotEmpty) ...[
           Text(
-            'Images',
+            l10n.translate('images'),
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -1122,7 +1146,7 @@ class _AttachmentsList extends StatelessWidget {
         ],
         if (files.isNotEmpty) ...[
           Text(
-            'Files',
+            l10n.translate('files'),
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: textColor,
@@ -1284,4 +1308,6 @@ class _ToolbarButton extends StatelessWidget {
     );
   }
 }
+
+
 
