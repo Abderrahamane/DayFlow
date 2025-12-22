@@ -5,6 +5,7 @@ import 'translations/settings_translations.dart';
 import 'translations/backup_translations.dart';
 import 'translations/help_support_translations.dart';
 import 'translations/terms_privacy_translations.dart';
+import 'translations/tasks_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -357,6 +358,57 @@ class AppLocalizations {
   String get reminderInfoTaskLocked	 => translate('reminderInfoTaskLocked');
   String get task => translate('task');
 
+  // Tasks Page
+  String get todaysList => translate('todays_list');
+  String get failedToLoadTasks => translate('failed_to_load_tasks');
+  String get createNewTask => translate('create_new_task');
+  String get editTask => translate('edit_task');
+  String get taskTitle => translate('task_title');
+  String get required => translate('required');
+  String get tagsHint => translate('tags_hint');
+  String get setDueDate => translate('set_due_date');
+  String get addRecurrence => translate('add_recurrence');
+  String get addTask => translate('add_task');
+  String get updateTask => translate('update_task');
+  String get taskAdded => translate('task_added');
+  String get taskUpdated => translate('task_updated');
+  String get noTasksYet => translate('no_tasks_yet');
+  String get createFirstTask => translate('create_first_task');
+
+  // Task Filter Bar
+  String get sortedBy => translate('sorted_by');
+  String get filterAndSort => translate('filter_and_sort');
+  String get allTasks => translate('all_tasks');
+  String get pendingTasks => translate('pending_tasks');
+  String get completedTasks => translate('completed_tasks');
+  String get todaysTasks => translate('todays_tasks');
+  String get overdueTasks => translate('overdue_tasks');
+  String get filterBy => translate('filter_by');
+  String get sortBy => translate('sort_by');
+  String get apply => translate('apply');
+
+  // Dialogs
+  String get comingSoon => translate('coming_soon');
+}
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) {
+    return ['en', 'fr', 'ar'].contains(locale.languageCode);
+  }
+
+  @override
+  Future<AppLocalizations> load(Locale locale) async {
+    return AppLocalizations(locale);
+  }
+
+  @override
+  bool shouldReload(LocalizationsDelegate<AppLocalizations> old) {
+    return false;
+  }
 }
 
 // English Translations
@@ -365,6 +417,7 @@ const Map<String, String> _enTranslations = {
   ...BackupTranslations.en,
   ...HelpSupportTranslations.en,
   ...TermsPrivacyTranslations.en,
+  ...TasksTranslations.en,
   'app_name': 'DayFlow',
   'welcome': 'Welcome',
   'get_started': 'Get Started',
@@ -578,6 +631,33 @@ const Map<String, String> _enTranslations = {
   "delete": "delete",
   "reminderInfoTaskLocked": "This reminder is from a task and cannot be modified.",
   "task": "Task",
+
+  "todays_list": "Today's List",
+  "failed_to_load_tasks": "Failed to load tasks. Please try again.",
+  "create_new_task": "Create New Task",
+  "edit_task": "Edit Task",
+  "task_title": "Task Title",
+  "required": "Required",
+  "tags_hint": "Add tags separated by commas",
+  "set_due_date": "Set Due Date",
+  "add_recurrence": "Add Recurrence",
+  "add_task": "Add Task",
+  "update_task": "Update Task",
+  "task_added": "Task added successfully!",
+  "task_updated": "Task updated successfully!",
+  "no_tasks_yet": "No tasks yet. Create your first task!",
+  "create_first_task": "Create your first task",
+
+  "sorted_by": "Sorted by",
+  "filter_and_sort": "Filter & Sort",
+  "all_tasks": "All Tasks",
+  "pending_tasks": "Pending Tasks",
+  "completed_tasks": "Completed Tasks",
+  "todays_tasks": "Today's Tasks",
+  "overdue_tasks": "Overdue Tasks",
+  "filter_by": "Filter by",
+  "sort_by": "Sort by",
+  "apply": "Apply",
 };
 
 // French Translations
@@ -733,23 +813,3 @@ const Map<String, String> _arTranslations = {
   'enter_current_password': 'أدخل كلمة المرور الحالية',
   'enter_new_password': 'أدخل كلمة المرور الجديدة',
 };
-
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
-  const _AppLocalizationsDelegate();
-
-  @override
-  bool isSupported(Locale locale) {
-    return ['en', 'fr', 'ar'].contains(locale.languageCode);
-  }
-
-  @override
-  Future<AppLocalizations> load(Locale locale) async {
-    return AppLocalizations(locale);
-  }
-
-  @override
-  bool shouldReload(LocalizationsDelegate<AppLocalizations> old) {
-    return false;
-  }
-}
