@@ -26,7 +26,14 @@ class _PomodoroPageState extends State<PomodoroPage>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
-    )..repeat(reverse: true);
+    );
+
+    // Check if already running
+    final state = context.read<PomodoroBloc>().state;
+    if (state.isRunning) {
+      _pulseController.repeat(reverse: true);
+    }
+
     context.read<PomodoroBloc>().add(LoadPomodoroData());
   }
 
@@ -57,11 +64,27 @@ class _PomodoroPageState extends State<PomodoroPage>
           ),
         ],
       ),
-      body: BlocListener<PomodoroBloc, PomodoroState>(
-        listenWhen: (previous, current) =>
-            previous.status != PomodoroStatus.ringing &&
-            current.status == PomodoroStatus.ringing,
-        listener: (context, state) => _showAlarmDialog(context),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<PomodoroBloc, PomodoroState>(
+            listenWhen: (previous, current) =>
+                previous.status != PomodoroStatus.ringing &&
+                current.status == PomodoroStatus.ringing,
+            listener: (context, state) => _showAlarmDialog(context),
+          ),
+          BlocListener<PomodoroBloc, PomodoroState>(
+            listenWhen: (previous, current) =>
+                previous.isRunning != current.isRunning,
+            listener: (context, state) {
+              if (state.isRunning) {
+                _pulseController.repeat(reverse: true);
+              } else {
+                _pulseController.stop();
+                _pulseController.value = 0.0;
+              }
+            },
+          ),
+        ],
         child: BlocBuilder<PomodoroBloc, PomodoroState>(
           builder: (context, state) {
             return SingleChildScrollView(
@@ -445,25 +468,28 @@ class _TimerControls extends StatelessWidget {
       return Column(
         children: [
           // Session type buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: PomodoroSessionType.values.map((type) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: OutlinedButton(
-                  onPressed: () => context
-                      .read<PomodoroBloc>()
-                      .add(StartSession(type: type)),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: PomodoroSessionType.values.map((type) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: OutlinedButton(
+                    onPressed: () => context
+                        .read<PomodoroBloc>()
+                        .add(StartSession(type: type)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
+                    child: Text('${type.icon} ${PomodoroHelper.getSessionTypeLabel(context, type)}'),
                   ),
-                  child: Text('${type.icon} ${PomodoroHelper.getSessionTypeLabel(context, type)}'),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           ),
           const SizedBox(height: 24),
           // Main start button
