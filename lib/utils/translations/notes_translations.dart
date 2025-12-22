@@ -127,6 +127,13 @@ class NotesTranslations {
     'category_ideas': 'Ideas',
     'category_travel': 'Travel',
     'category_health': 'Health',
+
+    // Time formatting
+    'just_now': 'Just now',
+    'minutes_ago': '{minutes}m ago',
+    'hours_ago': '{hours}h ago',
+    'yesterday': 'Yesterday',
+    'days_ago': '{days}d ago',
   };
 
   static const Map<String, String> fr = {
@@ -249,14 +256,21 @@ class NotesTranslations {
     'files': 'Fichiers',
 
     // Note Categories
-    'category_work': 'عمل',
-    'category_study': 'دراسة',
-    'category_personal': 'شخصي',
-    'category_shopping': 'تسوق',
-    'category_important': 'مهم',
-    'category_ideas': 'أفكار',
-    'category_travel': 'سفر',
-    'category_health': 'صحة',
+    'category_work': 'Travail',
+    'category_study': 'Études',
+    'category_personal': 'Personnel',
+    'category_shopping': 'Courses',
+    'category_important': 'Important',
+    'category_ideas': 'Idées',
+    'category_travel': 'Voyage',
+    'category_health': 'Santé',
+
+    // Time formatting
+    'just_now': 'À l\'instant',
+    'minutes_ago': 'Il y a {minutes} min',
+    'hours_ago': 'Il y a {hours} h',
+    'yesterday': 'Hier',
+    'days_ago': 'Il y a {days} j',
   };
 
   static const Map<String, String> ar = {
@@ -374,5 +388,12 @@ class NotesTranslations {
     'category_ideas': 'أفكار',
     'category_travel': 'سفر',
     'category_health': 'صحة',
+
+    // Time formatting
+    'just_now': 'الآن',
+    'minutes_ago': 'منذ {minutes} دقيقة',
+    'hours_ago': 'منذ {hours} ساعة',
+    'yesterday': 'أمس',
+    'days_ago': 'منذ {days} يوم',
   };
 }

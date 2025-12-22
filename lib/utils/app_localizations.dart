@@ -11,6 +11,7 @@ import 'translations/templates_translations.dart';
 import 'translations/task_detail_translations.dart';
 import 'translations/notes_translations.dart';
 import 'translations/auth_translations.dart';
+import 'navigation_localizations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -574,6 +575,22 @@ class AppLocalizations {
   String get categoryIdeas => translate('category_ideas');
   String get categoryTravel => translate('category_travel');
   String get categoryHealth => translate('category_health');
+
+  // Time formatting
+  String get justNow => translate('just_now');
+  String get minutesAgo => translate('minutes_ago');
+  String get hoursAgo => translate('hours_ago');
+  String get yesterday => translate('yesterday');
+  String get daysAgo => translate('days_ago');
+
+  // Template Categories
+  String get templateCategoryWork => translate('template_category_work');
+  String get templateCategoryPersonal => translate('template_category_personal');
+  String get templateCategoryHealth => translate('template_category_health');
+  String get templateCategoryShopping => translate('template_category_shopping');
+  String get templateCategoryProject => translate('template_category_project');
+  String get templateCategoryMeeting => translate('template_category_meeting');
+  String get templateCategoryOther => translate('template_category_other');
 }
 
 // ------------------------------
@@ -612,6 +629,7 @@ final Map<String, String> _enTranslations = {
   ...TaskDetailTranslations.en,
   ...NotesTranslations.en,
   ...AuthTranslations.en,
+  ...NavigationLocalizations.en,
 };
 
 // French Translations
@@ -626,6 +644,7 @@ final Map<String, String> _frTranslations = {
   ...TaskDetailTranslations.fr,
   ...NotesTranslations.fr,
   ...AuthTranslations.fr,
+  ...NavigationLocalizations.fr,
 };
 
 // Arabic Translations
@@ -640,5 +659,6 @@ final Map<String, String> _arTranslations = {
   ...TaskDetailTranslations.ar,
   ...NotesTranslations.ar,
   ...AuthTranslations.ar,
+  ...NavigationLocalizations.ar,
 };
 

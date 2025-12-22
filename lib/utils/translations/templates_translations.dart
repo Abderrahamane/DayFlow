@@ -28,6 +28,13 @@ class TemplatesTranslations {
     'task_settings': 'Task Settings',
     'subtasks': 'Subtasks',
     'add': 'Add',
+    'template_category_work': 'Work',
+    'template_category_personal': 'Personal',
+    'template_category_health': 'Health',
+    'template_category_shopping': 'Shopping',
+    'template_category_project': 'Project',
+    'template_category_meeting': 'Meeting',
+    'template_category_other': 'Other',
   };
 
   static const Map<String, String> fr = {
@@ -90,5 +97,12 @@ class TemplatesTranslations {
     'task_settings': 'إعدادات المهمة',
     'subtasks': 'مهام فرعية',
     'add': 'إضافة',
+    'template_category_work': 'عمل',
+    'template_category_personal': 'شخصي',
+    'template_category_health': 'صحة',
+    'template_category_shopping': 'تسوق',
+    'template_category_project': 'مشروع',
+    'template_category_meeting': 'اجتماع',
+    'template_category_other': 'آخر',
   };
 }

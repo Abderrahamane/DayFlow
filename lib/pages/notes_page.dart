@@ -344,47 +344,71 @@ class _NotesPageState extends State<NotesPage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(note.isPinned
-                  ? l10n.translate('unpin')
-                  : l10n.translate('pin_to_top')),
-              onTap: () {
-                Navigator.pop(ctx);
-                context.read<NoteBloc>().add(ToggleNotePinEvent(note.id));
-              },
-            ),
-            ListTile(
-              title: Text(l10n.translate('change_color')),
-              onTap: () {
-                Navigator.pop(ctx);
-                _showColorPicker(context, note);
-              },
-            ),
-            ListTile(
-              title: Text(note.isLocked
-                  ? l10n.translate('remove_lock')
-                  : l10n.translate('lock_note')),
-              onTap: () {
-                Navigator.pop(ctx);
-                if (note.isLocked) {
-                  context.read<NoteBloc>().add(UnlockNoteEvent(note.id));
-                } else {
-                  _showLockOptions(context, note);
-                }
-              },
-            ),
-            ListTile(
-              title: Text(l10n.translate('delete_note')),
-              onTap: () {
-                Navigator.pop(ctx);
-                _confirmDelete(context, note);
-              },
-            ),
-          ],
+      builder: (ctx) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 8),
+              ListTile(
+                leading: Icon(note.isPinned ? Icons.push_pin_outlined : Icons.push_pin),
+                title: Text(note.isPinned
+                    ? l10n.unpin
+                    : l10n.pinToTop),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  context.read<NoteBloc>().add(ToggleNotePinEvent(note.id));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.palette_outlined),
+                title: Text(l10n.changeColor),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showColorPicker(context, note);
+                },
+              ),
+              ListTile(
+                leading: Icon(note.isLocked ? Icons.lock_open : Icons.lock_outline),
+                title: Text(note.isLocked
+                    ? l10n.removeLock
+                    : l10n.lockNote),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  if (note.isLocked) {
+                    context.read<NoteBloc>().add(UnlockNoteEvent(note.id));
+                  } else {
+                    _showLockOptions(context, note);
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_outline, color: Colors.red),
+                title: Text(
+                  l10n.deleteNote,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _confirmDelete(context, note);
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -1083,7 +1107,7 @@ class _NoteCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  note.formattedDate,
+                  _formatDate(context, note),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: textColor.withAlpha(128),
                   ),
@@ -1101,6 +1125,29 @@ class _NoteCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDate(BuildContext context, Note note) {
+    final l10n = AppLocalizations.of(context);
+    final date = note.updatedAt ?? note.createdAt;
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      if (difference.inHours == 0) {
+        if (difference.inMinutes == 0) {
+          return l10n.justNow;
+        }
+        return l10n.translateWithArgs('minutes_ago', args: {'minutes': difference.inMinutes});
+      }
+      return l10n.translateWithArgs('hours_ago', args: {'hours': difference.inHours});
+    } else if (difference.inDays == 1) {
+      return l10n.yesterday;
+    } else if (difference.inDays < 7) {
+      return l10n.translateWithArgs('days_ago', args: {'days': difference.inDays});
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
   }
 }
 

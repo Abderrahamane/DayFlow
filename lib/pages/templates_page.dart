@@ -839,8 +839,32 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                       runSpacing: 8,
                       children: TemplateCategory.values.map((cat) {
                         final isSelected = _category == cat.name;
+                        String label;
+                        switch (cat) {
+                          case TemplateCategory.work:
+                            label = l10n.templateCategoryWork;
+                            break;
+                          case TemplateCategory.personal:
+                            label = l10n.templateCategoryPersonal;
+                            break;
+                          case TemplateCategory.health:
+                            label = l10n.templateCategoryHealth;
+                            break;
+                          case TemplateCategory.shopping:
+                            label = l10n.templateCategoryShopping;
+                            break;
+                          case TemplateCategory.project:
+                            label = l10n.templateCategoryProject;
+                            break;
+                          case TemplateCategory.meeting:
+                            label = l10n.templateCategoryMeeting;
+                            break;
+                          case TemplateCategory.other:
+                            label = l10n.templateCategoryOther;
+                            break;
+                        }
                         return FilterChip(
-                          label: Text('${cat.icon} ${cat.displayName}'), // TODO: Localize category display name
+                          label: Text('${cat.icon} $label'),
                           selected: isSelected,
                           onSelected: (_) => setState(() {
                             _category = isSelected ? null : cat.name;
