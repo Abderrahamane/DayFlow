@@ -9,6 +9,7 @@ import 'translations/tasks_translations.dart';
 import 'translations/pomodoro_translations.dart';
 import 'translations/templates_translations.dart';
 import 'translations/task_detail_translations.dart';
+import 'translations/notes_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -33,6 +34,23 @@ class AppLocalizations {
     return _localizedValues[locale.languageCode]?[key] ??
         _enTranslations[key] ??
         key;
+  }
+
+  /// Returns a localized string and replaces `{placeholders}` with provided values.
+  ///
+  /// Example: translateWithArgs('create_task_from_template', args: {'taskTitle': 'Standup'})
+  String translateWithArgs(
+    String key, {
+    Map<String, Object?> args = const {},
+  }) {
+    var text = translate(key);
+    if (args.isEmpty) return text;
+
+    args.forEach((placeholder, value) {
+      text = text.replaceAll('{$placeholder}', value?.toString() ?? '');
+    });
+
+    return text;
   }
 
   // Common
@@ -501,6 +519,79 @@ class AppLocalizations {
   String get dueToday => translate('due_today');
   String get daysLeft => translate('days_left');
   String get completedCount => translate('completed_count');
+
+  // Notes
+  String get notesTitle => translate('notes');
+  String get searchNotesHint => translate('search_notes_hint');
+  String get createNew => translate('create_new');
+  String get textNote => translate('text_note');
+  String get simpleTextNote => translate('simple_text_note');
+  String get checklist => translate('checklist');
+  String get taskListWithCheckboxes => translate('task_list_with_checkboxes');
+  String get richTextNote => translate('rich_text_note');
+  String get withFormattingOptions => translate('with_formatting_options');
+  String get failedToLoadNotes => translate('failed_to_load_notes');
+  String get retry => translate('retry');
+  String get clearAll => translate('clear_all');
+  String get filterNotes => translate('filter_notes');
+
+  String get authenticateToViewNote => translate('authenticate_to_view_note');
+  String get enterPin => translate('enter_pin');
+  String get enter4DigitPin => translate('enter_4_digit_pin');
+  String get unlock => translate('unlock');
+
+  String get pinToTop => translate('pin_to_top');
+  String get unpin => translate('unpin');
+  String get changeColor => translate('change_color');
+  String get lockNote => translate('lock_note');
+  String get removeLock => translate('remove_lock');
+
+  String get chooseColor => translate('choose_color');
+
+  String get secureYourNote => translate('secure_your_note');
+  String get chooseHowToProtectNote => translate('choose_how_to_protect_note');
+  String get biometrics => translate('biometrics');
+  String get useFingerprintOrFace => translate('use_fingerprint_or_face');
+  String get noteLockedWithBiometrics => translate('note_locked_with_biometrics');
+  String get biometricsNotAvailable => translate('biometrics_not_available');
+  String get pinCode => translate('pin_code');
+  String get set4DigitSecurityCode => translate('set_4_digit_security_code');
+  String get both => translate('both');
+  String get useBiometricsWithPinBackup => translate('use_biometrics_with_pin_backup');
+  String get biometricsNotAvailableUsingPin => translate('biometrics_not_available_using_pin');
+
+  String get setBackupPin => translate('set_backup_pin');
+  String get setPinBackupForBiometrics => translate('set_pin_backup_for_biometrics');
+  String get pin => translate('pin');
+  String get confirmPin => translate('confirm_pin');
+  String get pinsDoNotMatch => translate('pins_do_not_match');
+  String get pinMustBe4Digits => translate('pin_must_be_4_digits');
+
+  String get deleteNote => translate('delete_note');
+  String get deleteNoteConfirmMsg => translate('delete_note_confirm_msg');
+
+  String get noNotesYet => translate('no_notes_yet');
+  String get noNotesMatchingFilters => translate('no_notes_matching_filters');
+  String get createFirstNote => translate('create_first_note');
+
+  // Notes sections & empty-state helper strings
+  String get pinned => translate('pinned');
+  String get others => translate('others');
+  String get tryAdjustingYourFilters => translate('try_adjusting_your_filters');
+  String get startCreatingNotes => translate('start_creating_notes');
+
+  // Note editor
+  String get untitled => translate('untitled');
+  String get noteCreated => translate('note_created');
+  String get noteUpdated => translate('note_updated');
+  String get discardChanges => translate('discard_changes');
+  String get unsavedChangesDiscard => translate('unsaved_changes_discard');
+  String get discard => translate('discard');
+  String get titleHint => translate('title_hint');
+  String get startWritingHint => translate('start_writing_hint');
+  String get resetToDefault => translate('reset_to_default');
+  String get none => translate('none');
+  String get addTagHint => translate('add_tag_hint');
 }
 
 class _AppLocalizationsDelegate
@@ -524,7 +615,7 @@ class _AppLocalizationsDelegate
 }
 
 // English Translations
-const Map<String, String> _enTranslations = {
+final Map<String, String> _enTranslations = {
   ...SettingsTranslations.en,
   ...BackupTranslations.en,
   ...HelpSupportTranslations.en,
@@ -533,6 +624,7 @@ const Map<String, String> _enTranslations = {
   ...PomodoroTranslations.en,
   ...TemplatesTranslations.en,
   ...TaskDetailTranslations.en,
+  ...NotesTranslations.en,
   'app_name': 'DayFlow',
   'welcome': 'Welcome',
   'get_started': 'Get Started',
@@ -602,154 +694,430 @@ const Map<String, String> _enTranslations = {
   'enter_current_password': 'Enter current password',
   'enter_new_password': 'Enter new password',
 
+  // About
+  'app_description': 'DayFlow is your smart daily planner, designed to help you organize tasks, capture ideas, and never miss a reminder.',
+  'developed_by': 'Developed by: Your Name',
+  'team_members': 'Team Members: Member1, Member2, Member3',
 
+  // Welcome Page
   'your_smart_daily_planner': 'Your Smart Daily Planner',
-  'organize_tasks': 'Organize your tasks efficiently',
-  'capture_ideas': 'Capture ideas instantly',
-  'never_miss_reminders': 'Never miss important reminders',
+  'organize_tasks': 'Organize Tasks',
+  'capture_ideas': 'Capture Ideas',
+  'never_miss_reminders': 'Never Miss Reminders',
+
+  // Onboarding
   'skip': 'Skip',
   'next': 'Next',
   'organize_your_tasks': 'Organize Your Tasks',
-  'organize_tasks_desc':
-      'Create, manage, and prioritize your daily tasks with ease. Never miss a deadline again.',
+  'organize_tasks_desc': 'Easily organize and prioritize your tasks in one place.',
   'capture_your_ideas': 'Capture Your Ideas',
-  'capture_ideas_desc':
-      'Jot down notes, thoughts, and ideas instantly. Keep everything organized in one place.',
+  'capture_ideas_desc': 'Quickly jot down your ideas and inspirations.',
   'set_smart_reminders': 'Set Smart Reminders',
-  'set_reminders_desc':
-      'Get timely notifications for important tasks. Stay on top of your schedule effortlessly.',
+  'set_reminders_desc': 'Get reminded of your tasks and events at the right time.',
   'track_your_habits': 'Track Your Habits',
-  'track_habits_desc':
-      'Build better habits with daily tracking. Monitor your progress and achieve your goals.',
-  'remember_password': 'Remember your password? Login',
-  'check_your_email': 'Check Your Email',
-  'forgot_password_desc':
-      "Don't worry! Enter your email address and we'll send you a link to reset your password.",
-  'reset_email_sent':
-      "We've sent a password reset link to your email address. Please check your inbox and follow the instructions.",
-  'resend_email': 'Resend Email',
-  'didnt_receive_email': "Didn't receive the email?",
-  'check_spam_folder': 'Check your spam folder or try resending the email.',
-  'email_verified_success':
-      'Email verified successfully! Welcome to DayFlow 🎉',
-  'verification_email_to': "We've sent a verification email to",
-  'check_inbox_and_click':
-      'Please check your inbox (and spam folder) and click the verification link to continue.',
-  'resend_in': 'Resend in',
-  'i_agree_to_the': 'I agree to the ',
-  'terms_conditions': 'Terms & Conditions',
-  'and': ' and ',
-  'privacy_policy': 'Privacy Policy',
-  'please_accept_terms': 'Please accept the terms and conditions',
-  'or': 'OR',
-  'make_email_correct': 'Make sure the email address is correct',
-  'wait_and_resend': 'Wait a few minutes and try resending',
+  'track_habits_desc': 'Monitor your habits and stay consistent.',
 
+  // Auth Pages
+  'remember_password': 'Remember Password?',
+  'check_your_email': 'Check Your Email',
+  'forgot_password_desc': 'Enter your email address and we\'ll send you a link to reset your password.',
+  'reset_email_sent': 'Reset Email Sent',
+  'resend_email': 'Resend Email',
+  'didnt_receive_email': 'Didn\'t receive the email?',
+  'check_spam_folder': 'Check your spam or junk folder.',
+  'email_verified_success': 'Email verified successfully!',
+  'verification_email_to': 'Verification email sent to',
+  'check_inbox_and_click': 'Check your inbox and click the verification link.',
+  'resend_in': 'Resend in {minutes} minutes',
+  'i_agree_to_the': 'I agree to the',
+  'terms_conditions': 'Terms and Conditions',
+  'and': 'and',
+  'privacy_policy': 'Privacy Policy',
+  'please_accept_terms': 'Please accept the terms and conditions to continue.',
+  'or': 'or',
+  'make_email_correct': 'Please make sure your email is correct.',
+  'wait_and_resend': 'Wait for a few minutes before resending the verification email.',
+
+  // Navigation & Drawer
   'tasks': 'Tasks',
   'notes': 'Notes',
   'reminders': 'Reminders',
   'habits': 'Habits',
-  'manage_todos': 'Manage your to-dos',
-  'quick_ideas': 'Quick ideas and thoughts',
-  'never_miss_tasks': 'Never miss important tasks',
-  'track_daily_habits': 'Track your daily habits',
+  'manage_todos': 'Manage Todos',
+  'quick_ideas': 'Quick Ideas',
+  'never_miss_tasks': 'Never Miss Tasks',
+  'track_daily_habits': 'Track Daily Habits',
   'statistics': 'Statistics',
-  'view_progress': 'View your progress',
-  'customize_experience': 'Customize your experience',
-  'open_menu': 'Open menu',
+  'view_progress': 'View Progress',
+  'customize_experience': 'Customize Experience',
+  'habits_page_coming_soon': 'Habits page is coming soon!',
+  'statistics_coming_soon': 'Statistics feature is coming soon!',
+  'open_menu': 'Open Menu',
   'search': 'Search',
 
-  // Question Flow
-  'qf_biggest_challenge': "What's your biggest productivity challenge?",
-  'qf_too_many_tasks': '📋 Too many tasks to manage',
-  'qf_staying_focused': '🎯 Staying focused',
-  'qf_time_management': '⏰ Time management',
-  'qf_remembering_everything': '🧠 Remembering everything',
+  // Help & Support
+  'how_can_we_help': 'How can we help you?',
+  'find_answers': 'Find Answers',
+  'contact_us': 'Contact Us',
+  'email_support': 'Email Support',
+  'live_chat': 'Live Chat',
+  'chat_with_team': 'Chat with our team',
+  'report_problem': 'Report a Problem',
+  'let_us_know': 'Let us know how we can help you.',
+  'faq': 'FAQ',
+  'resources': 'Resources',
+  'user_guide': 'User Guide',
+  'learn_how_to_use': 'Learn how to use DayFlow',
+  'video_tutorials': 'Video Tutorials',
+  'watch_guides': 'Watch Guides',
+  'tips_tricks': 'Tips & Tricks',
+  'get_most_out': 'Get the most out of DayFlow',
+  'problem_type': 'Problem Type',
+  'description': 'Description',
+  'describe_issue': 'Please describe your issue or question.',
+  'submit': 'Submit',
+  'problem_report_submitted': 'Your problem report has been submitted.',
+  'faq_create_task': 'How to create a task?',
+  'faq_create_task_answer': 'To create a task, go to the Tasks tab and click on "Add Task".',
+  'faq_dark_mode': 'How to enable dark mode?',
+  'faq_dark_mode_answer': 'To enable dark mode, go to Settings > Appearance > Theme and select "Dark Mode".',
+  'faq_sync_data': 'How to sync data across devices?',
+  'faq_sync_data_answer': 'To sync data, make sure you are logged in with the same account on all devices and enable "Sync with Cloud" in Settings.',
+  'faq_set_reminders': 'How to set reminders?',
+  'faq_set_reminders_answer': 'To set reminders, go to the task details and select "Add Reminder".',
+  'faq_backup_data': 'How to backup data?',
+  'faq_backup_data_answer': 'To backup data, go to Settings > Backup & Sync and select "Backup Now".',
+  'faq_export_data': 'How to export data?',
+  'faq_export_data_answer': 'To export data, go to Settings > Backup & Sync and select "Export Data".',
 
-  'qf_when_work_best': 'When do you work best?',
-  'qf_early_morning': '🌅 Early morning',
-  'qf_afternoon': '☀️ Afternoon',
-  'qf_evening': '🌆 Evening',
-  'qf_late_night': '🌙 Late night',
+  // Pomodoro
+  'pomodoro_timer': 'Pomodoro Timer',
+  'session_history': 'Session History',
+  'timer_finished': 'Timer Finished',
+  'what_would_you_like_to_do': 'What would you like to do now?',
+  'extend_5m': 'Extend 5 minutes',
+  'stop': 'Stop',
+  'focus_time': 'Focus Time',
+  'streak': 'Streak',
+  'start_focus': 'Start Focus',
+  'link_to_task': 'Link to Task',
+  'working_on': 'Working on',
+  'no_sessions_today': 'No sessions recorded for today.',
+  'start_focus_session_msg': 'Start a focus session to improve your productivity.',
+  'todays_sessions': 'Today\'s Sessions',
+  'focus_session': 'Focus Session',
+  'select_task': 'Select Task',
+  'no_pending_tasks': 'No pending tasks found.',
+  'due_prefix': 'Due: ',
+  'sessions_suffix': ' sessions',
+  'sessions_label': 'Sessions',
+  'no_sessions_yet': 'No sessions recorded yet.',
+  'timer_settings': 'Timer Settings',
+  'work_duration': 'Work Duration',
+  'short_break': 'Short Break',
+  'long_break': 'Long Break',
+  'sessions_before_long_break': 'Sessions before long break',
+  'auto_start_breaks': 'Auto Start Breaks',
+  'auto_start_breaks_desc': 'Automatically start breaks after a session ends.',
+  'auto_start_work': 'Auto Start Work',
+  'auto_start_work_desc': 'Automatically start the next work session.',
+  'sound': 'Sound',
+  'sound_desc': 'Select the sound for the timer.',
+  'session_type_work': 'Work',
+  'session_type_short_break': 'Short Break',
+  'session_type_long_break': 'Long Break',
+  'min_suffix': 'min',
+  'minutes': 'minutes',
 
-  'qf_main_goal': "What's your main goal with DayFlow?",
-  'qf_get_organized': '✨ Get organized',
-  'qf_build_habits': '💪 Build better habits',
-  'qf_track_tasks': '✅ Track all my tasks',
-  'qf_remember_all': '💡 Remember everything',
+  // Templates
+  'task_templates': 'Task Templates',
+  'search_templates': 'Search Templates',
+  'create_template': 'Create Template',
+  'edit_template': 'Edit Template',
+  'template_name': 'Template Name',
+  'template_name_hint': 'Enter a name for the template',
+  'default_priority': 'Default Priority',
+  'estimated_duration': 'Estimated Duration',
+  'category': 'Category',
+  'category_hint': 'Select a category for the task',
+  'save_template': 'Save Template',
+  'create_task_from_template': 'Create Task from Template',
+  'view': 'View',
+  'no_templates_found': 'No templates found.',
+  'no_templates_yet': 'No templates created yet.',
+  'create_first_template': 'Create your first template',
+  'delete_template': 'Delete Template',
+  'delete_template_confirmation': 'Are you sure you want to delete this template?',
+  'template_deleted': 'Template deleted successfully.',
+  'template_saved': 'Template saved successfully.',
+  'use_template': 'Use Template',
+  'popular_templates': 'Popular Templates',
+  'recent_templates': 'Recent Templates',
+  'all_templates': 'All Templates',
+  'icon': 'Icon',
+  'task_settings': 'Task Settings',
+  'subtasks': 'Subtasks',
+  'add': 'Add',
 
-  'qf_prefer_plan': 'How do you prefer to plan?',
-  'qf_day_by_day': '📅 Day by day',
-  'qf_week_ahead': '📆 Week ahead',
-  'qf_monthly_view': '🗓️ Monthly view',
-  'qf_go_with_flow': '🌊 Go with the flow',
+  // Backup
+  'backup_status': 'Backup Status',
+  'last_backup': 'Last Backup',
+  'no_backups_yet': 'No backups found.',
+  'quick_actions': 'Quick Actions',
+  'backup_now': 'Backup Now',
+  'restore_backup': 'Restore Backup',
+  'sync_with_cloud': 'Sync with Cloud',
+  'backup_settings': 'Backup Settings',
+  'auto_backup': 'Auto Backup',
+  'auto_backup_daily': 'Auto Backup Daily',
+  'cloud_sync': 'Cloud Sync',
+  'sync_across_devices': 'Sync Across Devices',
+  'encrypt_data': 'Encrypt Data',
+  'secure_backups': 'Secure Backups',
+  'clear_cache': 'Clear Cache',
+  'free_up_storage': 'Free Up Storage',
+  'delete_all_data': 'Delete All Data',
+  'permanently_remove': 'Permanently Remove',
+  'processing': 'Processing...',
+  'backup_completed': 'Backup completed successfully.',
+  'backup_restored': 'Backup restored successfully.',
+  'synced_cloud': 'Data synced with cloud.',
+  'restore_confirm': 'Are you sure you want to restore this backup?',
+  'delete_data_confirm': 'Are you sure you want to delete all data?',
+  'clear_cache_confirm': 'Are you sure you want to clear the cache?',
+  'cache_cleared': 'Cache cleared.',
+  'all_data_deleted': 'All data deleted.',
+  'delete_all': 'Delete All',
+  'clear': 'Clear',
+  'restore': 'Restore',
 
-  'qf_response_1': 'Got it, noted! 📝',
-  'qf_response_2': "You're my kind of planner!",
-  'qf_response_3': 'That tells me a lot!',
-  'qf_response_4': "Wow, you've got range! 🎯",
-  'qf_response_5': 'Interesting choice! ⏰',
-  'qf_response_6': 'I can work with that!',
-  'qf_response_7': 'Nice, flexibility is key! 🌟',
-  'qf_response_8': "You're versatile! Love it!",
-  'qf_response_9': "You're going to love DayFlow for that! 🚀",
-  'qf_response_10': "Perfect! We've got you covered!",
-  'qf_response_11': "That's exactly what we do best! ⭐",
-  'qf_response_12': 'Ambitious! I like it! 💯',
-  'qf_response_13': 'Smart approach! 🎯',
-  'qf_response_14': 'I see your planning style!',
-  'qf_response_15': 'Mix and match, nice! 🌈',
-  'qf_response_16': "You're adaptable! Perfect! ✨",
+  // Terms & Privacy
+  'terms_of_service': 'Terms of Service',
+  'privacy_policy_title': 'Privacy Policy',
+  'last_updated': 'Last Updated',
+  'by_using_dayflow': 'By using DayFlow, you agree to our Terms of Service and Privacy Policy.',
 
-  'qf_greeting': "Hi there! Let's get to know you! 👋",
-  'qf_next_question': 'Next question! 🎯',
-  'qf_completion': "Perfect! You're all set! 🎉",
-  'qf_finish': 'Finish',
+  // Reminders Page Localization
+  'remindersRetry': 'Retry',
+  'remindersNoRemindersTitle': 'No Reminders Yet',
+  'remindersNoRemindersSubtitle': 'You have not set any reminders yet.',
+  'remindersToday': 'Today\'s Reminders',
+  'remindersTomorrow': 'Tomorrow\'s Reminders',
+  'remindersUpcoming': 'Upcoming Reminders',
+  'remindersSomethingWrong': 'Something went wrong. Please try again.',
 
-  "remindersRetry": "Retry",
-  "remindersNoRemindersTitle": "No Reminders",
-  "remindersNoRemindersSubtitle": "Add reminders or create tasks",
-  "remindersToday": "Today",
-  "remindersTomorrow": "Tomorrow",
-  "remindersUpcoming": "Upcoming",
-  "remindersSomethingWrong": "Something went wrong",
+  // Reminders model page Localization
+  'weekdayMonday': 'Monday',
+  'weekdayTuesday': 'Tuesday',
+  'weekdayWednesday': 'Wednesday',
+  'weekdayThursday': 'Thursday',
+  'weekdayFriday': 'Friday',
+  'weekdaySaturday': 'Saturday',
+  'weekdaySunday': 'Sunday',
 
-  "weekdayMonday": "Monday",
-  "weekdayTuesday": "Tuesday",
-  "weekdayWednesday": "Wednesday",
-  "weekdayThursday": "Thursday",
-  "weekdayFriday": "Friday",
-  "weekdaySaturday": "Saturday",
-  "weekdaySunday": "Sunday",
+  // Reminder add dialog Localization
+  'reminderCreateTitle': 'Create Reminder',
+  'reminderTitle': 'Reminder Title',
+  'reminderEnterTitle': 'Enter a title for your reminder',
+  'reminderDescriptionOptional': 'Description (optional)',
+  'reminderEnterDescription': 'Enter a description for your reminder',
+  'reminderSelectTime': 'Select Time',
+  'reminderAdd': 'Add Reminder',
+  'reminderErrorTitleRequired': 'Title is required',
+  'reminderErrorTimeRequired': 'Time is required',
+  'reminderAdded': 'Reminder added successfully.',
 
-  "reminderCreateTitle": "Create New Reminder",
-  "reminderTitle": "Title",
-  "reminderEnterTitle": "Enter reminder title",
-  "reminderDescriptionOptional": "Description (Optional)",
-  "reminderEnterDescription": "Enter description",
-  "reminderSelectTime": "Select Time",
-  "reminderAdd": "Add Reminder",
-  "reminderErrorTitleRequired": "Please enter a reminder title",
-  "reminderErrorTimeRequired": "Please select a time",
-  "reminderAdded": "Reminder added!",
+  // reminders item Localization
+  'reminderEditTitle': 'Edit Reminder',
+  'update': 'Update',
+  'editReminder': 'Edit Reminder',
+  'deleteReminder': 'Delete Reminder',
+  'enableReminder': 'Enable Reminder',
+  'disableReminder': 'Disable Reminder',
+  'reminderDeleteConfirmation': 'Are you sure you want to delete this reminder?',
+  'reminderUpdated': 'Reminder updated successfully.',
+  'reminderDeleted': 'Reminder deleted successfully.',
+  'delete': 'Delete',
+  'reminderInfoTaskLocked': 'This reminder is linked to a locked task.',
+  'task': 'Task',
 
-  "reminderEditTitle": "Edit Reminder",
-  "update": "Update",
-  "editReminder": "Edit Reminder",
-  "deleteReminder": "Delete Reminder",
-  "enableReminder": "Enable Reminder",
-  "disableReminder": "Disable Reminder",
-  "reminderDeleteConfirmation":
-      "Are you sure you want to delete this reminder?",
-  "reminderUpdated": "Reminder updated!",
-  "reminderDeleted": "Reminder deleted",
-  "delete": "delete",
-  "reminderInfoTaskLocked": "This reminder is from a task and cannot be modified.",
-  "task": "Task",
+  // Tasks Page
+  'todays_list': 'Today\'s Tasks',
+  'failed_to_load_tasks': 'Failed to load tasks. Please try again.',
+  'create_new_task': 'Create New Task',
+  'edit_task': 'Edit Task',
+  'task_title': 'Task Title',
+  'required': 'Required',
+  'tags_hint': 'Enter tags separated by commas',
+  'set_due_date': 'Set Due Date',
+  'add_recurrence': 'Add Recurrence',
+  'add_task': 'Add Task',
+  'update_task': 'Update Task',
+  'task_added': 'Task added successfully.',
+  'task_updated': 'Task updated successfully.',
+  'no_tasks_yet': 'No tasks found. Create your first task!',
+  'create_first_task': 'Create your first task',
+
+  // Task Filter Bar
+  'sorted_by': 'Sorted by',
+  'filter_and_sort': 'Filter & Sort',
+  'all_tasks': 'All Tasks',
+  'pending_tasks': 'Pending Tasks',
+  'completed_tasks': 'Completed Tasks',
+  'todays_tasks': 'Today\'s Tasks',
+  'overdue_tasks': 'Overdue Tasks',
+  'filter_by': 'Filter by',
+  'sort_by': 'Sort by',
+  'apply': 'Apply',
+
+  // Priorities
+  'priority_none': 'No Priority',
+  'priority_low': 'Low Priority',
+  'priority_medium': 'Medium Priority',
+  'priority_high': 'High Priority',
+
+  // Sort Options
+  'sort_date_created': 'Sort by Date Created',
+  'sort_due_date': 'Sort by Due Date',
+  'sort_priority': 'Sort by Priority',
+  'sort_alphabetical': 'Sort Alphabetically',
+
+  // Recurrence
+  'repeat': 'Repeat',
+  'recurrence_none': 'Does not repeat',
+  'recurrence_daily': 'Daily',
+  'recurrence_weekly': 'Weekly',
+  'recurrence_monthly': 'Monthly',
+  'recurrence_custom': 'Custom',
+
+  // Recurrence Picker
+  'recurrence_repeat': 'Repeat',
+  'recurrence_every': 'Every',
+  'recurrence_day': 'day',
+  'recurrence_days': 'days',
+  'recurrence_week': 'week',
+  'recurrence_weeks': 'weeks',
+  'recurrence_month': 'month',
+  'recurrence_months': 'months',
+  'recurrence_on_these_days': 'On these days',
+  'recurrence_on_day': 'On day',
+  'recurrence_of_the_month': 'of the month',
+  'recurrence_ends': 'Ends',
+  'recurrence_on_specific_date': 'On specific date',
+  'recurrence_on_date': 'On date',
+  'recurrence_after': 'After',
+  'recurrence_occurrences': 'occurrences',
+  'recurrence_never': 'Never',
+  'recurrence_until': 'Until',
+  'recurrence_times': 'times',
+
+  // Task Card
+  'no_due_date': 'No due date',
+  'overdue_prefix': 'Overdue: ',
+  'due_today_prefix': 'Due today: ',
+
+  // Dialogs
+  'coming_soon': 'Coming Soon',
+
+  // Quote
+  'quote_text': 'The only way to do great work is to love what you do. - Steve Jobs',
+  'quote_author': 'Steve Jobs',
+
+  // Recurrence Descriptions
+  'recurrence_does_not_repeat': 'This task does not repeat.',
+  'recurrence_repeats_daily': 'This task repeats daily.',
+  'recurrence_repeats_every_days': 'This task repeats every {days} days.',
+  'recurrence_repeats_weekly_on': 'This task repeats weekly on {day}.',
+  'recurrence_repeats_weekly': 'This task repeats weekly.',
+  'recurrence_repeats_every_weeks': 'This task repeats every {weeks} weeks.',
+  'recurrence_repeats_monthly': 'This task repeats monthly.',
+  'recurrence_repeats_every_months': 'This task repeats every {months} months.',
+  'recurrence_custom_every_days': 'This task has a custom recurrence every {days} days.',
+
+  // Task Detail
+  'delete_task_question': 'Are you sure you want to delete this task?',
+  'delete_task_confirmation': 'Delete Task',
+  'save_as_template': 'Save as Template',
+  'create_template_from_task_desc': 'Create a template from this task',
+  'template_created_success': 'Template created successfully.',
+  'task_not_found': 'Task not found.',
+  'task_not_found_msg': 'The task you are looking for does not exist.',
+  'days_overdue': '{days} days overdue',
+  'due_today': 'Due today',
+  'days_left': '{days} days left',
+  'completed_count': 'Completed: {count}',
+
+  // Notes
+  'notes': 'Notes',
+  'search_notes_hint': 'Search notes...',
+  'create_new': 'Create New',
+  'text_note': 'Text Note',
+  'simple_text_note': 'Simple Text Note',
+  'checklist': 'Checklist',
+  'task_list_with_checkboxes': 'Task List with Checkboxes',
+  'rich_text_note': 'Rich Text Note',
+  'with_formatting_options': 'With formatting options',
+  'failed_to_load_notes': 'Failed to load notes. Please try again.',
+  'retry': 'Retry',
+  'clear_all': 'Clear All',
+
+  'authenticate_to_view_note': 'Authenticate to view note',
+  'enter_pin': 'Enter PIN',
+  'enter_4_digit_pin': 'Enter 4-digit PIN',
+  'unlock': 'Unlock',
+
+  'pin_to_top': 'Pin to Top',
+  'unpin': 'Unpin',
+  'change_color': 'Change Color',
+  'lock_note': 'Lock Note',
+  'remove_lock': 'Remove Lock',
+
+  'choose_color': 'Choose Color',
+
+  'secure_your_note': 'Secure your note',
+  'choose_how_to_protect_note': 'Choose how to protect your note',
+  'biometrics': 'Biometrics',
+  'use_fingerprint_or_face': 'Use fingerprint or face recognition',
+  'note_locked_with_biometrics': 'This note is locked with biometrics.',
+  'biometrics_not_available': 'Biometrics not available.',
+  'pin_code': 'PIN Code',
+  'set_4_digit_security_code': 'Set a 4-digit security code',
+  'both': 'Both',
+  'use_biometrics_with_pin_backup': 'Use biometrics with PIN backup',
+  'biometrics_not_available_using_pin': 'Biometrics not available, using PIN instead.',
+
+  'set_backup_pin': 'Set Backup PIN',
+  'set_pin_backup_for_biometrics': 'Set PIN backup for biometrics',
+  'pin': 'PIN',
+  'confirm_pin': 'Confirm PIN',
+  'pins_do_not_match': 'PINs do not match',
+  'pin_must_be_4_digits': 'PIN must be 4 digits',
+
+  'delete_note': 'Delete Note',
+  'delete_note_confirm_msg': 'Are you sure you want to delete this note?',
+
+  'no_notes_yet': 'No notes found. Create your first note!',
+  'no_notes_matching_filters': 'No notes matching the current filters.',
+  'create_first_note': 'Create your first note',
+
+  'filter_notes': 'Filter Notes',
+
+  // Note editor
+  'untitled': 'Untitled',
+  'note_created': 'Note created',
+  'note_updated': 'Note updated',
+  'discard_changes': 'Discard changes?',
+  'unsaved_changes_discard': 'You have unsaved changes. Discard them?',
+  'discard': 'Discard',
+  'title_hint': 'Title',
+  'start_writing_hint': 'Start writing your note...',
+  'reset_to_default': 'Reset to default',
+  'none': 'None',
+  'add_tag_hint': 'Add a tag',
 };
 
 // French Translations
-const Map<String, String> _frTranslations = {
+final Map<String, String> _frTranslations = {
   ...SettingsTranslations.fr,
   ...BackupTranslations.fr,
   ...HelpSupportTranslations.fr,
@@ -758,79 +1126,11 @@ const Map<String, String> _frTranslations = {
   ...PomodoroTranslations.fr,
   ...TemplatesTranslations.fr,
   ...TaskDetailTranslations.fr,
-  // Common
-  'app_name': 'DayFlow',
-  'welcome': 'Bienvenue',
-  'get_started': 'Commencer',
-  'sign_in': 'Se connecter',
-  'already_have_account': 'Vous avez déjà un compte ?',
-  'cancel': 'Annuler',
-  'save': 'Enregistrer',
-  'close': 'Fermer',
-  'change': 'Changer',
-  'got_it': 'Compris',
-  'loading': 'Chargement...',
-
-  // Authentication
-  'login': 'Connexion',
-  'signup': "S'inscrire",
-  'logout': 'Se déconnecter',
-  'email': 'Email',
-  'password': 'Mot de passe',
-  'full_name': 'Nom complet',
-  'confirm_password': 'Confirmer le mot de passe',
-  'forgot_password': 'Mot de passe oublié ?',
-  'reset_password': 'Réinitialiser le mot de passe',
-  'send_reset_link': 'Envoyer le lien de réinitialisation',
-  'back_to_login': 'Retour à la connexion',
-  'create_account': 'Créer un compte',
-  'welcome_back': 'Bon retour !',
-  'sign_in_to_continue': 'Connectez-vous pour continuer vers DayFlow',
-  'sign_up_to_get_started': 'Inscrivez-vous pour commencer avec DayFlow',
-  'dont_have_account': "Vous n'avez pas de compte ?",
-  'continue_with_google': 'Continuer avec Google',
-  'verify_your_email': 'Vérifiez votre email',
-  'email_verification_sent': 'Nous avons envoyé un email de vérification à',
-  'resend_verification_email': 'Renvoyer l\'email de vérification',
-  'use_different_account': 'Utiliser un autre compte',
-  'checking_verification_status': 'Vérification du statut...',
-
-  // Dialogs
-  'coming_soon': 'Bientôt disponible',
-  'feature_under_development': 'Cette fonctionnalité est en cours de développement',
-  'working_hard_on_feature': 'Nous travaillons dur pour vous apporter cette fonctionnalité bientôt !',
-  'logout_confirmation': 'Se déconnecter',
-  'are_you_sure_logout': 'Êtes-vous sûr de vouloir vous déconnecter ?',
-  'logout_success': 'Déconnexion réussie',
-  'language_changed': 'Langue changée en',
-  'theme_changed': 'Thème changé en',
-  'profile_updated': 'Profil mis à jour avec succès',
-  'password_changed': 'Mot de passe changé avec succès',
-
-  // Validation
-  'please_enter_email': 'Veuillez entrer votre email',
-  'please_enter_valid_email': 'Veuillez entrer un email valide',
-  'please_enter_password': 'Veuillez entrer votre mot de passe',
-  'password_too_short': 'Le mot de passe doit contenir au moins 6 caractères',
-  'please_enter_name': 'Veuillez entrer votre nom',
-  'name_too_short': 'Le nom doit contenir au moins 3 caractères',
-  'please_confirm_password': 'Veuillez confirmer votre mot de passe',
-  'passwords_do_not_match': 'Les mots de passe ne correspondent pas',
-  'password_must_be_different': 'Le nouveau mot de passe doit être différent',
-  'please_enter_current_password': 'Veuillez entrer le mot de passe actuel',
-  'please_enter_new_password': 'Veuillez entrer le nouveau mot de passe',
-
-  // Input Placeholders
-  'enter_email': 'Entrez votre email',
-  'enter_password': 'Entrez votre mot de passe',
-  'enter_name': 'Entrez votre nom complet',
-  're_enter_password': 'Entrez à nouveau votre mot de passe',
-  'enter_current_password': 'Entrez le mot de passe actuel',
-  'enter_new_password': 'Entrez le nouveau mot de passe',
+  ...NotesTranslations.fr,
 };
 
 // Arabic Translations
-const Map<String, String> _arTranslations = {
+final Map<String, String> _arTranslations = {
   ...SettingsTranslations.ar,
   ...BackupTranslations.ar,
   ...HelpSupportTranslations.ar,
@@ -839,73 +1139,6 @@ const Map<String, String> _arTranslations = {
   ...PomodoroTranslations.ar,
   ...TemplatesTranslations.ar,
   ...TaskDetailTranslations.ar,
-  // Common
-  'app_name': 'DayFlow',
-  'welcome': 'مرحباً',
-  'get_started': 'ابدأ الآن',
-  'sign_in': 'تسجيل الدخول',
-  'already_have_account': 'لديك حساب بالفعل؟',
-  'cancel': 'إلغاء',
-  'save': 'حفظ',
-  'close': 'إغلاق',
-  'change': 'تغيير',
-  'got_it': 'فهمت',
-  'loading': 'جاري التحميل...',
-
-  // Authentication
-  'login': 'دخول',
-  'signup': 'إنشاء حساب',
-  'logout': 'تسجيل الخروج',
-  'email': 'البريد الإلكتروني',
-  'password': 'كلمة المرور',
-  'full_name': 'الاسم الكامل',
-  'confirm_password': 'تأكيد كلمة المرور',
-  'forgot_password': 'نسيت كلمة المرور؟',
-  'reset_password': 'إعادة تعيين كلمة المرور',
-  'send_reset_link': 'إرسال رابط إعادة التعيين',
-  'back_to_login': 'العودة لتسجيل الدخول',
-  'create_account': 'إنشاء حساب',
-  'welcome_back': 'مرحباً بعودتك!',
-  'sign_in_to_continue': 'سجل الدخول للمتابعة إلى DayFlow',
-  'sign_up_to_get_started': 'سجل حساباً للبدء مع DayFlow',
-  'dont_have_account': 'ليس لديك حساب؟',
-  'continue_with_google': 'المتابعة باستخدام Google',
-  'verify_your_email': 'تحقق من بريدك الإلكتروني',
-  'email_verification_sent': 'لقد أرسلنا رسالة تحقق إلى',
-  'resend_verification_email': 'إعادة إرسال رسالة التحقق',
-  'use_different_account': 'استخدام حساب آخر',
-  'checking_verification_status': 'جاري التحقق من الحالة...',
-
-  // Dialogs
-  'coming_soon': 'قريباً',
-  'feature_under_development': 'هذه الميزة قيد التطوير',
-  'working_hard_on_feature': 'نحن نعمل بجد لتقديم هذه الميزة لك قريباً!',
-  'logout_confirmation': 'تسجيل الخروج',
-  'are_you_sure_logout': 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
-  'logout_success': 'تم تسجيل الخروج بنجاح',
-  'language_changed': 'تم تغيير اللغة إلى',
-  'theme_changed': 'تم تغيير السمة إلى',
-  'profile_updated': 'تم تحديث الملف الشخصي بنجاح',
-  'password_changed': 'تم تغيير كلمة المرور بنجاح',
-
-  // Validation
-  'please_enter_email': 'يرجى إدخال بريدك الإلكتروني',
-  'please_enter_valid_email': 'يرجى إدخال بريد إلكتروني صالح',
-  'please_enter_password': 'يرجى إدخال كلمة المرور',
-  'password_too_short': 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل',
-  'please_enter_name': 'يرجى إدخال اسمك',
-  'name_too_short': 'يجب أن يتكون الاسم من 3 أحرف على الأقل',
-  'please_confirm_password': 'يرجى تأكيد كلمة المرور',
-  'passwords_do_not_match': 'كلمات المرور غير متطابقة',
-  'password_must_be_different': 'يجب أن تكون كلمة المرور الجديدة مختلفة',
-  'please_enter_current_password': 'يرجى إدخال كلمة المرور الحالية',
-  'please_enter_new_password': 'يرجى إدخال كلمة المرور الجديدة',
-
-  // Input Placeholders
-  'enter_email': 'أدخل بريدك الإلكتروني',
-  'enter_password': 'أدخل كلمة المرور',
-  'enter_name': 'أدخل اسمك الكامل',
-  're_enter_password': 'أعد إدخال كلمة المرور',
-  'enter_current_password': 'أدخل كلمة المرور الحالية',
-  'enter_new_password': 'أدخل كلمة المرور الجديدة',
+  ...NotesTranslations.ar,
 };
+

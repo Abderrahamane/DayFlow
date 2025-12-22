@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../utils/app_localizations.dart';
 import '../blocs/note/note_bloc.dart';
 import '../models/note_model.dart';
 import '../services/biometric_service.dart';
@@ -43,6 +44,8 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _showCreateOptions() {
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -56,7 +59,7 @@ class _NotesPageState extends State<NotesPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Create New',
+              l10n.createNew,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -64,8 +67,8 @@ class _NotesPageState extends State<NotesPage> {
             const SizedBox(height: 20),
             _CreateOptionTile(
               icon: Icons.note_add,
-              title: 'Text Note',
-              subtitle: 'Simple text note',
+              title: l10n.textNote,
+              subtitle: l10n.simpleTextNote,
               color: Theme.of(context).colorScheme.primary,
               onTap: () {
                 Navigator.pop(ctx);
@@ -82,8 +85,8 @@ class _NotesPageState extends State<NotesPage> {
             ),
             _CreateOptionTile(
               icon: Icons.checklist,
-              title: 'Checklist',
-              subtitle: 'Task list with checkboxes',
+              title: l10n.checklist,
+              subtitle: l10n.taskListWithCheckboxes,
               color: AppTheme.successColor,
               onTap: () {
                 Navigator.pop(ctx);
@@ -101,8 +104,8 @@ class _NotesPageState extends State<NotesPage> {
             ),
             _CreateOptionTile(
               icon: Icons.text_fields,
-              title: 'Rich Text Note',
-              subtitle: 'With formatting options',
+              title: l10n.richTextNote,
+              subtitle: l10n.withFormattingOptions,
               color: Colors.purple,
               onTap: () {
                 Navigator.pop(ctx);
@@ -138,26 +141,27 @@ class _NotesPageState extends State<NotesPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => Scaffold.of(context).openDrawer(),
-          tooltip: 'Open Menu',
+          tooltip: l10n.openMenu,
         ),
         title: _isSearching
             ? TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Search notes...',
+                decoration: InputDecoration(
+                  hintText: l10n.searchNotesHint,
                   border: InputBorder.none,
                 ),
                 onChanged: (query) =>
                     context.read<NoteBloc>().add(SearchNotesEvent(query)),
               )
-            : const Text('Notes'),
+            : Text(l10n.notesTitle),
         actions: [
           IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
@@ -189,14 +193,13 @@ class _NotesPageState extends State<NotesPage> {
                   Icon(Icons.error_outline,
                       size: 64, color: theme.colorScheme.error),
                   const SizedBox(height: 16),
-                  Text('Failed to load notes',
+                  Text(l10n.failedToLoadNotes,
                       style: theme.textTheme.titleLarge),
                   const SizedBox(height: 24),
                   FilledButton.icon(
-                    onPressed: () =>
-                        context.read<NoteBloc>().add(LoadNotes()),
+                    onPressed: () => context.read<NoteBloc>().add(LoadNotes()),
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
+                    label: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -215,7 +218,8 @@ class _NotesPageState extends State<NotesPage> {
               // Filter chips
               if (state.hasActiveFilter)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     children: [
                       if (state.selectedCategory != null)
@@ -250,7 +254,7 @@ class _NotesPageState extends State<NotesPage> {
                       TextButton(
                         onPressed: () =>
                             context.read<NoteBloc>().add(ClearFiltersEvent()),
-                        child: const Text('Clear all'),
+                        child: Text(l10n.clearAll),
                       ),
                     ],
                   ),
@@ -284,9 +288,11 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Future<bool> _authenticateNote(BuildContext context, Note note) async {
+    final l10n = AppLocalizations.of(context);
+
     if (note.useBiometric) {
       final success = await BiometricService.authenticate(
-        reason: 'Authenticate to view this note',
+        reason: l10n.authenticateToViewNote,
       );
       if (success) return true;
     }
@@ -299,30 +305,32 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   Future<bool> _showPinDialog(BuildContext context, String correctPin) async {
+    final l10n = AppLocalizations.of(context);
+
     final pinController = TextEditingController();
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Enter PIN'),
+        title: Text(l10n.enterPin),
         content: TextField(
           controller: pinController,
           keyboardType: TextInputType.number,
           obscureText: true,
           maxLength: 4,
-          decoration: const InputDecoration(
-            hintText: 'Enter 4-digit PIN',
+          decoration: InputDecoration(
+            hintText: l10n.enter4DigitPin,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(ctx, pinController.text == correctPin);
             },
-            child: const Text('Unlock'),
+            child: Text(l10n.unlock),
           ),
         ],
       ),
@@ -332,6 +340,8 @@ class _NotesPageState extends State<NotesPage> {
 
   void _showNoteOptions(BuildContext context, Note note) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -345,8 +355,9 @@ class _NotesPageState extends State<NotesPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(note.isPinned ? Icons.push_pin : Icons.push_pin_outlined),
-              title: Text(note.isPinned ? 'Unpin' : 'Pin to top'),
+              leading: Icon(
+                  note.isPinned ? Icons.push_pin : Icons.push_pin_outlined),
+              title: Text(note.isPinned ? l10n.unpin : l10n.pinToTop),
               onTap: () {
                 Navigator.pop(ctx);
                 context.read<NoteBloc>().add(ToggleNotePinEvent(note.id));
@@ -354,7 +365,7 @@ class _NotesPageState extends State<NotesPage> {
             ),
             ListTile(
               leading: const Icon(Icons.palette),
-              title: const Text('Change color'),
+              title: Text(l10n.changeColor),
               onTap: () {
                 Navigator.pop(ctx);
                 _showColorPicker(context, note);
@@ -362,7 +373,7 @@ class _NotesPageState extends State<NotesPage> {
             ),
             ListTile(
               leading: Icon(note.isLocked ? Icons.lock_open : Icons.lock),
-              title: Text(note.isLocked ? 'Remove lock' : 'Lock note'),
+              title: Text(note.isLocked ? l10n.removeLock : l10n.lockNote),
               onTap: () {
                 Navigator.pop(ctx);
                 if (note.isLocked) {
@@ -373,8 +384,10 @@ class _NotesPageState extends State<NotesPage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.delete_outline, color: theme.colorScheme.error),
-              title: Text('Delete', style: TextStyle(color: theme.colorScheme.error)),
+              leading:
+                  Icon(Icons.delete_outline, color: theme.colorScheme.error),
+              title: Text(l10n.delete,
+                  style: TextStyle(color: theme.colorScheme.error)),
               onTap: () {
                 Navigator.pop(ctx);
                 _confirmDelete(context, note);
@@ -387,6 +400,8 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _showColorPicker(BuildContext context, Note note) {
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -409,7 +424,7 @@ class _NotesPageState extends State<NotesPage> {
             ),
             const SizedBox(height: 20),
             Text(
-              '🎨 Choose Color',
+              l10n.chooseColor,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -476,6 +491,8 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _showLockOptions(BuildContext context, Note note) {
+    final l10n = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -514,14 +531,14 @@ class _NotesPageState extends State<NotesPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Secure Your Note',
+              l10n.secureYourNote,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Choose how you want to protect this note',
+              l10n.chooseHowToProtectNote,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey,
                   ),
@@ -530,8 +547,8 @@ class _NotesPageState extends State<NotesPage> {
             // Biometric option
             _LockOptionCard(
               icon: Icons.fingerprint,
-              title: 'Biometrics',
-              subtitle: 'Use fingerprint or face unlock',
+              title: l10n.biometrics,
+              subtitle: l10n.useFingerprintOrFace,
               color: Colors.green,
               onTap: () async {
                 final canAuth = await BiometricService.canAuthenticate();
@@ -541,15 +558,15 @@ class _NotesPageState extends State<NotesPage> {
                         LockNoteEvent(note.id, useBiometric: true),
                       );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('🔒 Note locked with biometrics'),
+                    SnackBar(
+                      content: Text(l10n.noteLockedWithBiometrics),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Biometrics not available on this device'),
+                    SnackBar(
+                      content: Text(l10n.biometricsNotAvailable),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -560,8 +577,8 @@ class _NotesPageState extends State<NotesPage> {
             // PIN option
             _LockOptionCard(
               icon: Icons.pin,
-              title: 'PIN Code',
-              subtitle: 'Set a 4-digit security code',
+              title: l10n.pinCode,
+              subtitle: l10n.set4DigitSecurityCode,
               color: Colors.blue,
               onTap: () {
                 Navigator.pop(ctx);
@@ -572,8 +589,8 @@ class _NotesPageState extends State<NotesPage> {
             // Both option
             _LockOptionCard(
               icon: Icons.security,
-              title: 'Both',
-              subtitle: 'Use biometrics with PIN backup',
+              title: l10n.both,
+              subtitle: l10n.useBiometricsWithPinBackup,
               color: Colors.purple,
               onTap: () async {
                 final canAuth = await BiometricService.canAuthenticate();
@@ -582,8 +599,8 @@ class _NotesPageState extends State<NotesPage> {
                   _showSetPinDialogWithBiometric(context, note);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Biometrics not available, using PIN only'),
+                    SnackBar(
+                      content: Text(l10n.biometricsNotAvailableUsingPin),
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -600,6 +617,8 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _showSetPinDialogWithBiometric(BuildContext context, Note note) {
+    final l10n = AppLocalizations.of(context);
+
     final pinController = TextEditingController();
     final confirmController = TextEditingController();
     showDialog(
@@ -610,14 +629,14 @@ class _NotesPageState extends State<NotesPage> {
           children: [
             Icon(Icons.security, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 12),
-            const Text('Set Backup PIN'),
+            Text(l10n.setBackupPin),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Set a PIN as backup for biometrics',
+              l10n.setPinBackupForBiometrics,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey,
                   ),
@@ -647,7 +666,7 @@ class _NotesPageState extends State<NotesPage> {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 24, letterSpacing: 8),
               decoration: InputDecoration(
-                hintText: 'Confirm',
+                hintText: l10n.confirmPin,
                 counterText: '',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -659,7 +678,7 @@ class _NotesPageState extends State<NotesPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -671,21 +690,21 @@ class _NotesPageState extends State<NotesPage> {
                           pin: pinController.text, useBiometric: true),
                     );
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('🔒 Note locked with biometrics + PIN'),
+                  SnackBar(
+                    content: Text(l10n.noteLockedWithBiometrics),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               } else if (pinController.text != confirmController.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('PINs do not match'),
+                  SnackBar(
+                    content: Text(l10n.pinsDoNotMatch),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
             },
-            child: const Text('Lock Note'),
+            child: Text(l10n.lockNote),
           ),
         ],
       ),
@@ -693,6 +712,8 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _showSetPinDialog(BuildContext context, Note note) {
+    final l10n = AppLocalizations.of(context);
+
     final pinController = TextEditingController();
     final confirmController = TextEditingController();
     showDialog(
@@ -703,14 +724,14 @@ class _NotesPageState extends State<NotesPage> {
           children: [
             Icon(Icons.pin, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 12),
-            const Text('Set PIN'),
+            Text(l10n.pinCode),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Enter a 4-digit PIN to lock this note',
+              l10n.set4DigitSecurityCode,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey,
                   ),
@@ -740,7 +761,7 @@ class _NotesPageState extends State<NotesPage> {
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 24, letterSpacing: 8),
               decoration: InputDecoration(
-                hintText: 'Confirm',
+                hintText: l10n.confirmPin,
                 counterText: '',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -752,7 +773,7 @@ class _NotesPageState extends State<NotesPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -763,21 +784,21 @@ class _NotesPageState extends State<NotesPage> {
                       LockNoteEvent(note.id, pin: pinController.text),
                     );
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('🔒 Note locked with PIN'),
+                  SnackBar(
+                    content: Text('🔒 ${l10n.lockNote}'),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               } else if (pinController.text != confirmController.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('PINs do not match'),
+                  SnackBar(
+                    content: Text(l10n.pinsDoNotMatch),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
             },
-            child: const Text('Lock Note'),
+            child: Text(l10n.lockNote),
           ),
         ],
       ),
@@ -785,15 +806,17 @@ class _NotesPageState extends State<NotesPage> {
   }
 
   void _confirmDelete(BuildContext context, Note note) {
+    final l10n = AppLocalizations.of(context);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Note'),
-        content: Text('Are you sure you want to delete "${note.title}"?'),
+        title: Text(l10n.deleteNote),
+        content: Text(l10n.deleteNoteConfirmMsg),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -803,7 +826,7 @@ class _NotesPageState extends State<NotesPage> {
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -858,6 +881,7 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Center(
       child: Padding(
@@ -872,7 +896,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              hasFilter ? 'No notes match your filter' : 'No notes yet',
+              hasFilter ? l10n.noNotesMatchingFilters : l10n.noNotesYet,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -880,8 +904,8 @@ class _EmptyState extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               hasFilter
-                  ? 'Try adjusting your filters'
-                  : 'Start creating notes to organize your thoughts',
+                  ? l10n.tryAdjustingYourFilters
+                  : l10n.startCreatingNotes,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.textTheme.bodyMedium?.color?.withAlpha(179),
@@ -892,7 +916,7 @@ class _EmptyState extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onCreate,
                 icon: const Icon(Icons.add),
-                label: const Text('Create Note'),
+                label: Text(l10n.createFirstNote),
               ),
             ],
           ],
@@ -918,6 +942,7 @@ class _NotesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -930,7 +955,7 @@ class _NotesGrid extends StatelessWidget {
                 const Icon(Icons.push_pin, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  'Pinned',
+                  l10n.pinned,
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -945,7 +970,7 @@ class _NotesGrid extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 8),
             child: Text(
-              'Others',
+              l10n.others,
               style: theme.textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -994,6 +1019,7 @@ class _NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final bgColor = note.color ?? theme.colorScheme.surface;
     final textColor = NoteColors.getContrastText(bgColor);
 
@@ -1042,7 +1068,7 @@ class _NoteCard extends StatelessWidget {
             const SizedBox(height: 8),
             // Title
             Text(
-              note.title.isEmpty ? 'Untitled' : note.title,
+              note.title.isEmpty ? l10n.untitled : note.title,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: textColor,
@@ -1158,6 +1184,7 @@ class _FilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<NoteBloc, NoteState>(
       builder: (context, state) {
@@ -1172,7 +1199,7 @@ class _FilterSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Filter Notes',
+                l10n.filterNotes,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -1246,7 +1273,7 @@ class _FilterSheet extends StatelessWidget {
                     context.read<NoteBloc>().add(ClearFiltersEvent());
                     Navigator.pop(context);
                   },
-                  child: const Text('Clear Filters'),
+                  child: Text(l10n.clearAll),
                 ),
               ),
             ],
