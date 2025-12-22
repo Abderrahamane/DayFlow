@@ -1,6 +1,7 @@
 // lib/utils/app_localizations.dart
 
 import 'package:flutter/material.dart';
+import 'translations/settings_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -22,7 +23,9 @@ class AppLocalizations {
   };
 
   String translate(String key) {
-    return _localizedValues[locale.languageCode]?[key] ?? key;
+    return _localizedValues[locale.languageCode]?[key] ??
+        _enTranslations[key] ??
+        key;
   }
 
   // Common
@@ -355,6 +358,7 @@ class AppLocalizations {
 
 // English Translations
 const Map<String, String> _enTranslations = {
+  ...SettingsTranslations.en,
   'app_name': 'DayFlow',
   'welcome': 'Welcome',
   'get_started': 'Get Started',
@@ -390,43 +394,7 @@ const Map<String, String> _enTranslations = {
   'use_different_account': 'Use Different Account',
   'checking_verification_status': 'Checking verification status...',
 
-  'settings': 'Settings',
-  'profile': 'Profile',
-  'edit_profile': 'Edit Profile',
-  'appearance': 'Appearance',
-  'theme': 'Theme',
-  'light_mode': 'Light Mode',
-  'dark_mode': 'Dark Mode',
-  'language': 'Language',
-  'select_language': 'Select Language',
-  'account': 'Account',
-  'sync_status': 'Sync Status',
-  'last_synced': 'Last synced just now',
-  'change_password': 'Change Password',
-  'update_password': 'Update your password',
-  'current_password': 'Current Password',
-  'new_password': 'New Password',
-  'confirm_new_password': 'Confirm New Password',
-  'preferences': 'Preferences',
-  'notifications': 'Notifications',
-  'notifications_enabled': 'Notifications enabled',
-  'notifications_disabled': 'Notifications turned off',
-  'receive_task_alerts': 'Receive task and reminder alerts',
-  'no_notifications': 'No notifications',
-  'privacy': 'Privacy',
-  'privacy_settings': 'Control your privacy settings',
-  'backup_and_sync': 'Backup & Sync',
-  'cloud_backup': 'Cloud backup settings',
-  'about': 'About',
-  'about_dayflow': 'About DayFlow',
-  'version': 'Version 1.0.0',
-  'help_and_support': 'Help & Support',
-  'get_help': 'Get help with DayFlow',
-  'terms_and_privacy': 'Terms & Privacy Policy',
-  'legal_info': 'Legal information',
-  'sign_in_to_continue_desc':
-      'Access your tasks, notes, and reminders\nacross all your devices',
-
+  // Dialogs
   'coming_soon': 'Coming Soon',
   'feature_under_development': 'This feature is under development',
   'working_hard_on_feature':
@@ -439,6 +407,7 @@ const Map<String, String> _enTranslations = {
   'profile_updated': 'Profile updated successfully',
   'password_changed': 'Password changed successfully',
 
+  // Validation
   'please_enter_email': 'Please enter your email',
   'please_enter_valid_email': 'Please enter a valid email',
   'please_enter_password': 'Please enter your password',
@@ -451,6 +420,7 @@ const Map<String, String> _enTranslations = {
   'please_enter_current_password': 'Please enter current password',
   'please_enter_new_password': 'Please enter new password',
 
+  // Input Placeholders
   'enter_email': 'Enter your email',
   'enter_password': 'Enter your password',
   'enter_name': 'Enter your full name',
@@ -458,10 +428,6 @@ const Map<String, String> _enTranslations = {
   'enter_current_password': 'Enter current password',
   'enter_new_password': 'Enter new password',
 
-  'app_description':
-      'A smart daily planner to help you manage your tasks, notes, and reminders efficiently.',
-  'developed_by': 'Developed by Team DayFlow',
-  'team_members': 'Abderrahmane Houri\nMohamed Al Amin Saàd\nLina Selma Ouadah',
 
   'your_smart_daily_planner': 'Your Smart Daily Planner',
   'organize_tasks': 'Organize your tasks efficiently',
@@ -683,4 +649,175 @@ const Map<String, String> _enTranslations = {
   "reminderUpdated": "Reminder updated!",
   "reminderDeleted": "Reminder deleted",
   "delete": "delete",
-  "reminderInfoTaskLocked": "This reminder is from a task and cannot be mod
+  "reminderInfoTaskLocked": "This reminder is from a task and cannot be modified.",
+  "task": "Task",
+};
+
+// French Translations
+const Map<String, String> _frTranslations = {
+  ...SettingsTranslations.fr,
+  // Common
+  'app_name': 'DayFlow',
+  'welcome': 'Bienvenue',
+  'get_started': 'Commencer',
+  'sign_in': 'Se connecter',
+  'already_have_account': 'Vous avez déjà un compte ?',
+  'cancel': 'Annuler',
+  'save': 'Enregistrer',
+  'close': 'Fermer',
+  'change': 'Changer',
+  'got_it': 'Compris',
+  'loading': 'Chargement...',
+
+  // Authentication
+  'login': 'Connexion',
+  'signup': "S'inscrire",
+  'logout': 'Se déconnecter',
+  'email': 'Email',
+  'password': 'Mot de passe',
+  'full_name': 'Nom complet',
+  'confirm_password': 'Confirmer le mot de passe',
+  'forgot_password': 'Mot de passe oublié ?',
+  'reset_password': 'Réinitialiser le mot de passe',
+  'send_reset_link': 'Envoyer le lien de réinitialisation',
+  'back_to_login': 'Retour à la connexion',
+  'create_account': 'Créer un compte',
+  'welcome_back': 'Bon retour !',
+  'sign_in_to_continue': 'Connectez-vous pour continuer vers DayFlow',
+  'sign_up_to_get_started': 'Inscrivez-vous pour commencer avec DayFlow',
+  'dont_have_account': "Vous n'avez pas de compte ?",
+  'continue_with_google': 'Continuer avec Google',
+  'verify_your_email': 'Vérifiez votre email',
+  'email_verification_sent': 'Nous avons envoyé un email de vérification à',
+  'resend_verification_email': 'Renvoyer l\'email de vérification',
+  'use_different_account': 'Utiliser un autre compte',
+  'checking_verification_status': 'Vérification du statut...',
+
+  // Dialogs
+  'coming_soon': 'Bientôt disponible',
+  'feature_under_development': 'Cette fonctionnalité est en cours de développement',
+  'working_hard_on_feature': 'Nous travaillons dur pour vous apporter cette fonctionnalité bientôt !',
+  'logout_confirmation': 'Se déconnecter',
+  'are_you_sure_logout': 'Êtes-vous sûr de vouloir vous déconnecter ?',
+  'logout_success': 'Déconnexion réussie',
+  'language_changed': 'Langue changée en',
+  'theme_changed': 'Thème changé en',
+  'profile_updated': 'Profil mis à jour avec succès',
+  'password_changed': 'Mot de passe changé avec succès',
+
+  // Validation
+  'please_enter_email': 'Veuillez entrer votre email',
+  'please_enter_valid_email': 'Veuillez entrer un email valide',
+  'please_enter_password': 'Veuillez entrer votre mot de passe',
+  'password_too_short': 'Le mot de passe doit contenir au moins 6 caractères',
+  'please_enter_name': 'Veuillez entrer votre nom',
+  'name_too_short': 'Le nom doit contenir au moins 3 caractères',
+  'please_confirm_password': 'Veuillez confirmer votre mot de passe',
+  'passwords_do_not_match': 'Les mots de passe ne correspondent pas',
+  'password_must_be_different': 'Le nouveau mot de passe doit être différent',
+  'please_enter_current_password': 'Veuillez entrer le mot de passe actuel',
+  'please_enter_new_password': 'Veuillez entrer le nouveau mot de passe',
+
+  // Input Placeholders
+  'enter_email': 'Entrez votre email',
+  'enter_password': 'Entrez votre mot de passe',
+  'enter_name': 'Entrez votre nom complet',
+  're_enter_password': 'Entrez à nouveau votre mot de passe',
+  'enter_current_password': 'Entrez le mot de passe actuel',
+  'enter_new_password': 'Entrez le nouveau mot de passe',
+};
+
+// Arabic Translations
+const Map<String, String> _arTranslations = {
+  ...SettingsTranslations.ar,
+  // Common
+  'app_name': 'DayFlow',
+  'welcome': 'مرحباً',
+  'get_started': 'ابدأ الآن',
+  'sign_in': 'تسجيل الدخول',
+  'already_have_account': 'لديك حساب بالفعل؟',
+  'cancel': 'إلغاء',
+  'save': 'حفظ',
+  'close': 'إغلاق',
+  'change': 'تغيير',
+  'got_it': 'فهمت',
+  'loading': 'جاري التحميل...',
+
+  // Authentication
+  'login': 'دخول',
+  'signup': 'إنشاء حساب',
+  'logout': 'تسجيل الخروج',
+  'email': 'البريد الإلكتروني',
+  'password': 'كلمة المرور',
+  'full_name': 'الاسم الكامل',
+  'confirm_password': 'تأكيد كلمة المرور',
+  'forgot_password': 'نسيت كلمة المرور؟',
+  'reset_password': 'إعادة تعيين كلمة المرور',
+  'send_reset_link': 'إرسال رابط إعادة التعيين',
+  'back_to_login': 'العودة لتسجيل الدخول',
+  'create_account': 'إنشاء حساب',
+  'welcome_back': 'مرحباً بعودتك!',
+  'sign_in_to_continue': 'سجل الدخول للمتابعة إلى DayFlow',
+  'sign_up_to_get_started': 'سجل حساباً للبدء مع DayFlow',
+  'dont_have_account': 'ليس لديك حساب؟',
+  'continue_with_google': 'المتابعة باستخدام Google',
+  'verify_your_email': 'تحقق من بريدك الإلكتروني',
+  'email_verification_sent': 'لقد أرسلنا رسالة تحقق إلى',
+  'resend_verification_email': 'إعادة إرسال رسالة التحقق',
+  'use_different_account': 'استخدام حساب آخر',
+  'checking_verification_status': 'جاري التحقق من الحالة...',
+
+  // Dialogs
+  'coming_soon': 'قريباً',
+  'feature_under_development': 'هذه الميزة قيد التطوير',
+  'working_hard_on_feature': 'نحن نعمل بجد لتقديم هذه الميزة لك قريباً!',
+  'logout_confirmation': 'تسجيل الخروج',
+  'are_you_sure_logout': 'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+  'logout_success': 'تم تسجيل الخروج بنجاح',
+  'language_changed': 'تم تغيير اللغة إلى',
+  'theme_changed': 'تم تغيير السمة إلى',
+  'profile_updated': 'تم تحديث الملف الشخصي بنجاح',
+  'password_changed': 'تم تغيير كلمة المرور بنجاح',
+
+  // Validation
+  'please_enter_email': 'يرجى إدخال بريدك الإلكتروني',
+  'please_enter_valid_email': 'يرجى إدخال بريد إلكتروني صالح',
+  'please_enter_password': 'يرجى إدخال كلمة المرور',
+  'password_too_short': 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل',
+  'please_enter_name': 'يرجى إدخال اسمك',
+  'name_too_short': 'يجب أن يتكون الاسم من 3 أحرف على الأقل',
+  'please_confirm_password': 'يرجى تأكيد كلمة المرور',
+  'passwords_do_not_match': 'كلمات المرور غير متطابقة',
+  'password_must_be_different': 'يجب أن تكون كلمة المرور الجديدة مختلفة',
+  'please_enter_current_password': 'يرجى إدخال كلمة المرور الحالية',
+  'please_enter_new_password': 'يرجى إدخال كلمة المرور الجديدة',
+
+  // Input Placeholders
+  'enter_email': 'أدخل بريدك الإلكتروني',
+  'enter_password': 'أدخل كلمة المرور',
+  'enter_name': 'أدخل اسمك الكامل',
+  're_enter_password': 'أعد إدخال كلمة المرور',
+  'enter_current_password': 'أدخل كلمة المرور الحالية',
+  'enter_new_password': 'أدخل كلمة المرور الجديدة',
+};
+
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
+  const _AppLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) {
+    return ['en', 'fr', 'ar'].contains(locale.languageCode);
+  }
+
+  @override
+  Future<AppLocalizations> load(Locale locale) async {
+    return AppLocalizations(locale);
+  }
+
+  @override
+  bool shouldReload(LocalizationsDelegate<AppLocalizations> old) {
+    return false;
+  }
+}
+
