@@ -1,6 +1,7 @@
 // lib/widgets/task_filter_bar.dart
 import 'package:flutter/material.dart';
 import '../models/task_model.dart';
+import '../utils/app_localizations.dart';
 
 class TaskFilterBar extends StatelessWidget {
   final TaskFilter currentFilter;
@@ -27,6 +28,7 @@ class TaskFilterBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -37,13 +39,13 @@ class TaskFilterBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _getFilterLabel(currentFilter),
+                  _getFilterLabel(context, currentFilter),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'Sorted by ${currentSort.displayName}',
+                  '${l10n.sortedBy} ${currentSort.displayName}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
@@ -54,25 +56,26 @@ class TaskFilterBar extends StatelessWidget {
           IconButton.filledTonal(
             onPressed: () => _showFilterSheet(context),
             icon: const Icon(Icons.tune),
-            tooltip: 'Filter & Sort',
+            tooltip: l10n.filterAndSort,
           ),
         ],
       ),
     );
   }
 
-  String _getFilterLabel(TaskFilter filter) {
+  String _getFilterLabel(BuildContext context, TaskFilter filter) {
+    final l10n = AppLocalizations.of(context);
     switch (filter) {
       case TaskFilter.all:
-        return 'All Tasks';
+        return l10n.allTasks;
       case TaskFilter.pending:
-        return 'Pending Tasks';
+        return l10n.pendingTasks;
       case TaskFilter.completed:
-        return 'Completed Tasks';
+        return l10n.completedTasks;
       case TaskFilter.today:
-        return "Today's Tasks";
+        return l10n.todaysTasks;
       case TaskFilter.overdue:
-        return 'Overdue Tasks';
+        return l10n.overdueTasks;
     }
   }
 
@@ -83,6 +86,7 @@ class TaskFilterBar extends StatelessWidget {
       isScrollControlled: true,
       builder: (context) {
         final theme = Theme.of(context);
+        final l10n = AppLocalizations.of(context);
         return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -105,14 +109,14 @@ class TaskFilterBar extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                'Filter & Sort',
+                l10n.filterAndSort,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 24),
               Text(
-                'Filter By',
+                l10n.filterBy,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,
@@ -124,7 +128,7 @@ class TaskFilterBar extends StatelessWidget {
                 runSpacing: 10,
                 children: [
                   _FilterChip(
-                    label: 'All',
+                    label: l10n.allTasks,
                     count: totalTasks,
                     isSelected: currentFilter == TaskFilter.all,
                     onTap: () {
@@ -134,7 +138,7 @@ class TaskFilterBar extends StatelessWidget {
                     theme: theme,
                   ),
                   _FilterChip(
-                    label: 'Pending',
+                    label: l10n.pendingTasks,
                     count: pendingTasks,
                     isSelected: currentFilter == TaskFilter.pending,
                     onTap: () {
@@ -145,7 +149,7 @@ class TaskFilterBar extends StatelessWidget {
                     color: Colors.orange.shade400,
                   ),
                   _FilterChip(
-                    label: 'Completed',
+                    label: l10n.completedTasks,
                     count: completedTasks,
                     isSelected: currentFilter == TaskFilter.completed,
                     onTap: () {
@@ -156,7 +160,7 @@ class TaskFilterBar extends StatelessWidget {
                     color: Colors.green.shade400,
                   ),
                   _FilterChip(
-                    label: 'Today',
+                    label: l10n.todaysTasks,
                     isSelected: currentFilter == TaskFilter.today,
                     onTap: () {
                       onFilterChanged(TaskFilter.today);
@@ -166,7 +170,7 @@ class TaskFilterBar extends StatelessWidget {
                     icon: Icons.today,
                   ),
                   _FilterChip(
-                    label: 'Overdue',
+                    label: l10n.overdueTasks,
                     count: overdueTasks,
                     isSelected: currentFilter == TaskFilter.overdue,
                     onTap: () {
@@ -180,7 +184,7 @@ class TaskFilterBar extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Sort By',
+                l10n.sortBy,
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,

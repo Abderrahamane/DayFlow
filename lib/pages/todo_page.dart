@@ -8,6 +8,7 @@ import '../models/task_model.dart';
 import '../models/recurrence_model.dart';
 import '../utils/date_utils.dart';
 import '../utils/routes.dart';
+import '../utils/app_localizations.dart';
 import '../widgets/quote_card.dart';
 import '../widgets/task_card.dart';
 import '../widgets/recurrence_picker_widget.dart';
@@ -69,6 +70,7 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -97,7 +99,7 @@ class _TodoPageState extends State<TodoPage> {
                       const SizedBox(height: 6),
                       Center(
                         child: Text(
-                          "Today's List",
+                          l10n.todaysList,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -126,7 +128,7 @@ class _TodoPageState extends State<TodoPage> {
                         child: CircularProgressIndicator(),
                       ),
                     TaskStatus.failure => Center(
-                        child: Text(state.errorMessage ?? 'Failed to load tasks'),
+                        child: Text(state.errorMessage ?? l10n.failedToLoadTasks),
                       ),
                     _ => tasks.isEmpty
                         ? const _EmptyTasks()
@@ -293,7 +295,9 @@ class _TaskEditorState extends State<_TaskEditor> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(widget.task == null ? 'Task added' : 'Task updated'),
+        content: Text(widget.task == null
+            ? AppLocalizations.of(context).taskAdded
+            : AppLocalizations.of(context).taskUpdated),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -302,6 +306,8 @@ class _TaskEditorState extends State<_TaskEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -323,7 +329,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.task == null ? 'Create New Task' : 'Edit Task',
+                      widget.task == null ? l10n.createNewTask : l10n.editTask,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -337,28 +343,28 @@ class _TaskEditorState extends State<_TaskEditor> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Task title',
-                    prefixIcon: Icon(Icons.task_alt),
+                  decoration: InputDecoration(
+                    labelText: l10n.taskTitle,
+                    prefixIcon: const Icon(Icons.task_alt),
                   ),
                   validator: (value) =>
-                      value == null || value.trim().isEmpty ? 'Required' : null,
+                      value == null || value.trim().isEmpty ? l10n.required : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _descriptionController,
                   maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
+                  decoration: InputDecoration(
+                    labelText: l10n.description,
                     alignLabelWithHint: true,
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _tagsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Tags (comma separated)',
-                    prefixIcon: Icon(Icons.sell_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.tagsHint,
+                    prefixIcon: const Icon(Icons.sell_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -370,7 +376,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                         icon: const Icon(Icons.calendar_today_outlined),
                         label: Text(
                           _selectedDate == null
-                              ? 'Set due date'
+                              ? l10n.setDueDate
                               : formattedDateWithDay(_selectedDate!),
                         ),
                       ),
@@ -407,7 +413,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                   title: Text(
                     _recurrence?.isRecurring == true
                         ? _recurrence!.description
-                        : 'Add recurrence',
+                        : l10n.addRecurrence,
                   ),
                   trailing: Icon(
                     _showRecurrence
@@ -428,7 +434,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _saveTask,
-                    child: Text(widget.task == null ? 'Add Task' : 'Update Task'),
+                    child: Text(widget.task == null ? l10n.addTask : l10n.updateTask),
                   ),
                 ),
               ],
@@ -446,6 +452,8 @@ class _EmptyTasks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -467,14 +475,14 @@ class _EmptyTasks extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'No tasks yet',
+              l10n.noTasksYet,
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Create your first task to start organizing your day.',
+              l10n.createFirstTask,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
               ),
