@@ -185,7 +185,6 @@ class PomodoroRepository {
       if (collection == null) return const PomodoroStats();
 
       final snapshot = await collection
-          .where('completed', isEqualTo: true)
           .where('type', isEqualTo: PomodoroSessionType.work.name)
           .get();
 
@@ -197,7 +196,7 @@ class PomodoroRepository {
     } else {
       await _ensureDb();
       final result = _localDb.rawDb.select(
-        'SELECT * FROM pomodoro_sessions WHERE completed = 1 AND type = 0 ORDER BY startTime DESC',
+        'SELECT * FROM pomodoro_sessions WHERE type = 0 ORDER BY startTime DESC',
       );
       allSessions = result.map((row) => PomodoroSession.fromDatabase(row)).toList();
     }
@@ -207,16 +206,25 @@ class PomodoroRepository {
     }
 
     // Calculate totals
-    int totalSessions = allSessions.length;
+    int totalSessions = 0;
     int totalMinutes = 0;
     final dailySessions = <DateTime, int>{};
 
     for (final session in allSessions) {
-      totalMinutes += session.durationMinutes;
+      int duration;
+      if (session.completed) {
+        duration = session.durationMinutes;
+        totalSessions++;
 
-      final date = session.startTime;
-      final dateOnly = DateTime(date.year, date.month, date.day);
-      dailySessions[dateOnly] = (dailySessions[dateOnly] ?? 0) + 1;
+        final date = session.startTime;
+        final dateOnly = DateTime(date.year, date.month, date.day);
+        dailySessions[dateOnly] = (dailySessions[dateOnly] ?? 0) + 1;
+      } else {
+        // For incomplete sessions, calculate actual duration
+        duration = session.actualDurationSeconds ~/ 60;
+      }
+
+      totalMinutes += duration;
     }
 
     // Calculate today's sessions
