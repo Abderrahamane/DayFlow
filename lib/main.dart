@@ -27,6 +27,7 @@ import 'data/repositories/pomodoro_repository.dart';
 import 'data/repositories/notification_repository.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
+import 'utils/calendar_localizations.dart';
 import 'utils/routes.dart';
 import 'package:dayflow/services/notification_servise.dart';
 
@@ -138,6 +139,7 @@ class DayFlowApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               localizationsDelegates: const [
                 AppLocalizations.delegate,
+                CalendarLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,

@@ -9,6 +9,8 @@ import '../blocs/navigation/navigation_cubit.dart';
 import '../models/task_model.dart';
 import '../models/habit_model.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_localizations.dart';
+import '../utils/calendar_localizations.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -50,15 +52,17 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final calendarL10n = CalendarLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => Scaffold.of(context).openDrawer(),
-          tooltip: 'Open Menu',
+          tooltip: l10n.openMenu,
         ),
-        title: const Text('Calendar'),
+        title: Text(calendarL10n.calendarPageTitle),
         centerTitle: true,
         actions: [
           PopupMenuButton<CalendarFormat>(
@@ -80,7 +84,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                           : null,
                     ),
                     const SizedBox(width: 12),
-                    const Text('Month View'),
+                    Text(calendarL10n.monthView),
                   ],
                 ),
               ),
@@ -95,7 +99,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                           : null,
                     ),
                     const SizedBox(width: 12),
-                    const Text('Two Weeks'),
+                    Text(calendarL10n.twoWeeks),
                   ],
                 ),
               ),
@@ -110,7 +114,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                           : null,
                     ),
                     const SizedBox(width: 12),
-                    const Text('Week View'),
+                    Text(calendarL10n.weekView),
                   ],
                 ),
               ),
@@ -135,12 +139,12 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                     color: theme.colorScheme.error.withValues(alpha: 0.7),
                   ),
                   const SizedBox(height: 16),
-                  Text('Failed to load calendar', style: theme.textTheme.titleLarge),
+                  Text(calendarL10n.failedToLoadCalendar, style: theme.textTheme.titleLarge),
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: () => context.read<CalendarBloc>().add(LoadCalendarData()),
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
+                    label: Text(l10n.retry),
                   ),
                 ],
               ),
@@ -150,7 +154,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
           return Column(
             children: [
               // Calendar widget
-              _buildCalendar(state, theme),
+              _buildCalendar(state, theme, calendarL10n),
 
               // Divider
               Container(
@@ -173,7 +177,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                         children: [
                           const Icon(Icons.task_alt, size: 18),
                           const SizedBox(width: 6),
-                          Text('Tasks (${state.selectedDateTasks.length})'),
+                          Text('${l10n.tasks} (${state.selectedDateTasks.length})'),
                         ],
                       ),
                     ),
@@ -183,17 +187,17 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                         children: [
                           const Icon(Icons.track_changes, size: 18),
                           const SizedBox(width: 6),
-                          Text('Habits (${state.selectedDateHabits.length})'),
+                          Text('${l10n.habits} (${state.selectedDateHabits.length})'),
                         ],
                       ),
                     ),
-                    const Tab(
+                    Tab(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.summarize, size: 18),
-                          SizedBox(width: 6),
-                          Text('Summary'),
+                          const Icon(Icons.summarize, size: 18),
+                          const SizedBox(width: 6),
+                          Text(calendarL10n.summary),
                         ],
                       ),
                     ),
@@ -206,9 +210,9 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    _buildTasksList(state, theme),
-                    _buildHabitsList(state, theme),
-                    _buildSummary(state, theme),
+                    _buildTasksList(state, theme, calendarL10n),
+                    _buildHabitsList(state, theme, calendarL10n),
+                    _buildSummary(state, theme, l10n, calendarL10n),
                   ],
                 ),
               ),
@@ -223,8 +227,9 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
     );
   }
 
-  Widget _buildCalendar(CalendarState state, ThemeData theme) {
+  Widget _buildCalendar(CalendarState state, ThemeData theme, CalendarLocalizations calendarL10n) {
     return TableCalendar<Task>(
+      locale: calendarL10n.locale.toString(),
       firstDay: DateTime.utc(2020, 1, 1),
       lastDay: DateTime.utc(2030, 12, 31),
       focusedDay: state.focusedDay,
@@ -337,16 +342,16 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
     );
   }
 
-  Widget _buildTasksList(CalendarState state, ThemeData theme) {
+  Widget _buildTasksList(CalendarState state, ThemeData theme, CalendarLocalizations calendarL10n) {
     final tasks = state.selectedDateTasks;
-    final dateStr = DateFormat('EEEE, MMMM d').format(state.selectedDate);
+    final dateStr = DateFormat('EEEE, MMMM d', calendarL10n.locale.toString()).format(state.selectedDate);
 
     if (tasks.isEmpty) {
       return _buildEmptyListState(
         theme,
         icon: Icons.task_alt,
-        title: 'No tasks for $dateStr',
-        subtitle: 'Tap the + button to add a task',
+        title: calendarL10n.noTasksForDate(dateStr),
+        subtitle: calendarL10n.tapPlusToAddTask,
       );
     }
 
@@ -366,16 +371,16 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
     );
   }
 
-  Widget _buildHabitsList(CalendarState state, ThemeData theme) {
+  Widget _buildHabitsList(CalendarState state, ThemeData theme, CalendarLocalizations calendarL10n) {
     final habits = state.selectedDateHabits;
-    final dateStr = DateFormat('EEEE, MMMM d').format(state.selectedDate);
+    final dateStr = DateFormat('EEEE, MMMM d', calendarL10n.locale.toString()).format(state.selectedDate);
 
     if (habits.isEmpty) {
       return _buildEmptyListState(
         theme,
         icon: Icons.track_changes,
-        title: 'No habits for $dateStr',
-        subtitle: 'Create habits in the Habits tab',
+        title: calendarL10n.noHabitsForDate(dateStr),
+        subtitle: calendarL10n.createHabitsInTab,
       );
     }
 
@@ -397,7 +402,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
     );
   }
 
-  Widget _buildSummary(CalendarState state, ThemeData theme) {
+  Widget _buildSummary(CalendarState state, ThemeData theme, AppLocalizations l10n, CalendarLocalizations calendarL10n) {
     final tasks = state.selectedDateTasks;
     final habits = state.selectedDateHabits;
     final completedTasks = tasks.where((t) => t.isCompleted).length;
@@ -410,7 +415,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
         children: [
           // Date header
           Text(
-            DateFormat('EEEE, MMMM d, yyyy').format(state.selectedDate),
+            DateFormat('EEEE, MMMM d, yyyy', calendarL10n.locale.toString()).format(state.selectedDate),
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -423,7 +428,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
               Expanded(
                 child: _SummaryCard(
                   icon: Icons.task_alt,
-                  title: 'Tasks',
+                  title: l10n.tasks,
                   value: '$completedTasks/${tasks.length}',
                   color: theme.colorScheme.primary,
                   progress: tasks.isEmpty ? 0 : completedTasks / tasks.length,
@@ -433,7 +438,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
               Expanded(
                 child: _SummaryCard(
                   icon: Icons.track_changes,
-                  title: 'Habits',
+                  title: l10n.habits,
                   value: '$completedHabits/${habits.length}',
                   color: AppTheme.successColor,
                   progress: habits.isEmpty ? 0 : completedHabits / habits.length,
@@ -446,19 +451,19 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
           // Priority breakdown
           if (tasks.isNotEmpty) ...[
             Text(
-              'Tasks by Priority',
+              calendarL10n.tasksByPriority,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
-            _buildPriorityBreakdown(tasks, theme),
+            _buildPriorityBreakdown(tasks, theme, l10n),
           ],
 
           if (habits.isNotEmpty) ...[
             const SizedBox(height: 24),
             Text(
-              'Habits Overview',
+              calendarL10n.habitsOverview,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -477,7 +482,7 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
     );
   }
 
-  Widget _buildPriorityBreakdown(List<Task> tasks, ThemeData theme) {
+  Widget _buildPriorityBreakdown(List<Task> tasks, ThemeData theme, AppLocalizations l10n) {
     final high = tasks.where((t) => t.priority == TaskPriority.high).length;
     final medium = tasks.where((t) => t.priority == TaskPriority.medium).length;
     final low = tasks.where((t) => t.priority == TaskPriority.low).length;
@@ -485,11 +490,11 @@ class _CalendarPageState extends State<CalendarPage> with TickerProviderStateMix
 
     return Column(
       children: [
-        _PriorityRow(label: 'High', count: high, color: AppTheme.errorColor, total: tasks.length),
-        _PriorityRow(label: 'Medium', count: medium, color: const Color(0xFFF59E0B), total: tasks.length),
-        _PriorityRow(label: 'Low', count: low, color: AppTheme.successColor, total: tasks.length),
+        _PriorityRow(label: l10n.priorityHigh, count: high, color: AppTheme.errorColor, total: tasks.length),
+        _PriorityRow(label: l10n.priorityMedium, count: medium, color: const Color(0xFFF59E0B), total: tasks.length),
+        _PriorityRow(label: l10n.priorityLow, count: low, color: AppTheme.successColor, total: tasks.length),
         if (none > 0)
-          _PriorityRow(label: 'None', count: none, color: Colors.grey, total: tasks.length),
+          _PriorityRow(label: l10n.priorityNone, count: none, color: Colors.grey, total: tasks.length),
       ],
     );
   }
@@ -567,9 +572,23 @@ class _TaskCalendarItem extends StatelessWidget {
     }
   }
 
+  String _getPriorityLabel(AppLocalizations l10n) {
+    switch (task.priority) {
+      case TaskPriority.high:
+        return l10n.priorityHigh;
+      case TaskPriority.medium:
+        return l10n.priorityMedium;
+      case TaskPriority.low:
+        return l10n.priorityLow;
+      case TaskPriority.none:
+        return l10n.priorityNone;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -620,7 +639,7 @@ class _TaskCalendarItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
-            task.priority.displayName,
+            _getPriorityLabel(l10n),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -647,6 +666,7 @@ class _HabitCalendarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final calendarL10n = CalendarLocalizations.of(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -685,7 +705,7 @@ class _HabitCalendarItem extends StatelessWidget {
         ),
         title: Text(habit.name),
         subtitle: Text(
-          '${habit.currentStreak} day streak',
+          calendarL10n.dayStreak(habit.currentStreak),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
           ),
@@ -855,6 +875,7 @@ class _HabitSummaryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final calendarL10n = CalendarLocalizations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -881,7 +902,7 @@ class _HabitSummaryItem extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${habit.currentStreak} day streak',
+                  calendarL10n.dayStreak(habit.currentStreak),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
                   ),
@@ -898,6 +919,7 @@ class _HabitSummaryItem extends StatelessWidget {
     );
   }
 }
+
 
 
 
