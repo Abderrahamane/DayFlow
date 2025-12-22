@@ -20,13 +20,13 @@ class TaskCard extends StatelessWidget {
 
   String _dueDateLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    if (task.dueDate == null) return l10n.noDueDate;
+    if (task.dueDate == null) return l10n.translate('no_due_date');
     final formatted = DateFormat('MMM d • h:mm a').format(task.dueDate!);
     if (task.isOverdue) {
-      return '${l10n.overduePrefix}$formatted';
+      return '${l10n.translate('overdue_prefix')}$formatted';
     }
     if (task.isDueToday) {
-      return '${l10n.dueTodayPrefix}${DateFormat('h:mm a').format(task.dueDate!)}';
+      return '${l10n.translate('due_today_prefix')}${DateFormat('h:mm a').format(task.dueDate!)}';
     }
     return formatted;
   }
@@ -67,7 +67,7 @@ class TaskCard extends StatelessWidget {
                         : Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.12),
+                            .withValues(alpha: 0.12),
                   ),
                 ),
                 child: task.isCompleted
@@ -90,7 +90,7 @@ class TaskCard extends StatelessWidget {
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none,
                             color: task.isCompleted
-                                ? theme.textTheme.bodySmall?.color?.withOpacity(0.6)
+                                ? theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6)
                                 : null,
                             fontWeight: FontWeight.w600,
                           ),
@@ -117,7 +117,7 @@ class TaskCard extends StatelessWidget {
                   Text(
                     _dueDateLabel(context),
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                      color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                     ),
                   ),
                 ],

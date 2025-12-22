@@ -301,7 +301,7 @@ class AppLocalizations {
   String get clear => translate('clear');
   String get restore => translate('restore');
 
-// Terms & Privacy
+  // Terms & Privacy
   String get termsOfService => translate('terms_of_service');
   String get privacyPolicyTitle => translate('privacy_policy_title');
   String get lastUpdated => translate('last_updated');
@@ -374,6 +374,30 @@ class AppLocalizations {
   String get noTasksYet => translate('no_tasks_yet');
   String get createFirstTask => translate('create_first_task');
 
+  // Task Filter Bar
+  String get sortedBy => translate('sorted_by');
+  String get filterAndSort => translate('filter_and_sort');
+  String get allTasks => translate('all_tasks');
+  String get pendingTasks => translate('pending_tasks');
+  String get completedTasks => translate('completed_tasks');
+  String get todaysTasks => translate('todays_tasks');
+  String get overdueTasks => translate('overdue_tasks');
+  String get filterBy => translate('filter_by');
+  String get sortBy => translate('sort_by');
+  String get apply => translate('apply');
+
+  // Priorities
+  String get priorityNone => translate('priority_none');
+  String get priorityLow => translate('priority_low');
+  String get priorityMedium => translate('priority_medium');
+  String get priorityHigh => translate('priority_high');
+
+  // Sort Options
+  String get sortDateCreated => translate('sort_date_created');
+  String get sortDueDate => translate('sort_due_date');
+  String get sortPriority => translate('sort_priority');
+  String get sortAlphabetical => translate('sort_alphabetical');
+
   // Recurrence
   String get repeat => translate('repeat');
   String get recurrenceNone => translate('recurrence_none');
@@ -382,6 +406,27 @@ class AppLocalizations {
   String get recurrenceMonthly => translate('recurrence_monthly');
   String get recurrenceCustom => translate('recurrence_custom');
 
+  // Recurrence Picker
+  String get recurrenceRepeat => translate('recurrence_repeat');
+  String get recurrenceEvery => translate('recurrence_every');
+  String get recurrenceDay => translate('recurrence_day');
+  String get recurrenceDays => translate('recurrence_days');
+  String get recurrenceWeek => translate('recurrence_week');
+  String get recurrenceWeeks => translate('recurrence_weeks');
+  String get recurrenceMonth => translate('recurrence_month');
+  String get recurrenceMonths => translate('recurrence_months');
+  String get recurrenceOnTheseDays => translate('recurrence_on_these_days');
+  String get recurrenceOnDay => translate('recurrence_on_day');
+  String get recurrenceOfTheMonth => translate('recurrence_of_the_month');
+  String get recurrenceEnds => translate('recurrence_ends');
+  String get recurrenceOnSpecificDate => translate('recurrence_on_specific_date');
+  String get recurrenceOnDate => translate('recurrence_on_date');
+  String get recurrenceAfter => translate('recurrence_after');
+  String get recurrenceOccurrences => translate('recurrence_occurrences');
+  String get recurrenceNever => translate('recurrence_never');
+  String get recurrenceUntil => translate('recurrence_until');
+  String get recurrenceTimes => translate('recurrence_times');
+
   // Task Card
   String get noDueDate => translate('no_due_date');
   String get overduePrefix => translate('overdue_prefix');
@@ -389,6 +434,21 @@ class AppLocalizations {
 
   // Dialogs
   String get comingSoon => translate('coming_soon');
+
+  // Quote
+  String get quoteText => translate('quote_text');
+  String get quoteAuthor => translate('quote_author');
+
+  // Recurrence Descriptions
+  String get recurrenceDoesNotRepeat => translate('recurrence_does_not_repeat');
+  String get recurrenceRepeatsDaily => translate('recurrence_repeats_daily');
+  String get recurrenceRepeatsEveryDays => translate('recurrence_repeats_every_days');
+  String get recurrenceRepeatsWeeklyOn => translate('recurrence_repeats_weekly_on');
+  String get recurrenceRepeatsWeekly => translate('recurrence_repeats_weekly');
+  String get recurrenceRepeatsEveryWeeks => translate('recurrence_repeats_every_weeks');
+  String get recurrenceRepeatsMonthly => translate('recurrence_repeats_monthly');
+  String get recurrenceRepeatsEveryMonths => translate('recurrence_repeats_every_months');
+  String get recurrenceCustomEveryDays => translate('recurrence_custom_every_days');
 }
 
 class _AppLocalizationsDelegate

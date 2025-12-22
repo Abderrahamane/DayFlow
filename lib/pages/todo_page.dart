@@ -9,6 +9,7 @@ import '../models/recurrence_model.dart';
 import '../utils/date_utils.dart';
 import '../utils/routes.dart';
 import '../utils/app_localizations.dart';
+import '../utils/recurrence_helper.dart';
 import '../widgets/quote_card.dart';
 import '../widgets/task_card.dart';
 import '../widgets/recurrence_picker_widget.dart';
@@ -55,7 +56,7 @@ class _TodoPageState extends State<TodoPage> {
     }
   }
 
-  String _formattedHeaderDate() => formattedHeaderDate();
+  String _formattedHeaderDate() => formattedHeaderDate(context);
 
   void _openTaskSheet({Task? task}) {
     showModalBottomSheet(
@@ -304,16 +305,16 @@ class _TaskEditorState extends State<_TaskEditor> {
   }
 
   String _getPriorityLabel(BuildContext context, TaskPriority priority) {
-    final l10n = AppLocalizations.of(context);
+    final AppLocalizations l10n = AppLocalizations.of(context);
     switch (priority) {
       case TaskPriority.none:
-        return l10n.priorityNone;
+        return l10n.translate('priority_none');
       case TaskPriority.low:
-        return l10n.priorityLow;
+        return l10n.translate('priority_low');
       case TaskPriority.medium:
-        return l10n.priorityMedium;
+        return l10n.translate('priority_medium');
       case TaskPriority.high:
-        return l10n.priorityHigh;
+        return l10n.translate('priority_high');
     }
   }
 
@@ -391,7 +392,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                         label: Text(
                           _selectedDate == null
                               ? l10n.setDueDate
-                              : formattedDateWithDay(_selectedDate!),
+                              : formattedDateWithDay(_selectedDate!, context),
                         ),
                       ),
                     ),
@@ -426,7 +427,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                   ),
                   title: Text(
                     _recurrence?.isRecurring == true
-                        ? _recurrence!.description
+                        ? RecurrenceHelper.getDescription(context, _recurrence!)
                         : l10n.addRecurrence,
                   ),
                   trailing: Icon(

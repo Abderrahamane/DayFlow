@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/recurrence_model.dart';
 import '../utils/app_localizations.dart';
+import '../utils/recurrence_helper.dart';
 
 enum RecurrenceEndType { never, date, occurrences }
 
@@ -114,12 +115,13 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           if (_type != RecurrenceType.weekly || _selectedDays.isEmpty) ...[
             Row(
               children: [
-                Text('Every', style: theme.textTheme.bodyMedium),
+                Text(l10n.recurrenceEvery, style: theme.textTheme.bodyMedium),
                 const SizedBox(width: 12),
                 SizedBox(
                   width: 60,
                   child: DropdownButtonFormField<int>(
-                    value: _interval,
+                    key: ValueKey(_interval),
+                    initialValue: _interval,
                     decoration: const InputDecoration(
                       isDense: true,
                       contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -135,7 +137,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  _getIntervalLabel(),
+                  _getIntervalLabel(context),
                   style: theme.textTheme.bodyMedium,
                 ),
               ],
@@ -146,7 +148,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           // Weekly day selector
           if (_type == RecurrenceType.weekly) ...[
             Text(
-              'On these days',
+              l10n.recurrenceOnTheseDays,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
@@ -171,12 +173,13 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           if (_type == RecurrenceType.monthly) ...[
             Row(
               children: [
-                Text('On day', style: theme.textTheme.bodyMedium),
+                Text(l10n.recurrenceOnDay, style: theme.textTheme.bodyMedium),
                 const SizedBox(width: 12),
                 SizedBox(
                   width: 70,
                   child: DropdownButtonFormField<int>(
-                    value: _dayOfMonth ?? DateTime.now().day,
+                    key: ValueKey(_dayOfMonth),
+                    initialValue: _dayOfMonth ?? DateTime.now().day,
                     decoration: const InputDecoration(
                       isDense: true,
                       contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -191,7 +194,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text('of the month', style: theme.textTheme.bodyMedium),
+                Text(l10n.recurrenceOfTheMonth, style: theme.textTheme.bodyMedium),
               ],
             ),
             const SizedBox(height: 16),
@@ -201,7 +204,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           const Divider(),
           const SizedBox(height: 8),
           Text(
-            'Ends',
+            l10n.recurrenceEnds,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
             ),
@@ -212,8 +215,11 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Radio<RecurrenceEndType>(
+              // ignore: deprecated_member_use
               value: RecurrenceEndType.date,
+              // ignore: deprecated_member_use
               groupValue: _endType,
+              // ignore: deprecated_member_use
               onChanged: (_) {
                 setState(() {
                   _endType = RecurrenceEndType.date;
@@ -224,8 +230,8 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
               },
             ),
             title: Text(_endDate != null
-                ? 'On ${_formatDate(_endDate!)}'
-                : 'On specific date'),
+                ? '${l10n.recurrenceOnDate} ${_formatDate(_endDate!)}'
+                : l10n.recurrenceOnSpecificDate),
             trailing: _endDate != null
                 ? IconButton(
                     icon: const Icon(Icons.clear, size: 18),
@@ -242,13 +248,16 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Radio<RecurrenceEndType>(
+              // ignore: deprecated_member_use
               value: RecurrenceEndType.occurrences,
+              // ignore: deprecated_member_use
               groupValue: _endType,
+              // ignore: deprecated_member_use
               onChanged: (_) => _setMaxOccurrences(),
             ),
             title: Row(
               children: [
-                const Text('After '),
+                Text('${l10n.recurrenceAfter} '),
                 SizedBox(
                   width: 50,
                   child: TextField(
@@ -265,7 +274,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
                     },
                   ),
                 ),
-                const Text(' occurrences'),
+                Text(' ${l10n.recurrenceOccurrences}'),
               ],
             ),
             onTap: _setMaxOccurrences,
@@ -275,8 +284,11 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Radio<RecurrenceEndType>(
+              // ignore: deprecated_member_use
               value: RecurrenceEndType.never,
+              // ignore: deprecated_member_use
               groupValue: _endType,
+              // ignore: deprecated_member_use
               onChanged: (_) {
                 setState(() {
                   _endDate = null;
@@ -286,7 +298,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
                 _notifyChange();
               },
             ),
-            title: const Text('Never'),
+            title: Text(l10n.recurrenceNever),
             onTap: () {
               setState(() {
                 _endDate = null;
@@ -367,16 +379,17 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
     _notifyChange();
   }
 
-  String _getIntervalLabel() {
+  String _getIntervalLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     switch (_type) {
       case RecurrenceType.daily:
-        return _interval == 1 ? 'day' : 'days';
+        return _interval == 1 ? l10n.recurrenceDay : l10n.recurrenceDays;
       case RecurrenceType.weekly:
-        return _interval == 1 ? 'week' : 'weeks';
+        return _interval == 1 ? l10n.recurrenceWeek : l10n.recurrenceWeeks;
       case RecurrenceType.monthly:
-        return _interval == 1 ? 'month' : 'months';
+        return _interval == 1 ? l10n.recurrenceMonth : l10n.recurrenceMonths;
       default:
-        return _interval == 1 ? 'day' : 'days';
+        return _interval == 1 ? l10n.recurrenceDay : l10n.recurrenceDays;
     }
   }
 
@@ -390,11 +403,14 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
       maxOccurrences: _maxOccurrences,
     );
 
-    String summary = pattern.description;
+    // Note: pattern.description is not localized here, ideally it should be.
+    // For now we just localize the suffix.
+    String summary = RecurrenceHelper.getDescription(context, pattern);
+    final l10n = AppLocalizations.of(context);
     if (_endDate != null) {
-      summary += ' until ${_formatDate(_endDate!)}';
+      summary += ' ${l10n.recurrenceUntil} ${_formatDate(_endDate!)}';
     } else if (_maxOccurrences != null) {
-      summary += ' ($_maxOccurrences times)';
+      summary += ' ($_maxOccurrences ${l10n.recurrenceTimes})';
     }
     return summary;
   }

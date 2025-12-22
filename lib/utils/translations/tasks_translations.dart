@@ -53,6 +53,40 @@ class TasksTranslations {
     'no_due_date': 'No due date',
     'overdue_prefix': 'Overdue • ',
     'due_today_prefix': 'Due today • ',
+
+    // Recurrence Picker
+    'recurrence_repeat': 'Repeat',
+    'recurrence_every': 'Every',
+    'recurrence_day': 'day',
+    'recurrence_days': 'days',
+    'recurrence_week': 'week',
+    'recurrence_weeks': 'weeks',
+    'recurrence_month': 'month',
+    'recurrence_months': 'months',
+    'recurrence_on_these_days': 'On these days',
+    'recurrence_on_day': 'On day',
+    'recurrence_of_the_month': 'of the month',
+    'recurrence_ends': 'Ends',
+    'recurrence_on_specific_date': 'On specific date',
+    'recurrence_on_date': 'On',
+    'recurrence_after': 'After',
+    'recurrence_occurrences': 'occurrences',
+    'recurrence_never': 'Never',
+    'recurrence_until': 'until',
+    'recurrence_times': 'times',
+    'recurrence_does_not_repeat': 'Does not repeat',
+    'recurrence_repeats_daily': 'Repeats daily',
+    'recurrence_repeats_every_days': 'Repeats every {interval} days',
+    'recurrence_repeats_weekly_on': 'Repeats weekly on {days}',
+    'recurrence_repeats_weekly': 'Repeats weekly',
+    'recurrence_repeats_every_weeks': 'Repeats every {interval} weeks',
+    'recurrence_repeats_monthly': 'Repeats monthly',
+    'recurrence_repeats_every_months': 'Repeats every {interval} months',
+    'recurrence_custom_every_days': 'Custom: every {interval} days',
+
+    // Quote
+    'quote_text': '"The secret of getting ahead is getting started."',
+    'quote_author': '- Mark Twain',
   };
 
   static const Map<String, String> fr = {
@@ -109,6 +143,40 @@ class TasksTranslations {
     'no_due_date': 'Pas de date d\'échéance',
     'overdue_prefix': 'En retard • ',
     'due_today_prefix': 'Pour aujourd\'hui • ',
+
+    // Recurrence Picker
+    'recurrence_repeat': 'Répéter',
+    'recurrence_every': 'Chaque',
+    'recurrence_day': 'jour',
+    'recurrence_days': 'jours',
+    'recurrence_week': 'semaine',
+    'recurrence_weeks': 'semaines',
+    'recurrence_month': 'mois',
+    'recurrence_months': 'mois',
+    'recurrence_on_these_days': 'Ces jours-ci',
+    'recurrence_on_day': 'Le jour',
+    'recurrence_of_the_month': 'du mois',
+    'recurrence_ends': 'Se termine',
+    'recurrence_on_specific_date': 'À une date précise',
+    'recurrence_on_date': 'Le',
+    'recurrence_after': 'Après',
+    'recurrence_occurrences': 'occurrences',
+    'recurrence_never': 'Jamais',
+    'recurrence_until': 'jusqu\'au',
+    'recurrence_times': 'fois',
+    'recurrence_does_not_repeat': 'Ne se répète pas',
+    'recurrence_repeats_daily': 'Se répète quotidiennement',
+    'recurrence_repeats_every_days': 'Se répète tous les {interval} jours',
+    'recurrence_repeats_weekly_on': 'Se répète chaque semaine le {days}',
+    'recurrence_repeats_weekly': 'Se répète chaque semaine',
+    'recurrence_repeats_every_weeks': 'Se répète toutes les {interval} semaines',
+    'recurrence_repeats_monthly': 'Se répète mensuellement',
+    'recurrence_repeats_every_months': 'Se répète tous les {interval} mois',
+    'recurrence_custom_every_days': 'Personnalisé : tous les {interval} jours',
+
+    // Quote
+    'quote_text': '"Le secret pour avancer, c\'est de commencer."',
+    'quote_author': '- Mark Twain',
   };
 
   static const Map<String, String> ar = {
@@ -165,6 +233,40 @@ class TasksTranslations {
     'no_due_date': 'لا يوجد تاريخ استحقاق',
     'overdue_prefix': 'متأخر • ',
     'due_today_prefix': 'مستحق اليوم • ',
+
+    // Recurrence Picker
+    'recurrence_repeat': 'تكرار',
+    'recurrence_every': 'كل',
+    'recurrence_day': 'يوم',
+    'recurrence_days': 'أيام',
+    'recurrence_week': 'أسبوع',
+    'recurrence_weeks': 'أسابيع',
+    'recurrence_month': 'شهر',
+    'recurrence_months': 'أشهر',
+    'recurrence_on_these_days': 'في هذه الأيام',
+    'recurrence_on_day': 'في يوم',
+    'recurrence_of_the_month': 'من الشهر',
+    'recurrence_ends': 'ينتهي',
+    'recurrence_on_specific_date': 'في تاريخ محدد',
+    'recurrence_on_date': 'في',
+    'recurrence_after': 'بعد',
+    'recurrence_occurrences': 'تكرارات',
+    'recurrence_never': 'أبداً',
+    'recurrence_until': 'حتى',
+    'recurrence_times': 'مرات',
+    'recurrence_does_not_repeat': 'لا يتكرر',
+    'recurrence_repeats_daily': 'يتكرر يومياً',
+    'recurrence_repeats_every_days': 'يتكرر كل {interval} أيام',
+    'recurrence_repeats_weekly_on': 'يتكرر أسبوعياً في {days}',
+    'recurrence_repeats_weekly': 'يتكرر أسبوعياً',
+    'recurrence_repeats_every_weeks': 'يتكرر كل {interval} أسابيع',
+    'recurrence_repeats_monthly': 'يتكرر شهرياً',
+    'recurrence_repeats_every_months': 'يتكرر كل {interval} أشهر',
+    'recurrence_custom_every_days': 'مخصص: كل {interval} أيام',
+
+    // Quote
+    'quote_text': '"سر التقدم هو البدء."',
+    'quote_author': '- مارك توين',
   };
 }
 
