@@ -303,6 +303,20 @@ class _TaskEditorState extends State<_TaskEditor> {
     );
   }
 
+  String _getPriorityLabel(BuildContext context, TaskPriority priority) {
+    final l10n = AppLocalizations.of(context);
+    switch (priority) {
+      case TaskPriority.none:
+        return l10n.priorityNone;
+      case TaskPriority.low:
+        return l10n.priorityLow;
+      case TaskPriority.medium:
+        return l10n.priorityMedium;
+      case TaskPriority.high:
+        return l10n.priorityHigh;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -388,7 +402,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                           .map(
                             (p) => DropdownMenuItem(
                               value: p,
-                              child: Text(p.displayName),
+                              child: Text(_getPriorityLabel(context, p)),
                             ),
                           )
                           .toList(),

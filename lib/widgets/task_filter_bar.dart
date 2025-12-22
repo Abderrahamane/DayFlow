@@ -45,7 +45,7 @@ class TaskFilterBar extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${l10n.sortedBy} ${currentSort.displayName}',
+                  '${l10n.sortedBy} ${_getSortLabel(context, currentSort)}',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
@@ -76,6 +76,20 @@ class TaskFilterBar extends StatelessWidget {
         return l10n.todaysTasks;
       case TaskFilter.overdue:
         return l10n.overdueTasks;
+    }
+  }
+
+  String _getSortLabel(BuildContext context, TaskSort sort) {
+    final l10n = AppLocalizations.of(context);
+    switch (sort) {
+      case TaskSort.dateCreated:
+        return l10n.sortDateCreated;
+      case TaskSort.dueDate:
+        return l10n.sortDueDate;
+      case TaskSort.priority:
+        return l10n.sortPriority;
+      case TaskSort.alphabetical:
+        return l10n.sortAlphabetical;
     }
   }
 
@@ -196,7 +210,7 @@ class TaskFilterBar extends StatelessWidget {
                 runSpacing: 10,
                 children: TaskSort.values.map((sort) {
                   return _FilterChip(
-                    label: sort.displayName,
+                    label: _getSortLabel(context, sort),
                     isSelected: currentSort == sort,
                     onTap: () {
                       onSortChanged(sort);

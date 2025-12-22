@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/recurrence_model.dart';
+import '../utils/app_localizations.dart';
 
 enum RecurrenceEndType { never, date, occurrences }
 
@@ -77,13 +78,14 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Recurrence type selector
         Text(
-          'Repeat',
+          l10n.repeat,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -95,7 +97,7 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
           children: RecurrenceType.values.map((type) {
             final isSelected = _type == type;
             return FilterChip(
-              label: Text('${type.icon} ${type.displayName}'),
+              label: Text('${type.icon} ${_getRecurrenceLabel(context, type)}'),
               selected: isSelected,
               onSelected: (_) {
                 setState(() => _type = type);
@@ -399,6 +401,22 @@ class _RecurrencePickerWidgetState extends State<RecurrencePickerWidget> {
 
   String _formatDate(DateTime date) {
     return '${date.month}/${date.day}/${date.year}';
+  }
+
+  String _getRecurrenceLabel(BuildContext context, RecurrenceType type) {
+    final l10n = AppLocalizations.of(context);
+    switch (type) {
+      case RecurrenceType.none:
+        return l10n.recurrenceNone;
+      case RecurrenceType.daily:
+        return l10n.recurrenceDaily;
+      case RecurrenceType.weekly:
+        return l10n.recurrenceWeekly;
+      case RecurrenceType.monthly:
+        return l10n.recurrenceMonthly;
+      case RecurrenceType.custom:
+        return l10n.recurrenceCustom;
+    }
   }
 }
 

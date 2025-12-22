@@ -7,7 +7,6 @@ class TasksTranslations {
     'edit_task': 'Edit Task',
     'task_title': 'Task title',
     'required': 'Required',
-    'description': 'Description',
     'tags_hint': 'Tags (comma separated)',
     'set_due_date': 'Set due date',
     'add_recurrence': 'Add recurrence',
@@ -29,6 +28,31 @@ class TasksTranslations {
     'filter_by': 'Filter by',
     'sort_by': 'Sort by',
     'apply': 'Apply',
+
+    // Priorities
+    'priority_none': 'None',
+    'priority_low': 'Low',
+    'priority_medium': 'Medium',
+    'priority_high': 'High',
+
+    // Sort Options
+    'sort_date_created': 'Date Created',
+    'sort_due_date': 'Due Date',
+    'sort_priority': 'Priority',
+    'sort_alphabetical': 'Alphabetical',
+
+    // Recurrence
+    'repeat': 'Repeat',
+    'recurrence_none': 'No Repeat',
+    'recurrence_daily': 'Daily',
+    'recurrence_weekly': 'Weekly',
+    'recurrence_monthly': 'Monthly',
+    'recurrence_custom': 'Custom',
+
+    // Task Card
+    'no_due_date': 'No due date',
+    'overdue_prefix': 'Overdue • ',
+    'due_today_prefix': 'Due today • ',
   };
 
   static const Map<String, String> fr = {
@@ -39,7 +63,6 @@ class TasksTranslations {
     'edit_task': 'Modifier la tâche',
     'task_title': 'Titre de la tâche',
     'required': 'Requis',
-    'description': 'Description',
     'tags_hint': 'Tags (séparés par des virgules)',
     'set_due_date': 'Définir la date d\'échéance',
     'add_recurrence': 'Ajouter une récurrence',
@@ -61,6 +84,31 @@ class TasksTranslations {
     'filter_by': 'Filtrer par',
     'sort_by': 'Trier par',
     'apply': 'Appliquer',
+
+    // Priorities
+    'priority_none': 'Aucune',
+    'priority_low': 'Basse',
+    'priority_medium': 'Moyenne',
+    'priority_high': 'Haute',
+
+    // Sort Options
+    'sort_date_created': 'Date de création',
+    'sort_due_date': 'Date d\'échéance',
+    'sort_priority': 'Priorité',
+    'sort_alphabetical': 'Alphabétique',
+
+    // Recurrence
+    'repeat': 'Répéter',
+    'recurrence_none': 'Pas de répétition',
+    'recurrence_daily': 'Quotidien',
+    'recurrence_weekly': 'Hebdomadaire',
+    'recurrence_monthly': 'Mensuel',
+    'recurrence_custom': 'Personnalisé',
+
+    // Task Card
+    'no_due_date': 'Pas de date d\'échéance',
+    'overdue_prefix': 'En retard • ',
+    'due_today_prefix': 'Pour aujourd\'hui • ',
   };
 
   static const Map<String, String> ar = {
@@ -71,7 +119,6 @@ class TasksTranslations {
     'edit_task': 'تعديل المهمة',
     'task_title': 'عنوان المهمة',
     'required': 'مطلوب',
-    'description': 'الوصف',
     'tags_hint': 'الوسوم (مفصولة بفواصل)',
     'set_due_date': 'تعيين تاريخ الاستحقاق',
     'add_recurrence': 'إضافة تكرار',
@@ -93,6 +140,31 @@ class TasksTranslations {
     'filter_by': 'تصفية حسب',
     'sort_by': 'فرز حسب',
     'apply': 'تطبيق',
+
+    // Priorities
+    'priority_none': 'لا يوجد',
+    'priority_low': 'منخفضة',
+    'priority_medium': 'متوسطة',
+    'priority_high': 'عالية',
+
+    // Sort Options
+    'sort_date_created': 'تاريخ الإنشاء',
+    'sort_due_date': 'تاريخ الاستحقاق',
+    'sort_priority': 'الأولوية',
+    'sort_alphabetical': 'أبجدي',
+
+    // Recurrence
+    'repeat': 'تكرار',
+    'recurrence_none': 'لا تكرار',
+    'recurrence_daily': 'يومي',
+    'recurrence_weekly': 'أسبوعي',
+    'recurrence_monthly': 'شهري',
+    'recurrence_custom': 'مخصص',
+
+    // Task Card
+    'no_due_date': 'لا يوجد تاريخ استحقاق',
+    'overdue_prefix': 'متأخر • ',
+    'due_today_prefix': 'مستحق اليوم • ',
   };
 }
 

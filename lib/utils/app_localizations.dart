@@ -108,7 +108,6 @@ class AppLocalizations {
   String get signInToContinueDesc => translate('sign_in_to_continue_desc');
 
   // Dialogs
-  String get comingSoon => translate('coming_soon');
   String get featureUnderDevelopment => translate('feature_under_development');
   String get workingHardOnFeature => translate('working_hard_on_feature');
   String get logoutConfirmation => translate('logout_confirmation');
@@ -375,17 +374,18 @@ class AppLocalizations {
   String get noTasksYet => translate('no_tasks_yet');
   String get createFirstTask => translate('create_first_task');
 
-  // Task Filter Bar
-  String get sortedBy => translate('sorted_by');
-  String get filterAndSort => translate('filter_and_sort');
-  String get allTasks => translate('all_tasks');
-  String get pendingTasks => translate('pending_tasks');
-  String get completedTasks => translate('completed_tasks');
-  String get todaysTasks => translate('todays_tasks');
-  String get overdueTasks => translate('overdue_tasks');
-  String get filterBy => translate('filter_by');
-  String get sortBy => translate('sort_by');
-  String get apply => translate('apply');
+  // Recurrence
+  String get repeat => translate('repeat');
+  String get recurrenceNone => translate('recurrence_none');
+  String get recurrenceDaily => translate('recurrence_daily');
+  String get recurrenceWeekly => translate('recurrence_weekly');
+  String get recurrenceMonthly => translate('recurrence_monthly');
+  String get recurrenceCustom => translate('recurrence_custom');
+
+  // Task Card
+  String get noDueDate => translate('no_due_date');
+  String get overduePrefix => translate('overdue_prefix');
+  String get dueTodayPrefix => translate('due_today_prefix');
 
   // Dialogs
   String get comingSoon => translate('coming_soon');
@@ -631,33 +631,6 @@ const Map<String, String> _enTranslations = {
   "delete": "delete",
   "reminderInfoTaskLocked": "This reminder is from a task and cannot be modified.",
   "task": "Task",
-
-  "todays_list": "Today's List",
-  "failed_to_load_tasks": "Failed to load tasks. Please try again.",
-  "create_new_task": "Create New Task",
-  "edit_task": "Edit Task",
-  "task_title": "Task Title",
-  "required": "Required",
-  "tags_hint": "Add tags separated by commas",
-  "set_due_date": "Set Due Date",
-  "add_recurrence": "Add Recurrence",
-  "add_task": "Add Task",
-  "update_task": "Update Task",
-  "task_added": "Task added successfully!",
-  "task_updated": "Task updated successfully!",
-  "no_tasks_yet": "No tasks yet. Create your first task!",
-  "create_first_task": "Create your first task",
-
-  "sorted_by": "Sorted by",
-  "filter_and_sort": "Filter & Sort",
-  "all_tasks": "All Tasks",
-  "pending_tasks": "Pending Tasks",
-  "completed_tasks": "Completed Tasks",
-  "todays_tasks": "Today's Tasks",
-  "overdue_tasks": "Overdue Tasks",
-  "filter_by": "Filter by",
-  "sort_by": "Sort by",
-  "apply": "Apply",
 };
 
 // French Translations
@@ -666,6 +639,7 @@ const Map<String, String> _frTranslations = {
   ...BackupTranslations.fr,
   ...HelpSupportTranslations.fr,
   ...TermsPrivacyTranslations.fr,
+  ...TasksTranslations.fr,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'Bienvenue',
@@ -743,6 +717,7 @@ const Map<String, String> _arTranslations = {
   ...BackupTranslations.ar,
   ...HelpSupportTranslations.ar,
   ...TermsPrivacyTranslations.ar,
+  ...TasksTranslations.ar,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'مرحباً',
