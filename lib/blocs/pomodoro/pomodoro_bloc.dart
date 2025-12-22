@@ -161,6 +161,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         : state.completedWorkSessions;
 
     final todaySessions = [completedSession, ...state.todaySessions];
+    final sessionHistory = [completedSession, ...state.sessionHistory];
 
     // Update stats locally
     final newStats = state.stats.copyWith(
@@ -177,6 +178,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       status: PomodoroStatus.completed,
       completedWorkSessions: newCompletedCount,
       todaySessions: todaySessions,
+      sessionHistory: sessionHistory,
       stats: newStats,
       clearCurrentSession: true,
       remainingSeconds: 0,
