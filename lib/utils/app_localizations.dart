@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'translations/settings_translations.dart';
 import 'translations/backup_translations.dart';
 import 'translations/help_support_translations.dart';
+import 'translations/terms_privacy_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -363,6 +364,7 @@ const Map<String, String> _enTranslations = {
   ...SettingsTranslations.en,
   ...BackupTranslations.en,
   ...HelpSupportTranslations.en,
+  ...TermsPrivacyTranslations.en,
   'app_name': 'DayFlow',
   'welcome': 'Welcome',
   'get_started': 'Get Started',
@@ -489,8 +491,6 @@ const Map<String, String> _enTranslations = {
   'open_menu': 'Open menu',
   'search': 'Search',
 
-  'terms_of_service': 'Terms of Service',
-
   // Question Flow
   'qf_biggest_challenge': "What's your biggest productivity challenge?",
   'qf_too_many_tasks': '📋 Too many tasks to manage',
@@ -585,6 +585,7 @@ const Map<String, String> _frTranslations = {
   ...SettingsTranslations.fr,
   ...BackupTranslations.fr,
   ...HelpSupportTranslations.fr,
+  ...TermsPrivacyTranslations.fr,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'Bienvenue',
@@ -661,6 +662,7 @@ const Map<String, String> _arTranslations = {
   ...SettingsTranslations.ar,
   ...BackupTranslations.ar,
   ...HelpSupportTranslations.ar,
+  ...TermsPrivacyTranslations.ar,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'مرحباً',
