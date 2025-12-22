@@ -22,14 +22,14 @@ class TermsPrivacyPage extends StatelessWidget {
           children: [
             // Header
             Text(
-              'Terms of Service & Privacy Policy',
+              '${l10n.translate('terms_of_service')} & ${l10n.translate('privacy_policy_title')}',
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Last updated: ${_getLastUpdatedDate()}',
+              '${l10n.translate('last_updated')}: ${_getLastUpdatedDate()}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
@@ -39,7 +39,7 @@ class TermsPrivacyPage extends StatelessWidget {
             // Terms of Service
             _buildSection(
               context,
-              title: 'Terms of Service',
+              title: l10n.translate('terms_of_service'),
               content: '''
 1. Acceptance of Terms
 By accessing and using DayFlow ("the App"), you accept and agree to be bound by the terms and provisions of this agreement.
@@ -87,7 +87,7 @@ DayFlow shall not be liable for any indirect, incidental, special, or consequent
             // Privacy Policy
             _buildSection(
               context,
-              title: 'Privacy Policy',
+              title: l10n.translate('privacy_policy_title'),
               content: '''
 1. Information We Collect
 • Account Information: Name, email address
@@ -228,7 +228,7 @@ To exercise these rights, contact us at: rights@dayflow.app
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'By using DayFlow, you agree to these Terms of Service and Privacy Policy.',
+                      l10n.translate('by_using_dayflow'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w600,

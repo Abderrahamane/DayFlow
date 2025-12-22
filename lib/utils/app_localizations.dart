@@ -10,6 +10,7 @@ import 'translations/pomodoro_translations.dart';
 import 'translations/templates_translations.dart';
 import 'translations/task_detail_translations.dart';
 import 'translations/notes_translations.dart';
+import 'translations/auth_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -66,30 +67,7 @@ class AppLocalizations {
   String get gotIt => translate('got_it');
   String get loading => translate('loading');
 
-  // Authentication
-  String get login => translate('login');
-  String get signup => translate('signup');
-  String get logout => translate('logout');
-  String get email => translate('email');
-  String get password => translate('password');
-  String get fullName => translate('full_name');
-  String get confirmPassword => translate('confirm_password');
-  String get forgotPassword => translate('forgot_password');
-  String get resetPassword => translate('reset_password');
-  String get sendResetLink => translate('send_reset_link');
-  String get backToLogin => translate('back_to_login');
-  String get createAccount => translate('create_account');
-  String get welcomeBack => translate('welcome_back');
-  String get signInToContinue => translate('sign_in_to_continue');
-  String get signUpToGetStarted => translate('sign_up_to_get_started');
-  String get dontHaveAccount => translate('dont_have_account');
-  String get continueWithGoogle => translate('continue_with_google');
-  String get verifyYourEmail => translate('verify_your_email');
-  String get emailVerificationSent => translate('email_verification_sent');
-  String get resendVerificationEmail => translate('resend_verification_email');
-  String get useDifferentAccount => translate('use_different_account');
-  String get checkingVerificationStatus =>
-      translate('checking_verification_status');
+  // Auth Pages - Moved to AuthTranslations and TermsPrivacyTranslations
 
   // Settings
   String get settings => translate('settings');
@@ -184,26 +162,7 @@ class AppLocalizations {
   String get trackYourHabits => translate('track_your_habits');
   String get trackHabitsDesc => translate('track_habits_desc');
 
-  // Auth Pages
-  String get rememberPassword => translate('remember_password');
-  String get checkYourEmail => translate('check_your_email');
-  String get forgotPasswordDesc => translate('forgot_password_desc');
-  String get resetEmailSent => translate('reset_email_sent');
-  String get resendEmail => translate('resend_email');
-  String get didntReceiveEmail => translate('didnt_receive_email');
-  String get checkSpamFolder => translate('check_spam_folder');
-  String get emailVerifiedSuccess => translate('email_verified_success');
-  String get verificationEmailTo => translate('verification_email_to');
-  String get checkInboxAndClick => translate('check_inbox_and_click');
-  String get resendIn => translate('resend_in');
-  String get iAgreeToThe => translate('i_agree_to_the');
-  String get termsConditions => translate('terms_conditions');
-  String get and => translate('and');
-  String get privacyPolicy => translate('privacy_policy');
-  String get pleaseAcceptTerms => translate('please_accept_terms');
-  String get or => translate('or');
-  String get makeEmailCorrect => translate('make_email_correct');
-  String get waitAndResend => translate('wait_and_resend');
+  // Auth Pages - Moved to AuthTranslations and TermsPrivacyTranslations
 
   // Navigation & Drawer
   String get tasks => translate('tasks');
@@ -661,6 +620,7 @@ final Map<String, String> _enTranslations = {
   ...TemplatesTranslations.en,
   ...TaskDetailTranslations.en,
   ...NotesTranslations.en,
+  ...AuthTranslations.en,
 };
 
 // French Translations
@@ -674,6 +634,7 @@ final Map<String, String> _frTranslations = {
   ...TemplatesTranslations.fr,
   ...TaskDetailTranslations.fr,
   ...NotesTranslations.fr,
+  ...AuthTranslations.fr,
 };
 
 // Arabic Translations
@@ -687,5 +648,6 @@ final Map<String, String> _arTranslations = {
   ...TemplatesTranslations.ar,
   ...TaskDetailTranslations.ar,
   ...NotesTranslations.ar,
+  ...AuthTranslations.ar,
 };
 

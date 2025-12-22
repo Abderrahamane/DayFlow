@@ -175,7 +175,7 @@ class AppDrawer extends StatelessWidget {
                               _showLogoutDialog(context);
                             },
                             icon: const Icon(Icons.logout),
-                            label: Text(l10n.logout),
+                            label: Text(l10n.translate('logout')),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
@@ -192,7 +192,7 @@ class AppDrawer extends StatelessWidget {
                                   Navigator.pushNamed(context, Routes.signup);
                                 },
                                 icon: const Icon(Icons.person_add),
-                                label: Text(l10n.signup),
+                                label: Text(l10n.translate('signup')),
                                 style: FilledButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 12),
                                 ),
@@ -207,7 +207,7 @@ class AppDrawer extends StatelessWidget {
                                   Navigator.pushNamed(context, Routes.login);
                                 },
                                 icon: const Icon(Icons.login),
-                                label: Text(l10n.login),
+                                label: Text(l10n.translate('login')),
                                 style: OutlinedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 12),
                                 ),
@@ -233,7 +233,7 @@ class AppDrawer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.logout),
+        title: Text(l10n.translate('logout')),
         content: Text(l10n.areYouSureLogout),
         actions: [
           TextButton(
@@ -255,7 +255,7 @@ class AppDrawer extends StatelessWidget {
                 );
               }
             },
-            child: Text(l10n.logout),
+            child: Text(l10n.translate('logout')),
           ),
         ],
       ),

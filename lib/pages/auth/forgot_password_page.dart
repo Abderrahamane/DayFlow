@@ -130,7 +130,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 // Title
                 Text(
-                  _emailSent ? l10n.checkYourEmail : l10n.forgotPassword,
+                  _emailSent ? l10n.translate('check_your_email') : l10n.translate('forgot_password'),
                   style: theme.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -142,8 +142,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 // Subtitle
                 Text(
                   _emailSent
-                      ? 'We\'ve sent a password reset link to your email address. Please check your inbox and follow the instructions.'
-                      : 'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.',
+                      ? l10n.translate('reset_email_sent')
+                      : l10n.translate('forgot_password_desc'),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
@@ -157,7 +157,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   Form(
                     key: _formKey,
                     child: CustomInput(
-                      label: l10n.email,
+                      label: l10n.translate('email'),
                       hint: l10n.enterEmail,
                       controller: _emailController,
                       type: InputType.email,
@@ -178,7 +178,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                   // Send reset link button
                   CustomButton(
-                    text: l10n.sendResetLink,
+                    text: l10n.translate('send_reset_link'),
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.send,
@@ -188,7 +188,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ] else ...[
                   // Success actions
                   CustomButton(
-                    text: l10n.resendEmail,
+                    text: l10n.translate('resend_email'),
                     type: ButtonType.secondary,
                     size: ButtonSize.large,
                     icon: Icons.refresh,
@@ -205,7 +205,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 16),
 
                   CustomButton(
-                    text: l10n.backToLogin,
+                    text: l10n.translate('back_to_login'),
                     type: ButtonType.outlined,
                     size: ButtonSize.large,
                     icon: Icons.arrow_back,
@@ -225,7 +225,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        l10n.rememberPassword,
+                        l10n.translate('remember_password'),
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -254,14 +254,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          l10n.didntReceiveEmail,
+                          l10n.translate('didnt_receive_email'),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          l10n.checkSpamFolder,
+                          l10n.translate('check_spam_folder'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.6),
                           ),

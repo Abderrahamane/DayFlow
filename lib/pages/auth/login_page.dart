@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 32),
 
                   Text(
-                    l10n.welcomeBack,
+                    l10n.translate('welcome_back'),
                     style: theme.textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -155,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 8),
 
                   Text(
-                    l10n.signInToContinue,
+                    l10n.translate('sign_in_to_continue'),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 48),
 
                   CustomInput(
-                    label: l10n.email,
+                    label: l10n.translate('email'),
                     hint: l10n.enterEmail,
                     controller: _emailController,
                     type: InputType.email,
@@ -184,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
 
                   CustomInput(
-                    label: l10n.password,
+                    label: l10n.translate('password'),
                     hint: l10n.enterPassword,
                     controller: _passwordController,
                     type: InputType.password,
@@ -209,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushNamed(context, Routes.forgotPassword);
                       },
                       child: Text(
-                        l10n.forgotPassword,
+                        l10n.translate('forgot_password'),
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -221,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 32),
 
                   CustomButton(
-                    text: l10n.login,
+                    text: l10n.translate('login'),
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.login,
@@ -237,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          l10n.or,
+                          l10n.translate('or'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
@@ -251,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   if (kIsWeb || Platform.isAndroid || Platform.isIOS)
                     CustomButton(
-                      text: l10n.continueWithGoogle,
+                      text: l10n.translate('continue_with_google'),
                       type: ButtonType.outlined,
                       size: ButtonSize.large,
                       icon: Icons.g_mobiledata,
@@ -295,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        l10n.dontHaveAccount,
+                        l10n.translate('dont_have_account'),
                         style: theme.textTheme.bodyMedium,
                       ),
                       TextButton(
@@ -308,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          l10n.signup,
+                          l10n.translate('signup'),
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,

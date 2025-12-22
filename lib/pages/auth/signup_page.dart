@@ -39,8 +39,8 @@ class _SignupPageState extends State<SignupPage> {
 
     if (!_acceptedTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please accept the terms and conditions'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).translate('please_accept_terms')),
           backgroundColor: Colors.orange,
           behavior: SnackBarBehavior.floating,
         ),
@@ -162,7 +162,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Title
                   Text(
-                    l10n.createAccount,
+                    l10n.translate('create_account'),
                     style: theme.textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -173,7 +173,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Subtitle
                   Text(
-                    l10n.signUpToGetStarted,
+                    l10n.translate('sign_up_to_get_started'),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),
@@ -184,7 +184,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Name input
                   CustomInput(
-                    label: l10n.fullName,
+                    label: l10n.translate('full_name'),
                     hint: l10n.pleaseEnterName,
                     controller: _nameController,
                     type: InputType.text,
@@ -204,7 +204,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Email input
                   CustomInput(
-                    label: l10n.email,
+                    label: l10n.translate('email'),
                     hint: l10n.enterEmail,
                     controller: _emailController,
                     type: InputType.email,
@@ -224,7 +224,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Password input
                   CustomInput(
-                    label: l10n.password,
+                    label: l10n.translate('password'),
                     hint: l10n.enterPassword,
                     controller: _passwordController,
                     type: InputType.password,
@@ -244,7 +244,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Confirm password input
                   CustomInput(
-                    label: l10n.confirmPassword,
+                    label: l10n.translate('confirm_password'),
                     hint: l10n.reEnterPassword,
                     controller: _confirmPasswordController,
                     type: InputType.password,
@@ -285,17 +285,17 @@ class _SignupPageState extends State<SignupPage> {
                             text: TextSpan(
                               style: theme.textTheme.bodySmall,
                               children: [
-                                const TextSpan(text: 'I agree to the '),
+                                TextSpan(text: '${l10n.translate('i_agree_to_the')} '),
                                 TextSpan(
-                                  text: l10n.termsConditions,
+                                  text: l10n.translate('terms_conditions'),
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const TextSpan(text: ' and '),
+                                TextSpan(text: ' ${l10n.translate('and')} '),
                                 TextSpan(
-                                  text: l10n.privacyPolicy,
+                                  text: l10n.translate('privacy_policy'),
                                   style: TextStyle(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w600,
@@ -313,7 +313,7 @@ class _SignupPageState extends State<SignupPage> {
 
                   // Sign up button
                   CustomButton(
-                    text: l10n.signup,
+                    text: l10n.translate('signup'),
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.person_add,
@@ -330,7 +330,7 @@ class _SignupPageState extends State<SignupPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          l10n.or,
+                          l10n.translate('or'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withOpacity(0.5),
                           ),
@@ -347,7 +347,7 @@ class _SignupPageState extends State<SignupPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        l10n.alreadyHaveAccount,
+                        l10n.translate('already_have_account'),
                         style: theme.textTheme.bodyMedium,
                       ),
                       TextButton(
@@ -360,7 +360,7 @@ class _SignupPageState extends State<SignupPage> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          l10n.login,
+                          l10n.translate('login'),
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,

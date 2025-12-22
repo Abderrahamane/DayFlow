@@ -45,8 +45,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       Navigator.pushReplacementNamed(context, Routes.home);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email verified successfully! Welcome to DayFlow 🎉'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).translate('email_verified_success')),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
@@ -172,7 +172,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
               // Title
               Text(
-                l10n.verifyYourEmail,
+                l10n.translate('verify_your_email'),
                 style: theme.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -189,8 +189,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                   children: [
-                    const TextSpan(
-                      text: 'We\'ve sent a verification email to\n',
+                    TextSpan(
+                      text: '${l10n.translate('verification_email_to')}\n',
                     ),
                     TextSpan(
                       text: userEmail,
@@ -206,7 +206,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               const SizedBox(height: 12),
 
               Text(
-                l10n.checkInboxAndClick,
+                l10n.translate('check_inbox_and_click'),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
                 ),
@@ -238,7 +238,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        l10n.checkingVerificationStatus,
+                        l10n.translate('checking_verification_status'),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w500,
@@ -254,8 +254,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
               // Resend email button
               CustomButton(
                 text: _canResend
-                    ? l10n.resendVerificationEmail
-                    : 'Resend in ${_resendCooldown}s',
+                    ? l10n.translate('resend_verification_email')
+                    : '${l10n.translate('resend_in')} ${_resendCooldown}s',
                 type: _canResend ? ButtonType.secondary : ButtonType.outlined,
                 size: ButtonSize.large,
                 icon: Icons.refresh,
@@ -267,7 +267,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
 
               // Logout button
               CustomButton(
-                text: l10n.useDifferentAccount,
+                text: l10n.translate('use_different_account'),
                 type: ButtonType.outlined,
                 size: ButtonSize.large,
                 icon: Icons.logout,
@@ -294,7 +294,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          l10n.didntReceiveEmail,
+                          l10n.translate('didnt_receive_email'),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -303,7 +303,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      l10n.checkSpamFolder,
+                      l10n.translate('check_spam_folder'),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.6),
                       ),

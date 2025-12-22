@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
-import 'package:dayflow/theme/app_theme.dart';
 import 'package:dayflow/blocs/language/language_cubit.dart';
 import 'package:dayflow/blocs/theme/theme_cubit.dart';
 import 'package:dayflow/utils/app_localizations.dart';
@@ -574,7 +573,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             title: Text(
-              l10n.logout,
+              l10n.translate('logout'),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.red,
@@ -590,7 +589,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
               children: [
                 CustomButton(
-                  text: l10n.signup,
+                  text: l10n.translate('signup'),
                   type: ButtonType.primary,
                   icon: Icons.person_add,
                   width: double.infinity,
@@ -600,7 +599,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 12),
                 CustomButton(
-                  text: l10n.login,
+                  text: l10n.translate('login'),
                   type: ButtonType.outlined,
                   icon: Icons.login,
                   width: double.infinity,
@@ -810,14 +809,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 24),
                 CustomInput(
-                  label: l10n.fullName,
+                  label: l10n.translate('full_name'),
                   hint: l10n.enterName,
                   controller: nameController,
                   prefixIcon: Icons.person_outline,
                 ),
                 const SizedBox(height: 16),
                 CustomInput(
-                  label: l10n.email,
+                  label: l10n.translate('email'),
                   hint: l10n.enterEmail,
                   controller: emailController,
                   type: InputType.email,
@@ -909,7 +908,7 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.red,
               ),
-              child: Text(l10n.logout),
+              child: Text(l10n.translate('logout')),
             ),
           ],
         );
@@ -1201,3 +1200,4 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
+
