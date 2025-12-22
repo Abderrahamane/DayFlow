@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'translations/settings_translations.dart';
+import 'translations/backup_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -359,6 +360,7 @@ class AppLocalizations {
 // English Translations
 const Map<String, String> _enTranslations = {
   ...SettingsTranslations.en,
+  ...BackupTranslations.en,
   'app_name': 'DayFlow',
   'welcome': 'Welcome',
   'get_started': 'Get Started',
@@ -507,39 +509,6 @@ const Map<String, String> _enTranslations = {
   'submit': 'Submit',
   'problem_report_submitted':
       "✓ Problem report submitted. We'll review it soon!",
-  'backup_status': 'Backup Status',
-  'last_backup': 'Last backup',
-  'no_backups_yet': 'No backups yet',
-  'quick_actions': 'Quick Actions',
-  'backup_now': 'Backup Now',
-  'restore_backup': 'Restore Backup',
-  'sync_with_cloud': 'Sync with Cloud',
-  'backup_settings': 'Backup Settings',
-  'auto_backup': 'Auto Backup',
-  'auto_backup_daily': 'Automatically backup data daily',
-  'cloud_sync': 'Cloud Sync',
-  'sync_across_devices': 'Sync data across devices',
-  'encrypt_data': 'Encrypt Data',
-  'secure_backups': 'Secure your backups',
-  'clear_cache': 'Clear Cache',
-  'free_up_storage': 'Free up storage space',
-  'delete_all_data': 'Delete All Data',
-  'permanently_remove': 'Permanently remove all data',
-  'processing': 'Processing...',
-  'backup_completed': '✓ Backup completed successfully',
-  'backup_restored': '✓ Backup restored successfully',
-  'synced_cloud': '✓ Synced with cloud successfully',
-  'restore_confirm':
-      'This will restore your data from the last backup. Current data will be replaced. Continue?',
-  'delete_data_confirm':
-      '⚠️ This will permanently delete all your data including tasks, notes, and settings. This action cannot be undone!',
-  'clear_cache_confirm':
-      'This will clear temporary files and free up storage space. Continue?',
-  'cache_cleared': '✓ Cache cleared successfully',
-  'all_data_deleted': 'All data deleted',
-  'delete_all': 'Delete All',
-  'clear': 'Clear',
-  'restore': 'Restore',
   'terms_of_service': 'Terms of Service',
   'privacy_policy_title': 'Privacy Policy',
   'last_updated': 'Last updated',
@@ -656,6 +625,7 @@ const Map<String, String> _enTranslations = {
 // French Translations
 const Map<String, String> _frTranslations = {
   ...SettingsTranslations.fr,
+  ...BackupTranslations.fr,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'Bienvenue',
@@ -730,6 +700,7 @@ const Map<String, String> _frTranslations = {
 // Arabic Translations
 const Map<String, String> _arTranslations = {
   ...SettingsTranslations.ar,
+  ...BackupTranslations.ar,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'مرحباً',
