@@ -52,6 +52,21 @@ class AuthLocalizations {
       'logout_success': 'Logged out successfully',
       'sign_in': 'Sign In',
       'sign_in_to_continue_desc': 'Sign in to sync your data across devices',
+      'password_reset_email_sent': 'Password reset email sent',
+      'user_not_found': 'User not found',
+      'invalid_email': 'Invalid email',
+      'too_many_requests': 'Too many requests',
+      'failed_to_send_reset_email': 'Failed to send reset email',
+      'error_occurred': 'An error occurred',
+      'check_your_email': 'Check your email',
+      'reset_email_sent': 'Reset email sent',
+      'forgot_password_desc': 'Enter your email to receive a password reset link',
+      'send_reset_link': 'Send Reset Link',
+      'resend_email': 'Resend Email',
+      'back_to_login': 'Back to Login',
+      'remember_password': 'Remembered your password?',
+      'didnt_receive_email': 'Didn\'t receive the email?',
+      'check_spam_folder': 'Check your spam folder',
     },
     'fr': {
       'login': 'Connexion',
@@ -92,6 +107,21 @@ class AuthLocalizations {
       'logout_success': 'Déconnecté avec succès',
       'sign_in': 'Se connecter',
       'sign_in_to_continue_desc': 'Connectez-vous pour synchroniser vos données',
+      'password_reset_email_sent': 'E-mail de réinitialisation du mot de passe envoyé',
+      'user_not_found': 'Utilisateur non trouvé',
+      'invalid_email': 'E-mail invalide',
+      'too_many_requests': 'Trop de demandes',
+      'failed_to_send_reset_email': 'Échec de l\'envoi de l\'e-mail de réinitialisation',
+      'error_occurred': 'Une erreur est survenue',
+      'check_your_email': 'Vérifiez votre e-mail',
+      'reset_email_sent': 'E-mail de réinitialisation envoyé',
+      'forgot_password_desc': 'Entrez votre e-mail pour recevoir un lien de réinitialisation du mot de passe',
+      'send_reset_link': 'Envoyer le lien de réinitialisation',
+      'resend_email': 'Renvoyer l\'e-mail',
+      'back_to_login': 'Retour à la connexion',
+      'remember_password': 'Vous vous souvenez de votre mot de passe ?',
+      'didnt_receive_email': 'Vous n\'avez pas reçu l\'e-mail ?',
+      'check_spam_folder': 'Vérifiez votre dossier spam',
     },
     'ar': {
       'login': 'تسجيل الدخول',
@@ -132,6 +162,21 @@ class AuthLocalizations {
       'logout_success': 'تم تسجيل الخروج بنجاح',
       'sign_in': 'تسجيل الدخول',
       'sign_in_to_continue_desc': 'سجل الدخول لمزامنة بياناتك عبر الأجهزة',
+      'password_reset_email_sent': 'تم إرسال بريد إعادة تعيين كلمة المرور',
+      'user_not_found': 'المستخدم غير موجود',
+      'invalid_email': 'بريد إلكتروني غير صالح',
+      'too_many_requests': 'طلبات كثيرة جدًا',
+      'failed_to_send_reset_email': 'فشل في إرسال بريد إعادة التعيين',
+      'error_occurred': 'حدث خطأ',
+      'check_your_email': 'تحقق من بريدك الإلكتروني',
+      'reset_email_sent': 'تم إرسال بريد إعادة التعيين',
+      'forgot_password_desc': 'أدخل بريدك الإلكتروني لاستلام رابط إعادة تعيين كلمة المرور',
+      'send_reset_link': 'إرسال رابط إعادة التعيين',
+      'resend_email': 'إعادة إرسال البريد الإلكتروني',
+      'back_to_login': 'العودة إلى تسجيل الدخول',
+      'remember_password': 'تذكرت كلمة المرور؟',
+      'didnt_receive_email': 'لم تستلم البريد الإلكتروني؟',
+      'check_spam_folder': 'تحقق من مجلد البريد المزعج',
     },
   };
 
@@ -173,6 +218,21 @@ class AuthLocalizations {
   String get logoutSuccess => _localizedValues[locale.languageCode]!['logout_success']!;
   String get signIn => _localizedValues[locale.languageCode]!['sign_in']!;
   String get signInToContinueDesc => _localizedValues[locale.languageCode]!['sign_in_to_continue_desc']!;
+  String get passwordResetEmailSent => _localizedValues[locale.languageCode]!['password_reset_email_sent']!;
+  String get userNotFound => _localizedValues[locale.languageCode]!['user_not_found']!;
+  String get invalidEmail => _localizedValues[locale.languageCode]!['invalid_email']!;
+  String get tooManyRequests => _localizedValues[locale.languageCode]!['too_many_requests']!;
+  String get failedToSendResetEmail => _localizedValues[locale.languageCode]!['failed_to_send_reset_email']!;
+  String get errorOccurred => _localizedValues[locale.languageCode]!['error_occurred']!;
+  String get checkYourEmail => _localizedValues[locale.languageCode]!['check_your_email']!;
+  String get resetEmailSent => _localizedValues[locale.languageCode]!['reset_email_sent']!;
+  String get forgotPasswordDesc => _localizedValues[locale.languageCode]!['forgot_password_desc']!;
+  String get sendResetLink => _localizedValues[locale.languageCode]!['send_reset_link']!;
+  String get resendEmail => _localizedValues[locale.languageCode]!['resend_email']!;
+  String get backToLogin => _localizedValues[locale.languageCode]!['back_to_login']!;
+  String get rememberPassword => _localizedValues[locale.languageCode]!['remember_password']!;
+  String get didntReceiveEmail => _localizedValues[locale.languageCode]!['didnt_receive_email']!;
+  String get checkSpamFolder => _localizedValues[locale.languageCode]!['check_spam_folder']!;
 }
 
 class _AuthLocalizationsDelegate
@@ -192,4 +252,3 @@ class _AuthLocalizationsDelegate
   @override
   bool shouldReload(_AuthLocalizationsDelegate old) => false;
 }
-

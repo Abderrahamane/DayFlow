@@ -334,11 +334,13 @@ class FirebaseAuthService {
       return {
         'success': false,
         'message': message,
+        'code': e.code,
       };
     } catch (e) {
       return {
         'success': false,
         'message': 'An error occurred: $e',
+        'code': 'unknown',
       };
     }
   }

@@ -273,6 +273,9 @@ class TasksTranslations {
     // Quote
     'quote_text': '"سر التقدم هو البدء."',
     'quote_author': '- مارك توين',
+
+    // Tasks and Habits
+    'tasks': 'المهام',
+    'habits': 'العادات',
   };
 }
-

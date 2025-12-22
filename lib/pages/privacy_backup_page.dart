@@ -68,9 +68,10 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
     });
 
     if (mounted) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✓ Backup completed successfully'),
+        SnackBar(
+          content: Text('✓ ${l10n.backupCompleted}'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
@@ -79,22 +80,23 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
   }
 
   Future<void> _restoreBackup() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Restore Backup'),
-        content: const Text(
-          'This will restore your data from the last backup. Current data will be replaced. Continue?',
+        title: Text(l10n.restoreBackup),
+        content: Text(
+          l10n.restoreConfirm,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.orange),
-            child: const Text('Restore'),
+            child: Text(l10n.restore),
           ),
         ],
       ),
@@ -115,8 +117,8 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✓ Backup restored successfully'),
+        SnackBar(
+          content: Text('✓ ${l10n.backupRestored}'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
@@ -137,9 +139,10 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
     });
 
     if (mounted) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✓ Synced with cloud successfully'),
+        SnackBar(
+          content: Text('✓ ${l10n.syncedCloud}'),
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
         ),
@@ -167,7 +170,7 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Processing...',
+              l10n.processing,
               style: theme.textTheme.bodyLarge,
             ),
           ],

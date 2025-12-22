@@ -35,6 +35,13 @@ class AuthTranslations {
     'resend_verification_email': 'Resend verification email',
     'use_different_account': 'Use a different account',
     'checking_verification_status': 'Checking verification status...',
+    'enter_email': 'Enter your email',
+    'password_reset_email_sent': 'Password reset email sent. Please check your inbox.',
+    'user_not_found': 'No account found with this email',
+    'invalid_email': 'Invalid email address',
+    'too_many_requests': 'Too many requests. Please try again later.',
+    'failed_to_send_reset_email': 'Failed to send reset email',
+    'error_occurred': 'An error occurred',
   };
 
   static const Map<String, String> fr = {
@@ -111,5 +118,12 @@ class AuthTranslations {
     'resend_verification_email': 'إعادة إرسال بريد التحقق',
     'use_different_account': 'استخدام حساب آخر',
     'checking_verification_status': 'جارٍ التحقق من الحالة...',
+    'enter_email': 'أدخل بريدك الإلكتروني',
+    'password_reset_email_sent': 'تم إرسال بريد إعادة تعيين كلمة المرور. يرجى التحقق من صندوق الوارد الخاص بك.',
+    'user_not_found': 'لم يتم العثور على حساب بهذا البريد الإلكتروني',
+    'invalid_email': 'عنوان البريد الإلكتروني غير صالح',
+    'too_many_requests': 'طلبات كثيرة جداً. يرجى المحاولة مرة أخرى لاحقاً.',
+    'failed_to_send_reset_email': 'فشل إرسال بريد إعادة التعيين',
+    'error_occurred': 'حدث خطأ',
   };
 }

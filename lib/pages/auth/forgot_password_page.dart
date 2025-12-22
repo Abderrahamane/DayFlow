@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
-import 'package:dayflow/utils/app_localizations.dart';
+import 'package:dayflow/utils/auth_localizations.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -42,6 +42,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
       if (!mounted) return;
 
+      final l10n = AuthLocalizations.of(context);
+
       if (result['success']) {
         setState(() {
           _emailSent = true;
@@ -49,15 +51,30 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message']),
+            content: Text(l10n.passwordResetEmailSent),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
           ),
         );
       } else {
+        String errorMessage;
+        switch (result['code']) {
+          case 'user-not-found':
+            errorMessage = l10n.userNotFound;
+            break;
+          case 'invalid-email':
+            errorMessage = l10n.invalidEmail;
+            break;
+          case 'too-many-requests':
+            errorMessage = l10n.tooManyRequests;
+            break;
+          default:
+            errorMessage = result['message'] ?? l10n.failedToSendResetEmail;
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message']),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -65,9 +82,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       }
     } catch (e) {
       if (!mounted) return;
+      final l10n = AuthLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('An error occurred: $e'),
+          content: Text('${l10n.errorOccurred}: $e'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
@@ -84,7 +102,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final l10n = AuthLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -115,7 +133,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Icon(
@@ -130,7 +148,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                 // Title
                 Text(
-                  _emailSent ? l10n.translate('check_your_email') : l10n.translate('forgot_password'),
+                  _emailSent ? l10n.checkYourEmail : l10n.forgotPassword,
                   style: theme.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -142,10 +160,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 // Subtitle
                 Text(
                   _emailSent
-                      ? l10n.translate('reset_email_sent')
-                      : l10n.translate('forgot_password_desc'),
+                      ? l10n.resetEmailSent
+                      : l10n.forgotPasswordDesc,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -157,17 +175,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   Form(
                     key: _formKey,
                     child: CustomInput(
-                      label: l10n.translate('email'),
+                      label: l10n.email,
                       hint: l10n.enterEmail,
                       controller: _emailController,
                       type: InputType.email,
                       prefixIcon: Icons.email_outlined,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
+                          return l10n.pleaseEnterEmail;
                         }
                         if (!value.contains('@')) {
-                          return 'Please enter a valid email';
+                          return l10n.pleaseEnterValidEmail;
                         }
                         return null;
                       },
@@ -178,7 +196,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
                   // Send reset link button
                   CustomButton(
-                    text: l10n.translate('send_reset_link'),
+                    text: l10n.sendResetLink,
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.send,
@@ -188,7 +206,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ] else ...[
                   // Success actions
                   CustomButton(
-                    text: l10n.translate('resend_email'),
+                    text: l10n.resendEmail,
                     type: ButtonType.secondary,
                     size: ButtonSize.large,
                     icon: Icons.refresh,
@@ -205,7 +223,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(height: 16),
 
                   CustomButton(
-                    text: l10n.translate('back_to_login'),
+                    text: l10n.backToLogin,
                     type: ButtonType.outlined,
                     size: ButtonSize.large,
                     icon: Icons.arrow_back,
@@ -225,7 +243,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        l10n.translate('remember_password'),
+                        l10n.rememberPassword,
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -239,10 +257,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: theme.colorScheme.outline.withOpacity(0.2),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
@@ -254,16 +272,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          l10n.translate('didnt_receive_email'),
+                          l10n.didntReceiveEmail,
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          l10n.translate('check_spam_folder'),
+                          l10n.checkSpamFolder,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           textAlign: TextAlign.center,
                         ),
