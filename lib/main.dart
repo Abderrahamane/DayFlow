@@ -39,6 +39,9 @@ import 'blocs/navigation/navigation_cubit.dart';
 import 'package:dayflow/services/firestore_service.dart';
 import 'utils/auth_localizations.dart';
 import 'utils/settings_localizations.dart';
+import 'utils/welcome_localizations.dart';
+import 'utils/onboarding_localizations.dart';
+import 'utils/question_flow_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -153,6 +156,9 @@ class DayFlowApp extends StatelessWidget {
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
+                WelcomeLocalizations.delegate,
+                OnboardingLocalizations.delegate,
+                QuestionFlowLocalizations.delegate,
               ],
               supportedLocales: const [
                 Locale('en'),

@@ -56,10 +56,7 @@ class AppLocalizations {
 
   // Common
   String get appName => translate('app_name');
-  String get welcome => translate('welcome');
-  String get getStarted => translate('get_started');
   String get signIn => translate('sign_in');
-  String get alreadyHaveAccount => translate('already_have_account');
   String get cancel => translate('cancel');
   String get save => translate('save');
   String get close => translate('close');
@@ -144,23 +141,7 @@ class AppLocalizations {
   String get developedBy => translate('developed_by');
   String get teamMembers => translate('team_members');
 
-  // Welcome Page
-  String get yourSmartDailyPlanner => translate('your_smart_daily_planner');
-  String get organizeTasks => translate('organize_tasks');
-  String get captureIdeas => translate('capture_ideas');
-  String get neverMissReminders => translate('never_miss_reminders');
 
-  // Onboarding
-  String get skip => translate('skip');
-  String get next => translate('next');
-  String get organizeYourTasks => translate('organize_your_tasks');
-  String get organizeTasksDesc => translate('organize_tasks_desc');
-  String get captureYourIdeas => translate('capture_your_ideas');
-  String get captureIdeasDesc => translate('capture_ideas_desc');
-  String get setSmartReminders => translate('set_smart_reminders');
-  String get setRemindersDesc => translate('set_reminders_desc');
-  String get trackYourHabits => translate('track_your_habits');
-  String get trackHabitsDesc => translate('track_habits_desc');
 
   // Auth Pages - Moved to AuthTranslations and TermsPrivacyTranslations
 

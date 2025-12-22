@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:dayflow/utils/app_localizations.dart';
+import 'package:dayflow/utils/welcome_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'onboarding/onboarding_page.dart';
 import 'package:dayflow/utils/routes.dart';
@@ -125,7 +125,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = WelcomeLocalizations.of(context);
 
     return Scaffold(
       body: AnimatedBuilder(

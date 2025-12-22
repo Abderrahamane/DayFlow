@@ -1,8 +1,7 @@
 // lib/pages/onboarding/onboarding_page.dart (LOCALIZED)
 
 import 'package:flutter/material.dart';
-import 'package:dayflow/utils/app_localizations.dart';
-import '../../utils/routes.dart';
+import 'package:dayflow/utils/onboarding_localizations.dart';
 import 'onboarding_model.dart';
 import 'onboarding_slide_widget.dart';
 import 'question_flow_page.dart';
@@ -73,7 +72,7 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = OnboardingLocalizations.of(context);
 
     return Scaffold(
       body: Stack(
@@ -163,10 +162,10 @@ class _AnimatedSkipButton extends StatelessWidget {
         )),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -217,12 +216,12 @@ class _PageIndicators extends StatelessWidget {
           decoration: BoxDecoration(
             color: currentPage == index
                 ? Colors.white
-                : Colors.white.withOpacity(0.4),
+                : Colors.white.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(4),
             boxShadow: currentPage == index
                 ? [
               BoxShadow(
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 blurRadius: 8,
                 spreadRadius: 1,
               ),
@@ -311,7 +310,7 @@ class _AnimatedNavigationButtonState extends State<_AnimatedNavigationButton>
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 8,
-                    shadowColor: Colors.black.withOpacity(0.3),
+                    shadowColor: Colors.black.withValues(alpha: 0.3),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
