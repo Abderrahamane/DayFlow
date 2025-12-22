@@ -114,7 +114,11 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         endTime: DateTime.now(),
         completed: false,
       );
-      await _repository.saveSession(completedSession);
+      try {
+        await _repository.saveSession(completedSession);
+      } catch (e) {
+        print('Failed to save session: $e');
+      }
     }
 
     emit(state.copyWith(
@@ -140,7 +144,11 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       completed: true,
     );
 
-    await _repository.saveSession(completedSession);
+    try {
+      await _repository.saveSession(completedSession);
+    } catch (e) {
+      print('Failed to save session: $e');
+    }
 
     // Notification is already shown when timer ends (ringing state)
     // But if we auto-complete (e.g. skip ringing), we might want to show it?
@@ -154,6 +162,14 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
 
     final todaySessions = [completedSession, ...state.todaySessions];
 
+    // Update stats locally
+    final newStats = state.stats.copyWith(
+      totalWorkSessions: state.stats.totalWorkSessions + (completedSession.type == PomodoroSessionType.work ? 1 : 0),
+      totalWorkMinutes: state.stats.totalWorkMinutes + (completedSession.type == PomodoroSessionType.work ? completedSession.durationMinutes : 0),
+      completedToday: state.stats.completedToday + (completedSession.type == PomodoroSessionType.work ? 1 : 0),
+      // Streak calculation is complex to do locally without full history, so we keep it as is or wait for reload
+    );
+
     // Determine next session type before clearing current session
     final nextType = _getNextSessionTypeAfterComplete(completedSession.type, newCompletedCount);
 
@@ -161,6 +177,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       status: PomodoroStatus.completed,
       completedWorkSessions: newCompletedCount,
       todaySessions: todaySessions,
+      stats: newStats,
       clearCurrentSession: true,
       remainingSeconds: 0,
     ));
@@ -173,6 +190,9 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
                state.settings.autoStartWork) {
       add(StartSession(type: PomodoroSessionType.work));
     }
+
+    // Reload stats to update UI
+    add(LoadPomodoroData());
   }
 
   void _onSkipToNext(SkipToNextSession event, Emitter<PomodoroState> emit) {
