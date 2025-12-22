@@ -117,6 +117,16 @@ class NotesTranslations {
     // Attachment section headers
     'images': 'Images',
     'files': 'Files',
+
+    // Note Categories
+    'category_work': 'Work',
+    'category_study': 'Study',
+    'category_personal': 'Personal',
+    'category_shopping': 'Shopping',
+    'category_important': 'Important',
+    'category_ideas': 'Ideas',
+    'category_travel': 'Travel',
+    'category_health': 'Health',
   };
 
   static const Map<String, String> fr = {
@@ -237,6 +247,16 @@ class NotesTranslations {
     // Attachment section headers
     'images': 'Images',
     'files': 'Fichiers',
+
+    // Note Categories
+    'category_work': 'عمل',
+    'category_study': 'دراسة',
+    'category_personal': 'شخصي',
+    'category_shopping': 'تسوق',
+    'category_important': 'مهم',
+    'category_ideas': 'أفكار',
+    'category_travel': 'سفر',
+    'category_health': 'صحة',
   };
 
   static const Map<String, String> ar = {
@@ -344,5 +364,15 @@ class NotesTranslations {
     // Attachment section headers
     'images': 'الصور',
     'files': 'الملفات',
+
+    // Note Categories
+    'category_work': 'عمل',
+    'category_study': 'دراسة',
+    'category_personal': 'شخصي',
+    'category_shopping': 'تسوق',
+    'category_important': 'مهم',
+    'category_ideas': 'أفكار',
+    'category_travel': 'سفر',
+    'category_health': 'صحة',
   };
 }

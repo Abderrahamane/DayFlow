@@ -904,14 +904,6 @@ class _EmptyState extends StatelessWidget {
                 color: theme.textTheme.bodyMedium?.color?.withAlpha(179),
               ),
             ),
-            if (!hasFilter) ...[
-              const SizedBox(height: 32),
-              FilledButton.icon(
-                onPressed: onCreate,
-                icon: const Icon(Icons.add),
-                label: Text(l10n.translate('create_first_note')),
-              ),
-            ],
           ],
         ),
       ),
@@ -1209,8 +1201,20 @@ class _FilterSheet extends StatelessWidget {
               Wrap(
                 spacing: 8,
                 children: NoteType.values.map((type) {
+                  String label;
+                  switch (type) {
+                    case NoteType.text:
+                      label = l10n.textNote;
+                      break;
+                    case NoteType.checklist:
+                      label = l10n.checklist;
+                      break;
+                    case NoteType.richText:
+                      label = l10n.richTextNote;
+                      break;
+                  }
                   return FilterChip(
-                    label: Text(type.displayName),
+                    label: Text(label),
                     avatar: Icon(type.icon, size: 18),
                     selected: state.selectedType == type,
                     onSelected: (_) {
@@ -1232,8 +1236,35 @@ class _FilterSheet extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: NoteCategory.values.map((category) {
+                  String label;
+                  switch (category) {
+                    case NoteCategory.work:
+                      label = l10n.categoryWork;
+                      break;
+                    case NoteCategory.study:
+                      label = l10n.categoryStudy;
+                      break;
+                    case NoteCategory.personal:
+                      label = l10n.categoryPersonal;
+                      break;
+                    case NoteCategory.shopping:
+                      label = l10n.categoryShopping;
+                      break;
+                    case NoteCategory.important:
+                      label = l10n.categoryImportant;
+                      break;
+                    case NoteCategory.ideas:
+                      label = l10n.categoryIdeas;
+                      break;
+                    case NoteCategory.travel:
+                      label = l10n.categoryTravel;
+                      break;
+                    case NoteCategory.health:
+                      label = l10n.categoryHealth;
+                      break;
+                  }
                   return FilterChip(
-                    label: Text('${category.icon} ${category.displayName}'),
+                    label: Text('${category.icon} $label'),
                     selected: state.selectedCategory == category,
                     onSelected: (_) {
                       context.read<NoteBloc>().add(FilterByCategoryEvent(

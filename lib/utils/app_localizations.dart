@@ -564,6 +564,16 @@ class AppLocalizations {
   String get copySuffix => translate('copy_suffix');
   String get takePhoto => translate('take_photo');
   String get chooseFromGallery => translate('choose_from_gallery');
+
+  // Note Categories
+  String get categoryWork => translate('category_work');
+  String get categoryStudy => translate('category_study');
+  String get categoryPersonal => translate('category_personal');
+  String get categoryShopping => translate('category_shopping');
+  String get categoryImportant => translate('category_important');
+  String get categoryIdeas => translate('category_ideas');
+  String get categoryTravel => translate('category_travel');
+  String get categoryHealth => translate('category_health');
 }
 
 // ------------------------------
