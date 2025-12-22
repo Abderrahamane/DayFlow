@@ -15,6 +15,8 @@ class TasksTranslations {
     'task_added': 'Task added',
     'task_updated': 'Task updated',
     'no_tasks_yet': 'No tasks yet',
+    'no_tags_yet': 'No tags yet',
+    'no_subtasks_yet': 'No subtasks yet',
     'create_first_task': 'Create your first task to start organizing your day.',
 
     // Task Filter Bar
@@ -104,7 +106,9 @@ class TasksTranslations {
     'update_task': 'Mettre à jour la tâche',
     'task_added': 'Tâche ajoutée',
     'task_updated': 'Tâche mise à jour',
-    'no_tasks_yet': 'Pas encore de tâches',
+    'no_tasks_yet': 'Aucune tâche pour le moment',
+    'no_tags_yet': 'Aucun tag pour le moment',
+    'no_subtasks_yet': 'Aucune sous-tâche pour le moment',
     'create_first_task': 'Créez votre première tâche pour commencer à organiser votre journée.',
 
     // Task Filter Bar
@@ -195,7 +199,9 @@ class TasksTranslations {
     'task_added': 'تمت إضافة المهمة',
     'task_updated': 'تم تحديث المهمة',
     'no_tasks_yet': 'لا توجد مهام بعد',
-    'create_first_task': 'أنشئ مهمتك الأولى لتبدأ في تنظيم يومك.',
+    'no_tags_yet': 'لا توجد وسوم بعد',
+    'no_subtasks_yet': 'لا توجد مهام فرعية بعد',
+    'create_first_task': 'أنشئ مهمتك الأولى لتبدأ تنظيم يومك.',
 
     // Task Filter Bar
     'sorted_by': 'مرتبة حسب',

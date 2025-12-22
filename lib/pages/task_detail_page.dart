@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/task/task_bloc.dart';
 import '../blocs/template/template_bloc.dart';
 import '../models/task_model.dart';
+import '../utils/app_localizations.dart';
 import 'task_edit_page.dart';
 
 class TaskDetailPage extends StatelessWidget {
@@ -31,17 +32,17 @@ class TaskDetailPage extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context, Task task) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete task?'),
-        content: const Text(
-            'This task will be permanently deleted. This action cannot be undone.'),
+        title: Text(l10n.deleteTaskQuestion),
+        content: Text(l10n.deleteTaskConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -52,7 +53,7 @@ class TaskDetailPage extends StatelessWidget {
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -60,22 +61,23 @@ class TaskDetailPage extends StatelessWidget {
   }
 
   void _showSaveAsTemplateDialog(BuildContext context, Task task) {
+    final l10n = AppLocalizations.of(context);
     final nameController = TextEditingController(text: task.title);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Save as Template'),
+        title: Text(l10n.saveAsTemplate),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Create a reusable template from this task.'),
+            Text(l10n.createTemplateFromTaskDesc),
             const SizedBox(height: 16),
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Template Name',
-                hintText: 'Enter template name',
+              decoration: InputDecoration(
+                labelText: l10n.templateName,
+                hintText: l10n.templateNameHint,
               ),
             ),
           ],
@@ -83,7 +85,7 @@ class TaskDetailPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -94,14 +96,14 @@ class TaskDetailPage extends StatelessWidget {
                 ));
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Template created successfully!'),
+                  SnackBar(
+                    content: Text(l10n.templateCreatedSuccess),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               }
             },
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -111,6 +113,7 @@ class TaskDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return BlocBuilder<TaskBloc, TaskState>(
       builder: (context, state) {
         final task = state.tasks.firstWhere(
@@ -125,8 +128,8 @@ class TaskDetailPage extends StatelessWidget {
 
         if (task.id.isEmpty) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Task Not Found')),
-            body: const Center(child: Text('Task not found')),
+            appBar: AppBar(title: Text(l10n.taskNotFound)),
+            body: Center(child: Text(l10n.taskNotFoundMsg)),
           );
         }
 
@@ -143,7 +146,7 @@ class TaskDetailPage extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.library_add_outlined),
                 onPressed: () => _showSaveAsTemplateDialog(context, task),
-                tooltip: 'Save as Template',
+                tooltip: l10n.saveAsTemplate,
               ),
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
@@ -216,7 +219,7 @@ class TaskDetailPage extends StatelessWidget {
                                     : null,
                                 color: task.isCompleted
                                     ? theme.textTheme.bodyMedium?.color
-                                        ?.withOpacity(0.5)
+                                        ?.withValues(alpha: 0.5)
                                     : null,
                               ),
                             ),
@@ -245,17 +248,17 @@ class TaskDetailPage extends StatelessWidget {
                                   ? Icons.warning_amber_rounded
                                   : Icons.schedule_outlined,
                               label: task.isOverdue
-                                  ? '${task.daysRemaining!.abs()}d overdue'
+                                  ? l10n.daysOverdue.replaceAll('{days}', task.daysRemaining!.abs().toString())
                                   : task.daysRemaining == 0
-                                      ? 'Due today'
-                                      : '${task.daysRemaining}d left',
+                                      ? l10n.dueToday
+                                      : l10n.daysLeft.replaceAll('{days}', task.daysRemaining.toString()),
                               color: task.isOverdue ? Colors.red : Colors.blue,
                             ),
                           if (task.tags != null && task.tags!.isNotEmpty)
                             _InfoChip(
                               icon: Icons.sell_outlined,
                               label: task.tags!.join(', '),
-                              color: theme.colorScheme.primary.withOpacity(0.8),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.8),
                             ),
                         ],
                       ),
@@ -269,7 +272,7 @@ class TaskDetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Description',
+                          l10n.description,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -290,16 +293,18 @@ class TaskDetailPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Subtasks',
+                          l10n.subtasks,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         Text(
-                          '${task.completedSubtasks}/${task.totalSubtasks} completed',
+                          l10n.completedCount
+                              .replaceAll('{completed}', task.completedSubtasks.toString())
+                              .replaceAll('{total}', task.totalSubtasks.toString()),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.textTheme.bodyMedium?.color
-                                ?.withOpacity(0.6),
+                                ?.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -344,8 +349,8 @@ class _InfoChip extends StatelessWidget {
     return Chip(
       avatar: Icon(icon, size: 16, color: color ?? theme.colorScheme.primary),
       label: Text(label),
-      backgroundColor: (color ?? theme.colorScheme.primary).withOpacity(0.08),
-      side: BorderSide(color: (color ?? theme.colorScheme.primary).withOpacity(0.4)),
+      backgroundColor: (color ?? theme.colorScheme.primary).withValues(alpha: 0.08),
+      side: BorderSide(color: (color ?? theme.colorScheme.primary).withValues(alpha: 0.4)),
     );
   }
 }

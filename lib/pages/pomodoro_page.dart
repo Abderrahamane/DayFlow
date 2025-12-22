@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../utils/app_localizations.dart';
+import '../utils/pomodoro_helper.dart';
 import '../blocs/pomodoro/pomodoro_bloc.dart';
 import '../blocs/task/task_bloc.dart';
 import '../models/pomodoro_model.dart';
@@ -170,7 +171,7 @@ class _StatsRow extends StatelessWidget {
           child: _StatCard(
             icon: Icons.check_circle,
             value: '${state.todayWorkSessions}',
-            label: l10n.remindersToday,
+            label: l10n.sessionsLabel,
             color: AppTheme.successColor,
           ),
         ),
@@ -221,7 +222,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(13),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -240,7 +241,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.textTheme.bodyMedium?.color?.withAlpha(179),
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -326,7 +327,7 @@ class _TimerDisplay extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        state.currentSession!.type.displayName,
+                        PomodoroHelper.getSessionTypeLabel(context, state.currentSession!.type),
                         style: TextStyle(
                           color: sessionColor,
                           fontWeight: FontWeight.w600,
@@ -459,7 +460,7 @@ class _TimerControls extends StatelessWidget {
                       vertical: 12,
                     ),
                   ),
-                  child: Text('${type.icon} ${type.displayName}'),
+                  child: Text('${type.icon} ${PomodoroHelper.getSessionTypeLabel(context, type)}'),
                 ),
               );
             }).toList(),
@@ -692,7 +693,7 @@ class _TodaySessionsList extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '${session.durationMinutes} minutes',
+                          '${session.durationMinutes} ${l10n.minutes}',
                           style: theme.textTheme.bodySmall,
                         ),
                       ],
@@ -896,7 +897,7 @@ class _HistorySheet extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '${session.durationMinutes} min • ${_formatDateTime(session.startTime)}',
+                                  '${session.durationMinutes} ${l10n.minSuffix} • ${_formatDateTime(session.startTime)}',
                                   style: theme.textTheme.bodySmall,
                                 ),
                               ],
@@ -990,7 +991,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                   value: _settings.workDuration.toDouble(),
                   min: 5,
                   max: 60,
-                  suffix: 'min',
+                  suffix: l10n.minSuffix,
                   onChanged: (v) => setState(
                       () => _settings = _settings.copyWith(workDuration: v.round())),
                 ),
@@ -999,7 +1000,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                   value: _settings.shortBreakDuration.toDouble(),
                   min: 1,
                   max: 15,
-                  suffix: 'min',
+                  suffix: l10n.minSuffix,
                   onChanged: (v) => setState(
                       () => _settings = _settings.copyWith(shortBreakDuration: v.round())),
                 ),
@@ -1008,7 +1009,7 @@ class _SettingsSheetState extends State<_SettingsSheet> {
                   value: _settings.longBreakDuration.toDouble(),
                   min: 10,
                   max: 30,
-                  suffix: 'min',
+                  suffix: l10n.minSuffix,
                   onChanged: (v) => setState(
                       () => _settings = _settings.copyWith(longBreakDuration: v.round())),
                 ),

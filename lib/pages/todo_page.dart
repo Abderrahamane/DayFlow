@@ -305,16 +305,16 @@ class _TaskEditorState extends State<_TaskEditor> {
   }
 
   String _getPriorityLabel(BuildContext context, TaskPriority priority) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context);
     switch (priority) {
       case TaskPriority.none:
-        return l10n.translate('priority_none');
+        return l10n.priorityNone;
       case TaskPriority.low:
-        return l10n.translate('priority_low');
+        return l10n.priorityLow;
       case TaskPriority.medium:
-        return l10n.translate('priority_medium');
+        return l10n.priorityMedium;
       case TaskPriority.high:
-        return l10n.translate('priority_high');
+        return l10n.priorityHigh;
     }
   }
 

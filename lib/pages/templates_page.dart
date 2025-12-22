@@ -7,6 +7,7 @@ import '../blocs/task/task_bloc.dart';
 import '../models/task_template_model.dart';
 import '../models/task_model.dart';
 import '../theme/app_theme.dart';
+import '../utils/app_localizations.dart';
 
 class TemplatesPage extends StatefulWidget {
   const TemplatesPage({super.key});
@@ -50,12 +51,13 @@ class _TemplatesPageState extends State<TemplatesPage> {
     final task = template.toTask(taskId: const Uuid().v4());
     context.read<TaskBloc>().add(AddOrUpdateTask(task));
 
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Task "${task.title}" created from template'),
+        content: Text(l10n.createTaskFromTemplate.replaceAll('{taskTitle}', task.title)),
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
-          label: 'View',
+          label: l10n.view,
           onPressed: () {
             // Navigate to tasks page
             Navigator.pop(context);
@@ -68,10 +70,11 @@ class _TemplatesPageState extends State<TemplatesPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Templates'),
+        title: Text(l10n.taskTemplates),
       ),
       body: BlocBuilder<TemplateBloc, TemplateState>(
         builder: (context, state) {
@@ -85,7 +88,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
                   onChanged: (value) =>
                       context.read<TemplateBloc>().add(SearchTemplates(value)),
                   decoration: InputDecoration(
-                    hintText: 'Search templates...',
+                    hintText: l10n.searchTemplates,
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
@@ -114,7 +117,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
                       FilterChip(
-                        label: const Text('All'),
+                        label: Text(l10n.allTemplates),
                         selected: state.selectedCategory == null,
                         onSelected: (_) =>
                             context.read<TemplateBloc>().add(ClearFilter()),
@@ -147,12 +150,13 @@ class _TemplatesPageState extends State<TemplatesPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showTemplateEditor(),
         icon: const Icon(Icons.add),
-        label: const Text('New Template'),
+        label: Text(l10n.createTemplate),
       ),
     );
   }
 
   Widget _buildContent(TemplateState state, ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     if (state.status == TemplateStatus.loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -165,13 +169,13 @@ class _TemplatesPageState extends State<TemplatesPage> {
             Icon(Icons.error_outline,
                 size: 64, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text('Failed to load templates', style: theme.textTheme.titleLarge),
+            Text(l10n.failedToLoadTasks, style: theme.textTheme.titleLarge),
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: () =>
                   context.read<TemplateBloc>().add(LoadTemplates()),
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(l10n.remindersRetry),
             ),
           ],
         ),
@@ -188,15 +192,15 @@ class _TemplatesPageState extends State<TemplatesPage> {
             const SizedBox(height: 16),
             Text(
               state.searchQuery.isNotEmpty
-                  ? 'No templates found'
-                  : 'No templates yet',
+                  ? l10n.noTemplatesFound
+                  : l10n.noTemplatesYet,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             Text(
               state.searchQuery.isNotEmpty
-                  ? 'Try a different search term'
-                  : 'Create templates for quick task creation',
+                  ? l10n.searchTemplates
+                  : l10n.createFirstTemplate,
               style: theme.textTheme.bodyMedium,
             ),
           ],
@@ -219,6 +223,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
   }
 
   void _showTemplateOptions(TaskTemplate template) {
+    final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -259,8 +264,8 @@ class _TemplatesPageState extends State<TemplatesPage> {
             const SizedBox(height: 24),
             _OptionButton(
               icon: Icons.add_task,
-              label: 'Create Task',
-              subtitle: 'Quick create task from this template',
+              label: l10n.createTaskFromTemplate.replaceAll('{taskTitle}', ''),
+              subtitle: l10n.useTemplate,
               color: AppTheme.successColor,
               onTap: () {
                 Navigator.pop(ctx);
@@ -269,8 +274,8 @@ class _TemplatesPageState extends State<TemplatesPage> {
             ),
             _OptionButton(
               icon: Icons.edit,
-              label: 'Edit Template',
-              subtitle: 'Modify template settings',
+              label: l10n.editTemplate,
+              subtitle: l10n.editTemplate,
               color: Theme.of(context).colorScheme.primary,
               onTap: () {
                 Navigator.pop(ctx);
@@ -279,8 +284,8 @@ class _TemplatesPageState extends State<TemplatesPage> {
             ),
             _OptionButton(
               icon: Icons.delete_outline,
-              label: 'Delete Template',
-              subtitle: 'Remove this template',
+              label: l10n.deleteTemplate,
+              subtitle: l10n.deleteTemplate,
               color: AppTheme.errorColor,
               onTap: () {
                 Navigator.pop(ctx);
@@ -295,15 +300,16 @@ class _TemplatesPageState extends State<TemplatesPage> {
   }
 
   void _confirmDelete(TaskTemplate template) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Template'),
-        content: Text('Are you sure you want to delete "${template.name}"?'),
+        title: Text(l10n.deleteTemplate),
+        content: Text(l10n.deleteTemplateConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -313,7 +319,7 @@ class _TemplatesPageState extends State<TemplatesPage> {
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -345,9 +351,24 @@ class _TemplateCard extends StatelessWidget {
     }
   }
 
+  String _getPriorityLabel(BuildContext context, TaskPriority priority) {
+    final l10n = AppLocalizations.of(context);
+    switch (priority) {
+      case TaskPriority.none:
+        return l10n.priorityNone;
+      case TaskPriority.low:
+        return l10n.priorityLow;
+      case TaskPriority.medium:
+        return l10n.priorityMedium;
+      case TaskPriority.high:
+        return l10n.priorityHigh;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -432,7 +453,7 @@ class _TemplateCard extends StatelessWidget {
                     onPressed: onQuickCreate,
                     icon: const Icon(Icons.add_task),
                     color: AppTheme.successColor,
-                    tooltip: 'Quick Create',
+                    tooltip: l10n.createTaskFromTemplate,
                   ),
                 ],
               ),
@@ -469,7 +490,7 @@ class _TemplateCard extends StatelessWidget {
                         template.subtasks!.isNotEmpty) ...[
                       const SizedBox(height: 8),
                       Text(
-                        '${template.subtasks!.length} subtasks',
+                        '${template.subtasks!.length} ${l10n.subtasks}',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.textTheme.bodyMedium?.color?.withAlpha(128),
                         ),
@@ -485,7 +506,7 @@ class _TemplateCard extends StatelessWidget {
                   Icon(Icons.repeat, size: 14, color: theme.colorScheme.outline),
                   const SizedBox(width: 4),
                   Text(
-                    'Used ${template.usageCount} times',
+                    'Used ${template.usageCount} ${l10n.recurrenceTimes}',
                     style: theme.textTheme.bodySmall,
                   ),
                   const Spacer(),
@@ -497,7 +518,7 @@ class _TemplateCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      template.priority.displayName,
+                      _getPriorityLabel(context, template.priority),
                       style: TextStyle(
                         fontSize: 10,
                         color: _getPriorityColor(),
@@ -648,22 +669,23 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
   }
 
   void _addSubtask() {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add Subtask'),
+        title: Text(l10n.addTask), // Reusing addTask
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Subtask title',
+          decoration: InputDecoration(
+            hintText: l10n.taskTitle,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -672,16 +694,31 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Add'),
+            child: Text(l10n.save),
           ),
         ],
       ),
     );
   }
 
+  String _getPriorityLabel(BuildContext context, TaskPriority priority) {
+    final l10n = AppLocalizations.of(context);
+    switch (priority) {
+      case TaskPriority.none:
+        return l10n.priorityNone;
+      case TaskPriority.low:
+        return l10n.priorityLow;
+      case TaskPriority.medium:
+        return l10n.priorityMedium;
+      case TaskPriority.high:
+        return l10n.priorityHigh;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isEditing = widget.template != null;
 
     return Container(
@@ -708,7 +745,7 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
             child: Row(
               children: [
                 Text(
-                  isEditing ? 'Edit Template' : 'New Template',
+                  isEditing ? l10n.editTemplate : l10n.createTemplate,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -716,12 +753,12 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                 const Spacer(),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.cancel),
                 ),
                 const SizedBox(width: 8),
                 FilledButton(
                   onPressed: _save,
-                  child: const Text('Save'),
+                  child: Text(l10n.save),
                 ),
               ],
             ),
@@ -736,7 +773,7 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Icon selector
-                    Text('Icon',
+                    Text(l10n.icon,
                         style: theme.textTheme.titleSmall
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
@@ -772,28 +809,28 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                     // Template name
                     TextFormField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Template Name *',
-                        hintText: 'e.g., Weekly Report',
+                      decoration: InputDecoration(
+                        labelText: '${l10n.templateName} *',
+                        hintText: l10n.templateNameHint,
                       ),
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Required' : null,
+                          v == null || v.isEmpty ? l10n.required : null,
                     ),
                     const SizedBox(height: 16),
 
                     // Description
                     TextFormField(
                       controller: _descController,
-                      decoration: const InputDecoration(
-                        labelText: 'Description',
-                        hintText: 'Template description',
+                      decoration: InputDecoration(
+                        labelText: l10n.description,
+                        hintText: l10n.description,
                       ),
                       maxLines: 2,
                     ),
                     const SizedBox(height: 20),
 
                     // Category
-                    Text('Category',
+                    Text(l10n.category,
                         style: theme.textTheme.titleSmall
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
@@ -803,7 +840,7 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                       children: TemplateCategory.values.map((cat) {
                         final isSelected = _category == cat.name;
                         return FilterChip(
-                          label: Text('${cat.icon} ${cat.displayName}'),
+                          label: Text('${cat.icon} ${cat.displayName}'), // TODO: Localize category display name
                           selected: isSelected,
                           onSelected: (_) => setState(() {
                             _category = isSelected ? null : cat.name;
@@ -817,33 +854,33 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                     const SizedBox(height: 20),
 
                     // Task settings
-                    Text('Task Settings',
+                    Text(l10n.taskSettings,
                         style: theme.textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
 
                     TextFormField(
                       controller: _taskTitleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Task Title *',
-                        hintText: 'Title for created tasks',
+                      decoration: InputDecoration(
+                        labelText: '${l10n.taskTitle} *',
+                        hintText: l10n.taskTitle,
                       ),
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Required' : null,
+                          v == null || v.isEmpty ? l10n.required : null,
                     ),
                     const SizedBox(height: 16),
 
                     TextFormField(
                       controller: _taskDescController,
-                      decoration: const InputDecoration(
-                        labelText: 'Task Description',
+                      decoration: InputDecoration(
+                        labelText: l10n.description,
                       ),
                       maxLines: 2,
                     ),
                     const SizedBox(height: 16),
 
                     // Priority
-                    Text('Priority',
+                    Text(l10n.defaultPriority,
                         style: theme.textTheme.titleSmall
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
@@ -851,7 +888,7 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                       segments: TaskPriority.values.map((p) {
                         return ButtonSegment(
                           value: p,
-                          label: Text(p.displayName),
+                          label: Text(_getPriorityLabel(context, p)),
                         );
                       }).toList(),
                       selected: {_priority},
@@ -863,9 +900,9 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                     // Tags
                     TextFormField(
                       controller: _tagsController,
-                      decoration: const InputDecoration(
-                        labelText: 'Tags',
-                        hintText: 'Comma-separated tags',
+                      decoration: InputDecoration(
+                        labelText: l10n.tagsHint,
+                        hintText: l10n.tagsHint,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -873,14 +910,14 @@ class _TemplateEditorSheetState extends State<_TemplateEditorSheet> {
                     // Subtasks
                     Row(
                       children: [
-                        Text('Subtasks',
+                        Text(l10n.subtasks,
                             style: theme.textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.bold)),
                         const Spacer(),
                         TextButton.icon(
                           onPressed: _addSubtask,
                           icon: const Icon(Icons.add, size: 18),
-                          label: const Text('Add'),
+                          label: Text(l10n.add),
                         ),
                       ],
                     ),

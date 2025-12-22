@@ -20,13 +20,13 @@ class TaskCard extends StatelessWidget {
 
   String _dueDateLabel(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    if (task.dueDate == null) return l10n.translate('no_due_date');
+    if (task.dueDate == null) return l10n.noDueDate;
     final formatted = DateFormat('MMM d • h:mm a').format(task.dueDate!);
     if (task.isOverdue) {
-      return '${l10n.translate('overdue_prefix')}$formatted';
+      return '${l10n.overduePrefix}$formatted';
     }
     if (task.isDueToday) {
-      return '${l10n.translate('due_today_prefix')}${DateFormat('h:mm a').format(task.dueDate!)}';
+      return '${l10n.dueTodayPrefix}${DateFormat('h:mm a').format(task.dueDate!)}';
     }
     return formatted;
   }

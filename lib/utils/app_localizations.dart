@@ -6,6 +6,9 @@ import 'translations/backup_translations.dart';
 import 'translations/help_support_translations.dart';
 import 'translations/terms_privacy_translations.dart';
 import 'translations/tasks_translations.dart';
+import 'translations/pomodoro_translations.dart';
+import 'translations/templates_translations.dart';
+import 'translations/task_detail_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -237,37 +240,73 @@ class AppLocalizations {
   String get faqExportDataAnswer => translate('faq_export_data_answer');
 
   // Pomodoro
-  String get pomodoroTimer => translate('pomodoroTimer');
-  String get sessionHistory => translate('sessionHistory');
-  String get timerFinished => translate('timerFinished');
-  String get whatWouldYouLikeToDo => translate('whatWouldYouLikeToDo');
-  String get extend5m => translate('extend5m');
+  String get pomodoroTimer => translate('pomodoro_timer');
+  String get sessionHistory => translate('session_history');
+  String get timerFinished => translate('timer_finished');
+  String get whatWouldYouLikeToDo => translate('what_would_you_like_to_do');
+  String get extend5m => translate('extend_5m');
   String get stop => translate('stop');
-  String get focusTime => translate('focusTime');
+  String get focusTime => translate('focus_time');
   String get streak => translate('streak');
-  String get startFocus => translate('startFocus');
-  String get linkToTask => translate('linkToTask');
-  String get workingOn => translate('workingOn');
-  String get noSessionsToday => translate('noSessionsToday');
-  String get startFocusSessionMsg => translate('startFocusSessionMsg');
-  String get todaysSessions => translate('todaysSessions');
-  String get focusSession => translate('focusSession');
-  String get selectTask => translate('selectTask');
-  String get noPendingTasks => translate('noPendingTasks');
-  String get duePrefix => translate('duePrefix');
-  String get sessionsSuffix => translate('sessionsSuffix');
-  String get noSessionsYet => translate('noSessionsYet');
-  String get timerSettings => translate('timerSettings');
-  String get workDuration => translate('workDuration');
-  String get shortBreak => translate('shortBreak');
-  String get longBreak => translate('longBreak');
-  String get sessionsBeforeLongBreak => translate('sessionsBeforeLongBreak');
-  String get autoStartBreaks => translate('autoStartBreaks');
-  String get autoStartBreaksDesc => translate('autoStartBreaksDesc');
-  String get autoStartWork => translate('autoStartWork');
-  String get autoStartWorkDesc => translate('autoStartWorkDesc');
+  String get startFocus => translate('start_focus');
+  String get linkToTask => translate('link_to_task');
+  String get workingOn => translate('working_on');
+  String get noSessionsToday => translate('no_sessions_today');
+  String get startFocusSessionMsg => translate('start_focus_session_msg');
+  String get todaysSessions => translate('todays_sessions');
+  String get focusSession => translate('focus_session');
+  String get selectTask => translate('select_task');
+  String get noPendingTasks => translate('no_pending_tasks');
+  String get duePrefix => translate('due_prefix');
+  String get sessionsSuffix => translate('sessions_suffix');
+  String get sessionsLabel => translate('sessions_label');
+  String get noSessionsYet => translate('no_sessions_yet');
+  String get timerSettings => translate('timer_settings');
+  String get workDuration => translate('work_duration');
+  String get shortBreak => translate('short_break');
+  String get longBreak => translate('long_break');
+  String get sessionsBeforeLongBreak => translate('sessions_before_long_break');
+  String get autoStartBreaks => translate('auto_start_breaks');
+  String get autoStartBreaksDesc => translate('auto_start_breaks_desc');
+  String get autoStartWork => translate('auto_start_work');
+  String get autoStartWorkDesc => translate('auto_start_work_desc');
   String get sound => translate('sound');
-  String get soundDesc => translate('soundDesc');
+  String get soundDesc => translate('sound_desc');
+  String get sessionTypeWork => translate('session_type_work');
+  String get sessionTypeShortBreak => translate('session_type_short_break');
+  String get sessionTypeLongBreak => translate('session_type_long_break');
+  String get minSuffix => translate('min_suffix');
+  String get minutes => translate('minutes');
+
+  // Templates
+  String get taskTemplates => translate('task_templates');
+  String get searchTemplates => translate('search_templates');
+  String get createTemplate => translate('create_template');
+  String get editTemplate => translate('edit_template');
+  String get templateName => translate('template_name');
+  String get templateNameHint => translate('template_name_hint');
+  String get defaultPriority => translate('default_priority');
+  String get estimatedDuration => translate('estimated_duration');
+  String get category => translate('category');
+  String get categoryHint => translate('category_hint');
+  String get saveTemplate => translate('save_template');
+  String get createTaskFromTemplate => translate('create_task_from_template');
+  String get view => translate('view');
+  String get noTemplatesFound => translate('no_templates_found');
+  String get noTemplatesYet => translate('no_templates_yet');
+  String get createFirstTemplate => translate('create_first_template');
+  String get deleteTemplate => translate('delete_template');
+  String get deleteTemplateConfirmation => translate('delete_template_confirmation');
+  String get templateDeleted => translate('template_deleted');
+  String get templateSaved => translate('template_saved');
+  String get useTemplate => translate('use_template');
+  String get popularTemplates => translate('popular_templates');
+  String get recentTemplates => translate('recent_templates');
+  String get allTemplates => translate('all_templates');
+  String get icon => translate('icon');
+  String get taskSettings => translate('task_settings');
+  String get subtasks => translate('subtasks');
+  String get add => translate('add');
 
   // Backup
   String get backupStatus => translate('backup_status');
@@ -449,6 +488,19 @@ class AppLocalizations {
   String get recurrenceRepeatsMonthly => translate('recurrence_repeats_monthly');
   String get recurrenceRepeatsEveryMonths => translate('recurrence_repeats_every_months');
   String get recurrenceCustomEveryDays => translate('recurrence_custom_every_days');
+
+  // Task Detail
+  String get deleteTaskQuestion => translate('delete_task_question');
+  String get deleteTaskConfirmation => translate('delete_task_confirmation');
+  String get saveAsTemplate => translate('save_as_template');
+  String get createTemplateFromTaskDesc => translate('create_template_from_task_desc');
+  String get templateCreatedSuccess => translate('template_created_success');
+  String get taskNotFound => translate('task_not_found');
+  String get taskNotFoundMsg => translate('task_not_found_msg');
+  String get daysOverdue => translate('days_overdue');
+  String get dueToday => translate('due_today');
+  String get daysLeft => translate('days_left');
+  String get completedCount => translate('completed_count');
 }
 
 class _AppLocalizationsDelegate
@@ -478,6 +530,9 @@ const Map<String, String> _enTranslations = {
   ...HelpSupportTranslations.en,
   ...TermsPrivacyTranslations.en,
   ...TasksTranslations.en,
+  ...PomodoroTranslations.en,
+  ...TemplatesTranslations.en,
+  ...TaskDetailTranslations.en,
   'app_name': 'DayFlow',
   'welcome': 'Welcome',
   'get_started': 'Get Started',
@@ -700,6 +755,9 @@ const Map<String, String> _frTranslations = {
   ...HelpSupportTranslations.fr,
   ...TermsPrivacyTranslations.fr,
   ...TasksTranslations.fr,
+  ...PomodoroTranslations.fr,
+  ...TemplatesTranslations.fr,
+  ...TaskDetailTranslations.fr,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'Bienvenue',
@@ -778,6 +836,9 @@ const Map<String, String> _arTranslations = {
   ...HelpSupportTranslations.ar,
   ...TermsPrivacyTranslations.ar,
   ...TasksTranslations.ar,
+  ...PomodoroTranslations.ar,
+  ...TemplatesTranslations.ar,
+  ...TaskDetailTranslations.ar,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'مرحباً',
