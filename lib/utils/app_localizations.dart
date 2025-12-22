@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'translations/settings_translations.dart';
 import 'translations/backup_translations.dart';
+import 'translations/help_support_translations.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -361,6 +362,7 @@ class AppLocalizations {
 const Map<String, String> _enTranslations = {
   ...SettingsTranslations.en,
   ...BackupTranslations.en,
+  ...HelpSupportTranslations.en,
   'app_name': 'DayFlow',
   'welcome': 'Welcome',
   'get_started': 'Get Started',
@@ -487,51 +489,7 @@ const Map<String, String> _enTranslations = {
   'open_menu': 'Open menu',
   'search': 'Search',
 
-  'how_can_we_help': 'How can we help you?',
-  'find_answers': 'Find answers or reach out to our support team',
-  'contact_us': 'Contact Us',
-  'email_support': 'Email Support',
-  'live_chat': 'Live Chat',
-  'chat_with_team': 'Chat with our team',
-  'report_problem': 'Report a Problem',
-  'let_us_know': 'Let us know what went wrong',
-  'faq': 'Frequently Asked Questions',
-  'resources': 'Resources',
-  'user_guide': 'User Guide',
-  'learn_how_to_use': 'Learn how to use DayFlow',
-  'video_tutorials': 'Video Tutorials',
-  'watch_guides': 'Watch step-by-step guides',
-  'tips_tricks': 'Tips & Tricks',
-  'get_most_out': 'Get the most out of DayFlow',
-  'problem_type': 'Problem Type',
-  'description': 'Description',
-  'describe_issue': 'Describe the issue in detail',
-  'submit': 'Submit',
-  'problem_report_submitted':
-      "✓ Problem report submitted. We'll review it soon!",
   'terms_of_service': 'Terms of Service',
-  'privacy_policy_title': 'Privacy Policy',
-  'last_updated': 'Last updated',
-  'by_using_dayflow':
-      'By using DayFlow, you agree to these Terms of Service and Privacy Policy.',
-  'faq_create_task': 'How do I create a new task?',
-  'faq_create_task_answer':
-      'Tap the + button on the Tasks page, enter your task details, and tap Save. You can set priorities, due dates, and categories.',
-  'faq_dark_mode': 'How do I enable dark mode?',
-  'faq_dark_mode_answer':
-      'Go to Settings → Appearance, then toggle the Theme switch to enable dark mode.',
-  'faq_sync_data': 'Can I sync my data across devices?',
-  'faq_sync_data_answer':
-      'Yes! Sign in with your account and enable Cloud Sync in Settings → Backup & Sync.',
-  'faq_set_reminders': 'How do I set reminders?',
-  'faq_set_reminders_answer':
-      'Open a task or create a new one, tap on "Set Reminder", choose your date and time, and save.',
-  'faq_backup_data': 'How do I backup my data?',
-  'faq_backup_data_answer':
-      'Go to Settings → Backup & Sync, then tap "Backup Now". You can also enable Auto Backup.',
-  'faq_export_data': 'Can I export my data?',
-  'faq_export_data_answer':
-      'For now this is not possible, maybe in the future yes.',
 
   // Question Flow
   'qf_biggest_challenge': "What's your biggest productivity challenge?",
@@ -626,6 +584,7 @@ const Map<String, String> _enTranslations = {
 const Map<String, String> _frTranslations = {
   ...SettingsTranslations.fr,
   ...BackupTranslations.fr,
+  ...HelpSupportTranslations.fr,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'Bienvenue',
@@ -701,6 +660,7 @@ const Map<String, String> _frTranslations = {
 const Map<String, String> _arTranslations = {
   ...SettingsTranslations.ar,
   ...BackupTranslations.ar,
+  ...HelpSupportTranslations.ar,
   // Common
   'app_name': 'DayFlow',
   'welcome': 'مرحباً',
@@ -791,4 +751,3 @@ class _AppLocalizationsDelegate
     return false;
   }
 }
-
