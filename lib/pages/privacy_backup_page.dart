@@ -478,7 +478,12 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
   Future<void> _clearCache() async {
     try {
       // Clear Firestore persistence
-      await FirebaseFirestore.instance.clearPersistence();
+      try {
+        await FirebaseFirestore.instance.terminate();
+        await FirebaseFirestore.instance.clearPersistence();
+      } catch (e) {
+        debugPrint('Error clearing persistence: $e');
+      }
 
       // Clear temporary directory
       final tempDir = await getTemporaryDirectory();
@@ -519,12 +524,22 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
       await prefs.clear();
 
       // Clear Firestore persistence
-      await FirebaseFirestore.instance.clearPersistence();
+      try {
+        await FirebaseFirestore.instance.terminate();
+        await FirebaseFirestore.instance.clearPersistence();
+      } catch (e) {
+        debugPrint('Error clearing persistence: $e');
+      }
 
-      // Sign out if logged in
+      // Delete account and sign out if logged in
       final authService = FirebaseAuthService();
       if (authService.isLoggedIn()) {
-        await authService.logout();
+        try {
+          await authService.currentUser?.delete();
+        } catch (e) {
+          debugPrint('Error deleting user: $e');
+          await authService.logout();
+        }
       }
 
       if (mounted) {

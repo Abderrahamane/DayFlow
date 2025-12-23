@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:share_plus/share_plus.dart';
+import 'package:printing/printing.dart';
 
 import '../blocs/habit_stats/habit_stats_bloc.dart';
 import '../models/habit_model.dart';
@@ -62,13 +68,13 @@ class _HabitStatsPageState extends State<HabitStatsPage>
                   color: Theme.of(context).colorScheme.primary.withAlpha(26),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.text_snippet, color: Theme.of(context).colorScheme.primary),
+                child: Icon(Icons.picture_as_pdf, color: Theme.of(context).colorScheme.primary),
               ),
-              title: Text(habitL10n.exportAsText),
-              subtitle: Text(habitL10n.plainTextSummary),
+              title: Text(habitL10n.exportAsPdf),
+              subtitle: Text(habitL10n.pdfReport),
               onTap: () {
                 Navigator.pop(ctx);
-                _exportAsText(state);
+                _exportAsPdf(state);
               },
             ),
             ListTile(
@@ -95,8 +101,221 @@ class _HabitStatsPageState extends State<HabitStatsPage>
     );
   }
 
-  void _exportAsText(HabitStatsState state) {
-    final habitL10n = HabitStatsLocalizations.of(context);
+  Future<void> _exportAsPdf(HabitStatsState state) async {
+    // Force English localization for PDF export
+    final habitL10n = HabitStatsLocalizations(const Locale('en'));
+    final theme = Theme.of(context);
+    final pdf = pw.Document();
+
+    // Load fonts
+    final font = await PdfGoogleFonts.notoSansArabicRegular();
+    final fontBold = await PdfGoogleFonts.notoSansArabicBold();
+
+    // Define colors
+    final primaryColor = PdfColor(theme.colorScheme.primary.r, theme.colorScheme.primary.g, theme.colorScheme.primary.b);
+    final accentColor = PdfColor(theme.colorScheme.secondary.r, theme.colorScheme.secondary.g, theme.colorScheme.secondary.b);
+    final successColor = PdfColor(AppTheme.successColor.r, AppTheme.successColor.g, AppTheme.successColor.b);
+    final textColor = PdfColor.fromInt(0xFF333333);
+    final subTextColor = PdfColor.fromInt(0xFF757575);
+
+    pw.Widget buildHeader(String text) {
+      return pw.Container(
+        margin: const pw.EdgeInsets.only(bottom: 10, top: 20),
+        padding: const pw.EdgeInsets.only(bottom: 5),
+        decoration: pw.BoxDecoration(
+          border: pw.Border(bottom: pw.BorderSide(color: primaryColor, width: 2)),
+        ),
+        child: pw.Text(
+          text,
+          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: primaryColor, font: fontBold),
+        ),
+      );
+    }
+
+    pw.Widget buildStatCard(String title, String value, PdfColor color) {
+      return pw.Expanded(
+        child: pw.Container(
+          padding: const pw.EdgeInsets.all(10),
+          decoration: pw.BoxDecoration(
+            color: PdfColor.fromInt(0xFFFFFFFF),
+            borderRadius: pw.BorderRadius.circular(8),
+            border: pw.Border.all(color: PdfColor.fromInt(0xFFE0E0E0)),
+          ),
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(value, style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: color, font: fontBold)),
+              pw.Text(title, style: pw.TextStyle(fontSize: 8, color: subTextColor, font: font)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    pw.Widget buildHeatmap(Habit habit) {
+      final now = DateTime.now();
+      final days = 90;
+      final startDate = now.subtract(Duration(days: days));
+
+      List<pw.Widget> weeks = [];
+      for (int w = 0; w <= days ~/ 7; w++) {
+        List<pw.Widget> daysInWeek = [];
+        final weekStart = startDate.add(Duration(days: w * 7));
+        for (int d = 0; d < 7; d++) {
+          final date = weekStart.add(Duration(days: d));
+          if (date.isAfter(now)) {
+             daysInWeek.add(pw.Container(width: 6, height: 6));
+             continue;
+          }
+          final dateKey = Habit.getDateKey(date);
+          final completed = habit.completionHistory[dateKey] ?? false;
+
+          daysInWeek.add(
+            pw.Container(
+              width: 6,
+              height: 6,
+              margin: const pw.EdgeInsets.all(1),
+              decoration: pw.BoxDecoration(
+                color: completed ? successColor : PdfColor.fromInt(0xFFEEEEEE),
+                borderRadius: pw.BorderRadius.circular(1),
+              )
+            )
+          );
+        }
+        weeks.add(pw.Column(children: daysInWeek));
+      }
+      return pw.Row(children: weeks);
+    }
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        theme: pw.ThemeData.withFont(
+          base: font,
+          bold: fontBold,
+        ),
+        build: (pw.Context context) {
+          return [
+            // Header
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text('DayFlow', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: primaryColor, font: fontBold)),
+                    pw.Text(habitL10n.habitStatisticsReport, style: pw.TextStyle(fontSize: 14, color: textColor, font: font)),
+                  ],
+                ),
+                pw.Text(DateFormat('yyyy-MM-dd').format(DateTime.now()), style: pw.TextStyle(color: subTextColor, font: font)),
+              ],
+            ),
+            pw.SizedBox(height: 20),
+
+            // Overview
+            buildHeader(habitL10n.overview),
+            pw.Row(
+              children: [
+                buildStatCard(habitL10n.completionRate, '${state.overallCompletionRate.toStringAsFixed(1)}%', primaryColor),
+                pw.SizedBox(width: 10),
+                buildStatCard(habitL10n.activeStreaks, '${state.totalStreakDays}', PdfColor(Colors.orange.r, Colors.orange.g, Colors.orange.b)),
+                pw.SizedBox(width: 10),
+                buildStatCard(habitL10n.totalDone, '${state.totalCompletionsAllTime}', successColor),
+                pw.SizedBox(width: 10),
+                buildStatCard(habitL10n.habits, '${state.habits.length}', accentColor),
+              ],
+            ),
+
+            // Best Performer
+            if (state.bestPerformingHabit != null) ...[
+              pw.SizedBox(height: 15),
+              pw.Container(
+                padding: const pw.EdgeInsets.all(10),
+                decoration: pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xFFF5F9FF),
+                  // borderRadius removed to fix assertion error with non-uniform border
+                  border: pw.Border(left: pw.BorderSide(color: primaryColor, width: 4)),
+                ),
+                child: pw.Row(
+                  children: [
+                    pw.Text(habitL10n.bestPerformer, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: primaryColor, font: fontBold)),
+                    pw.SizedBox(width: 10),
+                    pw.Text(state.bestPerformingHabit!.name, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, font: fontBold)),
+                    pw.Spacer(),
+                    pw.Text('${state.bestPerformingHabit!.getCompletionRate(state.timeRange.days).toStringAsFixed(1)}%', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: primaryColor, font: fontBold)),
+                  ],
+                ),
+              ),
+            ],
+
+            // Completion Rate Table
+            buildHeader(habitL10n.completionRate),
+            pw.Table(
+              border: pw.TableBorder.all(color: PdfColor.fromInt(0xFFE0E0E0), width: 0.5),
+              children: [
+                pw.TableRow(
+                  decoration: pw.BoxDecoration(color: PdfColor.fromInt(0xFFF5F5F5)),
+                  children: [
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(habitL10n.habits, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, font: fontBold))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('7 Days', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, font: fontBold))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('30 Days', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, font: fontBold))),
+                    pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(habitL10n.currentStreak, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, font: fontBold))),
+                  ],
+                ),
+                ...state.habits.map((habit) {
+                  return pw.TableRow(
+                    children: [
+                      pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text(habit.name, style: pw.TextStyle(fontSize: 10, font: font))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('${habit.getCompletionRate(7).toStringAsFixed(0)}%', style: pw.TextStyle(fontSize: 10, font: font))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('${habit.getCompletionRate(30).toStringAsFixed(0)}%', style: pw.TextStyle(fontSize: 10, font: font))),
+                      pw.Padding(padding: const pw.EdgeInsets.all(6), child: pw.Text('${habit.currentStreak}', style: pw.TextStyle(fontSize: 10, font: font))),
+                    ],
+                  );
+                }).toList(),
+              ],
+            ),
+
+            // Heatmaps
+            buildHeader(habitL10n.heatmap),
+            pw.Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              children: state.habits.map((habit) {
+                return pw.Container(
+                  width: 250,
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(habit.name, style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, font: fontBold)),
+                      pw.SizedBox(height: 4),
+                      buildHeatmap(habit),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+
+            // Footer
+            pw.SizedBox(height: 30),
+            pw.Divider(color: PdfColor.fromInt(0xFFE0E0E0)),
+            pw.Center(
+              child: pw.Text('Generated by DayFlow', style: pw.TextStyle(fontSize: 8, color: subTextColor, font: font)),
+            ),
+          ];
+        },
+      ),
+    );
+
+    final output = await getTemporaryDirectory();
+    final file = File("${output.path}/habit_stats.pdf");
+    await file.writeAsBytes(await pdf.save());
+
+    await Share.shareXFiles([XFile(file.path)], text: habitL10n.habitStatisticsReport);
+  }
+
+  void _shareStats(HabitStatsState state) {
+    // Force English localization for text export
+    final habitL10n = HabitStatsLocalizations(const Locale('en'));
     final buffer = StringBuffer();
     buffer.writeln(habitL10n.habitStatisticsReport);
     buffer.writeln('${habitL10n.generated}${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now())}');
@@ -117,26 +336,7 @@ class _HabitStatsPageState extends State<HabitStatsPage>
       buffer.writeln(habitL10n.thirtyDayRate(habit.getCompletionRate(30)));
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(habitL10n.statsCopied),
-        behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: 'OK',
-          onPressed: () {},
-        ),
-      ),
-    );
-  }
-
-  void _shareStats(HabitStatsState state) {
-    final habitL10n = HabitStatsLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(habitL10n.shareFunctionality),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    Share.share(buffer.toString());
   }
 
   @override
