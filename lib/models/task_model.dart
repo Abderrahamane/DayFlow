@@ -1,4 +1,6 @@
 // lib/models/task_model.dart
+import 'recurrence_model.dart';
+
 class Task {
   final String id;
   final String title;
@@ -9,6 +11,9 @@ class Task {
   final TaskPriority priority;
   final List<String>? tags;
   final List<Subtask>? subtasks;
+  final List<TaskAttachment>? attachments;
+  final RecurrencePattern? recurrence;
+  final String? parentTaskId; // For recurring task instances
 
   Task({
     required this.id,
@@ -20,7 +25,12 @@ class Task {
     this.priority = TaskPriority.medium,
     this.tags,
     this.subtasks,
+    this.attachments,
+    this.recurrence,
+    this.parentTaskId,
   });
+
+  bool get isRecurring => recurrence != null && recurrence!.isRecurring;
 
   Task copyWith({
     String? id,
@@ -32,6 +42,9 @@ class Task {
     TaskPriority? priority,
     List<String>? tags,
     List<Subtask>? subtasks,
+    List<TaskAttachment>? attachments,
+    RecurrencePattern? recurrence,
+    String? parentTaskId,
   }) {
     return Task(
       id: id ?? this.id,
@@ -43,6 +56,31 @@ class Task {
       priority: priority ?? this.priority,
       tags: tags ?? this.tags,
       subtasks: subtasks ?? this.subtasks,
+      attachments: attachments ?? this.attachments,
+      recurrence: recurrence ?? this.recurrence,
+      parentTaskId: parentTaskId ?? this.parentTaskId,
+    );
+  }
+
+  /// Create next occurrence of this recurring task
+  Task? createNextOccurrence(String newId) {
+    if (!isRecurring || recurrence!.hasEnded) return null;
+
+    final nextDueDate = recurrence!.getNextOccurrence(dueDate ?? DateTime.now());
+    if (nextDueDate == null) return null;
+
+    return Task(
+      id: newId,
+      title: title,
+      description: description,
+      isCompleted: false,
+      createdAt: DateTime.now(),
+      dueDate: nextDueDate,
+      priority: priority,
+      tags: tags,
+      subtasks: subtasks?.map((s) => s.copyWith(isCompleted: false)).toList(),
+      recurrence: recurrence!.incrementOccurrence(),
+      parentTaskId: parentTaskId ?? id,
     );
   }
 
@@ -57,6 +95,9 @@ class Task {
       'priority': priority.name,
       'tags': tags,
       'subtasks': subtasks?.map((s) => s.toJson()).toList(),
+      'attachments': attachments?.map((a) => a.toJson()).toList(),
+      'recurrence': recurrence?.toJson(),
+      'parentTaskId': parentTaskId,
     };
   }
 
@@ -76,6 +117,13 @@ class Task {
       subtasks: json['subtasks'] != null
           ? (json['subtasks'] as List).map((s) => Subtask.fromJson(s)).toList()
           : null,
+      attachments: json['attachments'] != null
+          ? (json['attachments'] as List).map((a) => TaskAttachment.fromJson(a)).toList()
+          : null,
+      recurrence: json['recurrence'] != null
+          ? RecurrencePattern.fromJson(json['recurrence'])
+          : null,
+      parentTaskId: json['parentTaskId'],
     );
   }
 
@@ -90,6 +138,9 @@ class Task {
       'priority': priority.name,
       'tags': tags,
       'subtasks': subtasks?.map((s) => s.toJson()).toList(),
+      'attachments': attachments?.map((a) => a.toJson()).toList(),
+      'recurrence': recurrence?.toJson(),
+      'parentTaskId': parentTaskId,
     };
   }
 
@@ -111,6 +162,13 @@ class Task {
       subtasks: data['subtasks'] != null
           ? (data['subtasks'] as List).map((s) => Subtask.fromJson(s)).toList()
           : null,
+      attachments: data['attachments'] != null
+          ? (data['attachments'] as List).map((a) => TaskAttachment.fromJson(a)).toList()
+          : null,
+      recurrence: data['recurrence'] != null
+          ? RecurrencePattern.fromJson(data['recurrence'])
+          : null,
+      parentTaskId: data['parentTaskId'],
     );
   }
 
@@ -118,6 +176,8 @@ class Task {
       subtasks?.where((s) => s.isCompleted).length ?? 0;
   int get totalSubtasks => subtasks?.length ?? 0;
   bool get hasSubtasks => subtasks != null && subtasks!.isNotEmpty;
+  bool get hasAttachments => attachments != null && attachments!.isNotEmpty;
+  int get attachmentCount => attachments?.length ?? 0;
 
   int? get daysRemaining {
     if (dueDate == null) return null;
@@ -242,3 +302,117 @@ enum TaskSort {
     }
   }
 }
+
+/// Attachment type for task files
+enum AttachmentType {
+  image,
+  document,
+  other;
+
+  String get displayName {
+    switch (this) {
+      case AttachmentType.image:
+        return 'Image';
+      case AttachmentType.document:
+        return 'Document';
+      case AttachmentType.other:
+        return 'File';
+    }
+  }
+
+  static AttachmentType fromMimeType(String mimeType) {
+    if (mimeType.startsWith('image/')) return AttachmentType.image;
+    if (mimeType.contains('pdf') ||
+        mimeType.contains('document') ||
+        mimeType.contains('text')) return AttachmentType.document;
+    return AttachmentType.other;
+  }
+}
+
+/// Task attachment model for files/images
+class TaskAttachment {
+  final String id;
+  final String taskId;
+  final String name;
+  final String url;
+  final AttachmentType type;
+  final DateTime createdAt;
+
+  TaskAttachment({
+    required this.id,
+    required this.taskId,
+    required this.name,
+    required this.url,
+    required this.type,
+    required this.createdAt,
+  });
+
+  TaskAttachment copyWith({
+    String? id,
+    String? taskId,
+    String? name,
+    String? url,
+    AttachmentType? type,
+    DateTime? createdAt,
+  }) {
+    return TaskAttachment(
+      id: id ?? this.id,
+      taskId: taskId ?? this.taskId,
+      name: name ?? this.name,
+      url: url ?? this.url,
+      type: type ?? this.type,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'taskId': taskId,
+      'name': name,
+      'url': url,
+      'type': type.name,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
+
+  factory TaskAttachment.fromJson(Map<String, dynamic> json) {
+    return TaskAttachment(
+      id: json['id'],
+      taskId: json['taskId'],
+      name: json['name'],
+      url: json['url'],
+      type: AttachmentType.values.firstWhere(
+        (t) => t.name == json['type'],
+        orElse: () => AttachmentType.other,
+      ),
+      createdAt: DateTime.parse(json['createdAt']),
+    );
+  }
+
+  Map<String, dynamic> toDatabase() {
+    return {
+      'id': id,
+      'taskId': taskId,
+      'name': name,
+      'url': url,
+      'type': type.name,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+    };
+  }
+
+  factory TaskAttachment.fromDatabase(Map<String, dynamic> row) {
+    return TaskAttachment(
+      id: row['id'] as String,
+      taskId: row['taskId'] as String,
+      name: row['name'] as String,
+      url: row['url'] as String,
+      type: AttachmentType.values.firstWhere(
+        (t) => t.name == row['type'],
+        orElse: () => AttachmentType.other,
+      ),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(row['createdAt'] as int),
+    );
+  }
+}
+

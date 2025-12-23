@@ -91,7 +91,7 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
         gradient: LinearGradient(
           colors: [
             widget.slide.color,
-            widget.slide.color.withOpacity(0.7),
+            widget.slide.color.withValues(alpha: 0.7),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -135,11 +135,11 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
                         width: 140,
                         height: 140,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.25),
+                          color: Colors.white.withValues(alpha: 0.25),
                           borderRadius: BorderRadius.circular(35),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -181,7 +181,7 @@ class _OnboardingSlideWidgetState extends State<OnboardingSlideWidget>
                         widget.slide.description(context),
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           height: 1.6,
                         ),
                         textAlign: TextAlign.center,

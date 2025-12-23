@@ -290,6 +290,7 @@ class FirebaseAuthService {
         },
       };
     } catch (e) {
+      print('Google Sign In Error Details: $e');
       return {
         'success': false,
         'message': 'Google sign-in error: $e',
@@ -333,11 +334,13 @@ class FirebaseAuthService {
       return {
         'success': false,
         'message': message,
+        'code': e.code,
       };
     } catch (e) {
       return {
         'success': false,
         'message': 'An error occurred: $e',
+        'code': 'unknown',
       };
     }
   }

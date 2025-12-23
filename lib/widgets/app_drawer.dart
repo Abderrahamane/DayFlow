@@ -1,11 +1,14 @@
 // lib/widgets/app_drawer.dart (WITH LOCALIZATION)
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import '../blocs/navigation/navigation_cubit.dart';
 import '../blocs/theme/theme_cubit.dart';
 import '../theme/app_theme.dart';
+import '../utils/navigation_localizations.dart';
+import '../services/firebase_auth_service.dart';
 import '../utils/routes.dart';
-import '../utils/app_localizations.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -14,7 +17,7 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeCubit = context.watch<ThemeCubit>();
     final isDark = themeCubit.isDarkMode;
-    final l10n = AppLocalizations.of(context);
+    final navL10n = NavigationLocalizations.of(context);
 
     return Drawer(
       child: SafeArea(
@@ -40,7 +43,7 @@ class AppDrawer extends StatelessWidget {
                     width: 64,
                     height: 64,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
@@ -51,7 +54,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    l10n.appName,
+                    navL10n.appName,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -60,10 +63,10 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    l10n.yourSmartDailyPlanner,
+                    navL10n.yourSmartDailyPlanner,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                   ),
                 ],
@@ -77,58 +80,56 @@ class AppDrawer extends StatelessWidget {
                 children: [
                   _DrawerItem(
                     icon: Icons.check_circle_outline,
-                    title: l10n.tasks,
-                    subtitle: l10n.manageTodos,
+                    title: navL10n.tasks,
+                    subtitle: navL10n.manageTodos,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(0);
                       Navigator.pop(context);
-                      // Navigate to tasks if needed
                     },
                   ),
                   _DrawerItem(
                     icon: Icons.note_outlined,
-                    title: l10n.notes,
-                    subtitle: l10n.quickIdeas,
+                    title: navL10n.notes,
+                    subtitle: navL10n.quickIdeas,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(1);
                       Navigator.pop(context);
                     },
                   ),
                   _DrawerItem(
-                    icon: Icons.alarm_outlined,
-                    title: l10n.reminders,
-                    subtitle: l10n.neverMissTasks,
+                    icon: Icons.calendar_today_outlined,
+                    title: navL10n.calendar,
+                    subtitle: navL10n.planSchedule,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(2);
                       Navigator.pop(context);
                     },
                   ),
                   _DrawerItem(
                     icon: Icons.track_changes,
-                    title: l10n.habits,
-                    subtitle: l10n.trackDailyHabits,
+                    title: navL10n.habits,
+                    subtitle: navL10n.trackHabits,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(3);
                       Navigator.pop(context);
-                      // TODO: Navigate to habits page
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.habitsPageComingSoon)),
-                      );
                     },
                   ),
                   const Divider(height: 32, indent: 16, endIndent: 16),
                   _DrawerItem(
                     icon: Icons.bar_chart_rounded,
-                    title: l10n.statistics,
-                    subtitle: l10n.viewProgress,
+                    title: navL10n.statistics,
+                    subtitle: navL10n.viewProgress,
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.statisticsComingSoon)),
-                      );
+                      Navigator.pushNamed(context, Routes.habitStats);
                     },
                   ),
                   _DrawerItem(
                     icon: Icons.settings_outlined,
-                    title: l10n.settings,
-                    subtitle: l10n.customizeExperience,
+                    title: navL10n.settings,
+                    subtitle: navL10n.customizeExperience,
                     onTap: () {
+                      context.read<NavigationCubit>().setIndex(4);
                       Navigator.pop(context);
                     },
                   ),
@@ -149,7 +150,7 @@ class AppDrawer extends StatelessWidget {
                       isDark ? Icons.dark_mode : Icons.light_mode,
                       color: Theme.of(context).colorScheme.primary,
                     ),
-                    title: Text(l10n.theme),
+                    title: Text(navL10n.theme),
                     trailing: Switch(
                       value: isDark,
                       onChanged: (value) {
@@ -158,19 +159,64 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ),
 
-                  // Logout Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        _showLogoutDialog(context);
-                      },
-                      icon: const Icon(Icons.logout),
-                      label: Text(l10n.logout),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
+                  const SizedBox(height: 16),
+
+                  // Auth Buttons
+                  StreamBuilder<User?>(
+                    stream: FirebaseAuthService().authStateChanges,
+                    builder: (context, snapshot) {
+                      final isLoggedIn = snapshot.hasData;
+
+                      if (isLoggedIn) {
+                        return SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              _showLogoutDialog(context);
+                            },
+                            icon: const Icon(Icons.logout),
+                            label: Text(navL10n.logout),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: FilledButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, Routes.signup);
+                                },
+                                icon: const Icon(Icons.person_add),
+                                label: Text(navL10n.signup),
+                                style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, Routes.login);
+                                },
+                                icon: const Icon(Icons.login),
+                                label: Text(navL10n.login),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
@@ -182,25 +228,34 @@ class AppDrawer extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final navL10n = NavigationLocalizations.of(context);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.logout),
-        content: Text(l10n.areYouSureLogout),
+        title: Text(navL10n.logout),
+        content: Text(navL10n.areYouSureLogout),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
+            child: Text(navL10n.cancel),
           ),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context); // Close drawer
-              Routes.navigateToWelcome(context);
+            onPressed: () async {
+              await FirebaseAuthService().logout();
+              if (context.mounted) {
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(context); // Close drawer
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(navL10n.logoutSuccess),
+                    duration: const Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
             },
-            child: Text(l10n.logout),
+            child: Text(navL10n.logout),
           ),
         ],
       ),
@@ -227,7 +282,7 @@ class _DrawerItem extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -247,7 +302,7 @@ class _DrawerItem extends StatelessWidget {
         subtitle,
         style: TextStyle(
           fontSize: 12,
-          color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+          color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
         ),
       ),
       onTap: onTap,

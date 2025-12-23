@@ -17,6 +17,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     on<AddOrUpdateHabit>(_onAddOrUpdateHabit);
     on<DeleteHabitEvent>(_onDeleteHabit);
     on<ToggleHabitCompletionEvent>(_onToggleCompletion);
+    on<SearchHabits>(_onSearchHabits);
   }
 
   Future<void> _onLoadHabits(
@@ -72,5 +73,9 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     }).toList();
 
     emit(state.copyWith(habits: habits));
+  }
+
+  void _onSearchHabits(SearchHabits event, Emitter<HabitState> emit) {
+    emit(state.copyWith(searchQuery: event.query));
   }
 }

@@ -6,20 +6,42 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'blocs/habit/habit_bloc.dart';
 import 'blocs/language/language_cubit.dart';
 import 'blocs/task/task_bloc.dart';
 import 'blocs/theme/theme_cubit.dart';
+import 'blocs/note/note_bloc.dart';
+import 'blocs/calendar/calendar_bloc.dart';
+import 'blocs/template/template_bloc.dart';
+import 'blocs/habit_stats/habit_stats_bloc.dart';
+import 'blocs/pomodoro/pomodoro_bloc.dart';
+import 'blocs/notification/notification_bloc.dart';
 import 'data/local/app_database.dart';
 import 'data/repositories/habit_repository.dart';
 import 'data/repositories/task_repository.dart';
 import 'data/repositories/reminder_repository.dart';
+import 'data/repositories/note_repository.dart';
+import 'data/repositories/task_template_repository.dart';
+import 'data/repositories/pomodoro_repository.dart';
+import 'data/repositories/notification_repository.dart';
 import 'theme/app_theme.dart';
 import 'utils/app_localizations.dart';
+import 'utils/calendar_localizations.dart';
+import 'utils/habit_localizations.dart';
+import 'utils/habit_stats_localizations.dart';
+import 'utils/navigation_localizations.dart';
 import 'utils/routes.dart';
 import 'package:dayflow/services/notification_servise.dart';
 
 import 'package:dayflow/services/mixpanel_service.dart';
+import 'blocs/navigation/navigation_cubit.dart';
+import 'package:dayflow/services/firestore_service.dart';
+import 'utils/auth_localizations.dart';
+import 'utils/settings_localizations.dart';
+import 'utils/welcome_localizations.dart';
+import 'utils/onboarding_localizations.dart';
+import 'utils/question_flow_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,9 +64,14 @@ void main() async {
   // Initialize database and repositories
   final database = AppDatabase();
   await database.init();
-  final taskRepository = TaskRepository(database);
-  final habitRepository = HabitRepository(database);
+  final firestoreService = FirestoreService();
+  final taskRepository = TaskRepository(database, firestoreService);
+  final habitRepository = HabitRepository(database, firestoreService);
   final reminderRepository = ReminderRepository(database);
+  final noteRepository = NoteRepository(database, firestoreService);
+  final templateRepository = TaskTemplateRepository(database);
+  final pomodoroRepository = PomodoroRepository(database, firestoreService);
+  final notificationRepository = NotificationRepository(database, firestoreService);
 
   runApp(
     MultiRepositoryProvider(
@@ -52,10 +79,19 @@ void main() async {
         RepositoryProvider.value(value: taskRepository),
         RepositoryProvider.value(value: habitRepository),
         RepositoryProvider.value(value: reminderRepository),
+        RepositoryProvider.value(value: noteRepository),
+        RepositoryProvider.value(value: templateRepository),
+        RepositoryProvider.value(value: pomodoroRepository),
+        RepositoryProvider.value(value: notificationRepository),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider(
+            create: (_) => ThemeCubit(),
+          ),
+          BlocProvider(
+            create: (_) => NavigationCubit(),
+          ),
           BlocProvider<LanguageCubit>(create: (_) => languageCubit),
           BlocProvider(
             create: (_) => TaskBloc(taskRepository)..add(LoadTasks()),
@@ -64,13 +100,32 @@ void main() async {
             create: (_) => HabitBloc(habitRepository)..add(LoadHabits()),
           ),
           BlocProvider(
-            create: (_) => ReminderBloc(reminderRepository)..add(LoadReminders()),
+            create: (_) => ReminderBloc(
+              reminderRepository,
+              notificationRepository: notificationRepository,
+            )..add(LoadReminders()),
           ),
           BlocProvider(
-              create: (_) => TaskBloc(taskRepository)..add(LoadTasks())
+            create: (_) => NoteBloc(noteRepository)..add(LoadNotes()),
           ),
           BlocProvider(
-              create: (_) => HabitBloc(habitRepository)..add(LoadHabits())),
+            create: (_) => CalendarBloc(
+              taskRepository: taskRepository,
+              habitRepository: habitRepository,
+            )..add(LoadCalendarData()),
+          ),
+          BlocProvider(
+            create: (_) => TemplateBloc(templateRepository)..add(LoadTemplates()),
+          ),
+          BlocProvider(
+            create: (_) => HabitStatsBloc(habitRepository)..add(LoadHabitStats()),
+          ),
+          BlocProvider(
+            create: (_) => PomodoroBloc(pomodoroRepository, notificationRepository),
+          ),
+          BlocProvider(
+            create: (_) => NotificationBloc(notificationRepository),
+          ),
         ],
         child: const DayFlowApp(),
       ),
@@ -92,9 +147,18 @@ class DayFlowApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               localizationsDelegates: const [
                 AppLocalizations.delegate,
+                CalendarLocalizations.delegate,
+                HabitLocalizations.delegate,
+                HabitStatsLocalizations.delegate,
+                NavigationLocalizations.delegate,
+                AuthLocalizations.delegate,
+                SettingsLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
+                WelcomeLocalizations.delegate,
+                OnboardingLocalizations.delegate,
+                QuestionFlowLocalizations.delegate,
               ],
               supportedLocales: const [
                 Locale('en'),
@@ -122,11 +186,39 @@ class DayFlowApp extends StatelessWidget {
   }
 }
 
-class AuthChecker extends StatelessWidget {
+class AuthChecker extends StatefulWidget {
   const AuthChecker({Key? key}) : super(key: key);
 
   @override
+  State<AuthChecker> createState() => _AuthCheckerState();
+}
+
+class _AuthCheckerState extends State<AuthChecker> {
+  bool _isLoading = true;
+  bool _hasCompletedOnboarding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _hasCompletedOnboarding = prefs.getBool('hasCompletedQuestionFlow') ?? false;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const SplashScreen();
+    }
+
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
@@ -159,10 +251,17 @@ class AuthChecker extends StatelessWidget {
           return const SplashScreen();
         }
 
+        // Not logged in
         Future.microtask(() {
           final currentRoute = ModalRoute.of(context)?.settings.name;
-          if (currentRoute != Routes.welcome) {
-            Navigator.pushReplacementNamed(context, Routes.welcome);
+          if (_hasCompletedOnboarding) {
+            if (currentRoute != Routes.home) {
+              Navigator.pushReplacementNamed(context, Routes.home);
+            }
+          } else {
+            if (currentRoute != Routes.welcome) {
+              Navigator.pushReplacementNamed(context, Routes.welcome);
+            }
           }
         });
         return const SplashScreen();

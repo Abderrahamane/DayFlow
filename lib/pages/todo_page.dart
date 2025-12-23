@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/task/task_bloc.dart';
+import '../blocs/navigation/navigation_cubit.dart';
 import '../models/task_model.dart';
+import '../models/recurrence_model.dart';
 import '../utils/date_utils.dart';
+import '../utils/routes.dart';
+import '../utils/app_localizations.dart';
+import '../utils/recurrence_helper.dart';
 import '../widgets/quote_card.dart';
 import '../widgets/task_card.dart';
+import '../widgets/recurrence_picker_widget.dart';
 
 class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
@@ -20,9 +26,37 @@ class _TodoPageState extends State<TodoPage> {
   void initState() {
     super.initState();
     context.read<TaskBloc>().add(LoadTasks());
+
+    // Check for navigation actions
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkNavigationAction();
+    });
   }
 
-  String _formattedHeaderDate() => formattedHeaderDate();
+  void _checkNavigationAction() {
+    final navigationState = context.read<NavigationCubit>().state;
+    if (navigationState.action == NavigationAction.openCreateTask) {
+      final date = navigationState.data as DateTime?;
+      // Clear the action so it doesn't trigger again
+      context.read<NavigationCubit>().clearAction();
+
+      // Open task sheet with pre-filled date if available
+      if (date != null) {
+        // Create a temporary task with the selected date
+        final task = Task(
+          id: '',
+          title: '',
+          dueDate: date,
+          createdAt: DateTime.now(),
+        );
+        _openTaskSheet(task: task);
+      } else {
+        _openTaskSheet();
+      }
+    }
+  }
+
+  String _formattedHeaderDate() => formattedHeaderDate(context);
 
   void _openTaskSheet({Task? task}) {
     showModalBottomSheet(
@@ -37,6 +71,7 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -58,14 +93,14 @@ class _TodoPageState extends State<TodoPage> {
                           _formattedHeaderDate(),
                           style: theme.textTheme.labelLarge?.copyWith(
                             color:
-                                theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                                theme.textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                           ),
                         ),
                       ),
                       const SizedBox(height: 6),
                       Center(
                         child: Text(
-                          "Today's List",
+                          l10n.todaysList,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -94,7 +129,7 @@ class _TodoPageState extends State<TodoPage> {
                         child: CircularProgressIndicator(),
                       ),
                     TaskStatus.failure => Center(
-                        child: Text(state.errorMessage ?? 'Failed to load tasks'),
+                        child: Text(state.errorMessage ?? l10n.failedToLoadTasks),
                       ),
                     _ => tasks.isEmpty
                         ? const _EmptyTasks()
@@ -129,10 +164,30 @@ class _TodoPageState extends State<TodoPage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openTaskSheet,
-        backgroundColor: primary,
-        child: const Icon(Icons.add, size: 28, color: Colors.white),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'pomodoro_fab',
+            onPressed: () => Routes.navigateToPomodoro(context),
+            backgroundColor: Colors.deepOrange,
+            child: const Icon(Icons.timer, size: 20, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton.small(
+            heroTag: 'templates_fab',
+            onPressed: () => Routes.navigateToTemplates(context),
+            backgroundColor: theme.colorScheme.secondary,
+            child: const Icon(Icons.library_books, size: 20, color: Colors.white),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: 'add_task_fab',
+            onPressed: _openTaskSheet,
+            backgroundColor: primary,
+            child: const Icon(Icons.add, size: 28, color: Colors.white),
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -155,6 +210,8 @@ class _TaskEditorState extends State<_TaskEditor> {
   late final TextEditingController _tagsController;
   DateTime? _selectedDate;
   TaskPriority _priority = TaskPriority.medium;
+  RecurrencePattern? _recurrence;
+  bool _showRecurrence = false;
 
   @override
   void initState() {
@@ -167,6 +224,8 @@ class _TaskEditorState extends State<_TaskEditor> {
     );
     _selectedDate = widget.task?.dueDate;
     _priority = widget.task?.priority ?? TaskPriority.medium;
+    _recurrence = widget.task?.recurrence;
+    _showRecurrence = widget.task?.recurrence != null;
   }
 
   @override
@@ -228,6 +287,8 @@ class _TaskEditorState extends State<_TaskEditor> {
       priority: _priority,
       tags: tags.isEmpty ? null : tags,
       subtasks: widget.task?.subtasks,
+      recurrence: _recurrence,
+      parentTaskId: widget.task?.parentTaskId,
     );
 
     bloc.add(AddOrUpdateTask(task));
@@ -235,15 +296,33 @@ class _TaskEditorState extends State<_TaskEditor> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(widget.task == null ? 'Task added' : 'Task updated'),
+        content: Text(widget.task == null
+            ? AppLocalizations.of(context).taskAdded
+            : AppLocalizations.of(context).taskUpdated),
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
+  String _getPriorityLabel(BuildContext context, TaskPriority priority) {
+    final l10n = AppLocalizations.of(context);
+    switch (priority) {
+      case TaskPriority.none:
+        return l10n.priorityNone;
+      case TaskPriority.low:
+        return l10n.priorityLow;
+      case TaskPriority.medium:
+        return l10n.priorityMedium;
+      case TaskPriority.high:
+        return l10n.priorityHigh;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -265,7 +344,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.task == null ? 'Create New Task' : 'Edit Task',
+                      widget.task == null ? l10n.createNewTask : l10n.editTask,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -279,28 +358,28 @@ class _TaskEditorState extends State<_TaskEditor> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Task title',
-                    prefixIcon: Icon(Icons.task_alt),
+                  decoration: InputDecoration(
+                    labelText: l10n.taskTitle,
+                    prefixIcon: const Icon(Icons.task_alt),
                   ),
                   validator: (value) =>
-                      value == null || value.trim().isEmpty ? 'Required' : null,
+                      value == null || value.trim().isEmpty ? l10n.required : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _descriptionController,
                   maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
+                  decoration: InputDecoration(
+                    labelText: l10n.description,
                     alignLabelWithHint: true,
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _tagsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Tags (comma separated)',
-                    prefixIcon: Icon(Icons.sell_outlined),
+                  decoration: InputDecoration(
+                    labelText: l10n.tagsHint,
+                    prefixIcon: const Icon(Icons.sell_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -312,8 +391,8 @@ class _TaskEditorState extends State<_TaskEditor> {
                         icon: const Icon(Icons.calendar_today_outlined),
                         label: Text(
                           _selectedDate == null
-                              ? 'Set due date'
-                              : formattedDateWithDay(_selectedDate!),
+                              ? l10n.setDueDate
+                              : formattedDateWithDay(_selectedDate!, context),
                         ),
                       ),
                     ),
@@ -324,7 +403,7 @@ class _TaskEditorState extends State<_TaskEditor> {
                           .map(
                             (p) => DropdownMenuItem(
                               value: p,
-                              child: Text(p.displayName),
+                              child: Text(_getPriorityLabel(context, p)),
                             ),
                           )
                           .toList(),
@@ -336,12 +415,41 @@ class _TaskEditorState extends State<_TaskEditor> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
+                // Recurrence section
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(
+                    Icons.repeat,
+                    color: _recurrence?.isRecurring == true
+                        ? theme.colorScheme.primary
+                        : null,
+                  ),
+                  title: Text(
+                    _recurrence?.isRecurring == true
+                        ? RecurrenceHelper.getDescription(context, _recurrence!)
+                        : l10n.addRecurrence,
+                  ),
+                  trailing: Icon(
+                    _showRecurrence
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                  ),
+                  onTap: () => setState(() => _showRecurrence = !_showRecurrence),
+                ),
+                if (_showRecurrence) ...[
+                  const SizedBox(height: 8),
+                  RecurrencePickerWidget(
+                    initialPattern: _recurrence,
+                    onChanged: (pattern) => setState(() => _recurrence = pattern),
+                  ),
+                ],
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _saveTask,
-                    child: Text(widget.task == null ? 'Add Task' : 'Update Task'),
+                    child: Text(widget.task == null ? l10n.addTask : l10n.updateTask),
                   ),
                 ),
               ],
@@ -359,6 +467,8 @@ class _EmptyTasks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -369,7 +479,7 @@ class _EmptyTasks extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -380,16 +490,16 @@ class _EmptyTasks extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'No tasks yet',
+              l10n.noTasksYet,
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Create your first task to start organizing your day.',
+              l10n.createFirstTask,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),

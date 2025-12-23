@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/task/task_bloc.dart';
 import '../models/task_model.dart';
+import '../utils/app_localizations.dart';
 
 class TaskEditPage extends StatefulWidget {
   final Task? task;
@@ -54,6 +55,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
   }
 
   void _saveTask() {
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
 
     final task = Task(
@@ -75,7 +77,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(widget.task == null ? 'Task created' : 'Task updated'),
+        content: Text(widget.task == null ? l10n.taskAdded : l10n.taskUpdated),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -83,17 +85,18 @@ class _TaskEditPageState extends State<TaskEditPage> {
   }
 
   void _showSubtaskDialog() {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Add subtask'),
+        title: Text(l10n.addTask), // Reusing addTask for subtask
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Subtask title',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: l10n.taskTitle,
+            border: const OutlineInputBorder(),
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -101,7 +104,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -115,7 +118,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Add'),
+            child: Text(l10n.add),
           ),
         ],
       ),
@@ -123,24 +126,25 @@ class _TaskEditPageState extends State<TaskEditPage> {
   }
 
   void _showTagDialog() {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Add tag'),
+        title: Text(l10n.tagsHint),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Tag name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            hintText: l10n.tagsHint,
+            border: const OutlineInputBorder(),
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () {
@@ -150,16 +154,31 @@ class _TaskEditPageState extends State<TaskEditPage> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Add'),
+            child: Text(l10n.add),
           ),
         ],
       ),
     );
   }
 
+  String _getPriorityLabel(BuildContext context, TaskPriority priority) {
+    final l10n = AppLocalizations.of(context);
+    switch (priority) {
+      case TaskPriority.none:
+        return l10n.priorityNone;
+      case TaskPriority.low:
+        return l10n.priorityLow;
+      case TaskPriority.medium:
+        return l10n.priorityMedium;
+      case TaskPriority.high:
+        return l10n.priorityHigh;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -191,7 +210,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                     Row(
                       children: [
                         Text(
-                          widget.task == null ? 'New Task' : 'Edit Task',
+                          widget.task == null ? l10n.createNewTask : l10n.editTask,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -219,15 +238,15 @@ class _TaskEditPageState extends State<TaskEditPage> {
                       TextFormField(
                         controller: _titleController,
                         decoration: InputDecoration(
-                          labelText: 'Title',
-                          hintText: 'What needs to be done?',
+                          labelText: l10n.taskTitle,
+                          hintText: l10n.taskTitle,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           filled: true,
                         ),
                         validator: (v) =>
-                        v?.trim().isEmpty ?? true ? 'Required' : null,
+                        v?.trim().isEmpty ?? true ? l10n.required : null,
                         textCapitalization: TextCapitalization.sentences,
                       ),
                       const SizedBox(height: 16),
@@ -235,8 +254,8 @@ class _TaskEditPageState extends State<TaskEditPage> {
                       TextFormField(
                         controller: _descriptionController,
                         decoration: InputDecoration(
-                          labelText: 'Description (optional)',
-                          hintText: 'Add more details...',
+                          labelText: l10n.description,
+                          hintText: l10n.description,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -248,7 +267,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                       const SizedBox(height: 24),
                       // Priority selector
                       Text(
-                        'Priority',
+                        l10n.defaultPriority,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -277,7 +296,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                                   decoration: BoxDecoration(
                                     color: isSelected
                                         ? color
-                                        : color.withOpacity(0.1),
+                                        : color.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: color,
@@ -285,7 +304,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                                     ),
                                   ),
                                   child: Text(
-                                    priority.displayName,
+                                    _getPriorityLabel(context, priority),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -302,7 +321,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                       const SizedBox(height: 24),
                       // Due date
                       Text(
-                        'Due Date',
+                        l10n.setDueDate,
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -324,7 +343,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                               const SizedBox(width: 12),
                               Text(
                                 _selectedDueDate == null
-                                    ? 'Set due date'
+                                    ? l10n.setDueDate
                                     : '${_selectedDueDate!.month}/${_selectedDueDate!.day}/${_selectedDueDate!.year}',
                                 style: theme.textTheme.bodyLarge,
                               ),
@@ -344,7 +363,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                       Row(
                         children: [
                           Text(
-                            'Subtasks',
+                            l10n.subtasks,
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -353,7 +372,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                           TextButton.icon(
                             onPressed: _showSubtaskDialog,
                             icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Add'),
+                            label: Text(l10n.add),
                           ),
                         ],
                       ),
@@ -366,7 +385,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                                 horizontal: 12, vertical: 12),
                             decoration: BoxDecoration(
                               color:
-                              theme.colorScheme.primary.withOpacity(0.05),
+                              theme.colorScheme.primary.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -387,10 +406,10 @@ class _TaskEditPageState extends State<TaskEditPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: Text(
-                            'No subtasks yet',
+                            l10n.tagsHint,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.textTheme.bodyMedium?.color
-                                  ?.withOpacity(0.5),
+                                  ?.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -399,7 +418,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                       Row(
                         children: [
                           Text(
-                            'Tags',
+                            l10n.tagsHint,
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -408,7 +427,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                           TextButton.icon(
                             onPressed: _showTagDialog,
                             icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Add'),
+                            label: Text(l10n.add),
                           ),
                         ],
                       ),
@@ -430,10 +449,10 @@ class _TaskEditPageState extends State<TaskEditPage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: Text(
-                            'No tags yet',
+                            l10n.noTasksYet, // Reusing noTasksYet
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.textTheme.bodyMedium?.color
-                                  ?.withOpacity(0.5),
+                                  ?.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -449,7 +468,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                   color: theme.scaffoldBackgroundColor,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, -5),
                     ),
@@ -467,7 +486,7 @@ class _TaskEditPageState extends State<TaskEditPage> {
                         ),
                       ),
                       child: Text(
-                        widget.task == null ? 'Create Task' : 'Save Changes',
+                        widget.task == null ? l10n.addTask : l10n.save,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

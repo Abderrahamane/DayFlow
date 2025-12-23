@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
-import 'package:dayflow/utils/app_localizations.dart';
+import 'package:dayflow/utils/auth_localizations.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -42,6 +42,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
       if (!mounted) return;
 
+      final l10n = AuthLocalizations.of(context);
+
       if (result['success']) {
         setState(() {
           _emailSent = true;
@@ -49,15 +51,30 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message']),
+            content: Text(l10n.passwordResetEmailSent),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
           ),
         );
       } else {
+        String errorMessage;
+        switch (result['code']) {
+          case 'user-not-found':
+            errorMessage = l10n.userNotFound;
+            break;
+          case 'invalid-email':
+            errorMessage = l10n.invalidEmail;
+            break;
+          case 'too-many-requests':
+            errorMessage = l10n.tooManyRequests;
+            break;
+          default:
+            errorMessage = result['message'] ?? l10n.failedToSendResetEmail;
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message']),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
           ),
@@ -65,9 +82,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       }
     } catch (e) {
       if (!mounted) return;
+      final l10n = AuthLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('An error occurred: $e'),
+          content: Text('${l10n.errorOccurred}: $e'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
@@ -84,7 +102,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final l10n = AuthLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -115,7 +133,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Icon(
@@ -142,10 +160,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 // Subtitle
                 Text(
                   _emailSent
-                      ? 'We\'ve sent a password reset link to your email address. Please check your inbox and follow the instructions.'
-                      : 'Don\'t worry! Enter your email address and we\'ll send you a link to reset your password.',
+                      ? l10n.resetEmailSent
+                      : l10n.forgotPasswordDesc,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -164,10 +182,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       prefixIcon: Icons.email_outlined,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your email';
+                          return l10n.pleaseEnterEmail;
                         }
                         if (!value.contains('@')) {
-                          return 'Please enter a valid email';
+                          return l10n.pleaseEnterValidEmail;
                         }
                         return null;
                       },
@@ -239,10 +257,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
+                      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: theme.colorScheme.outline.withOpacity(0.2),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
@@ -263,7 +281,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         Text(
                           l10n.checkSpamFolder,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           textAlign: TextAlign.center,
                         ),

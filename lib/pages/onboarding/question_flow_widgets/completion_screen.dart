@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../utils/routes.dart';
+import '../../../utils/question_flow_localizations.dart';
 
 class CompletionScreen extends StatefulWidget {
   const CompletionScreen({super.key});
@@ -92,6 +93,7 @@ class _CompletionScreenState extends State<CompletionScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
+    final l10n = QuestionFlowLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: isDark
@@ -132,7 +134,7 @@ class _CompletionScreenState extends State<CompletionScreen>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withOpacity(0.4),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.4),
                             blurRadius: 30,
                             spreadRadius: 5,
                           ),
@@ -158,7 +160,7 @@ class _CompletionScreenState extends State<CompletionScreen>
                         child: Column(
                           children: [
                             Text(
-                              "You're all set!",
+                              l10n.qfYouAreAllSet,
                               style: TextStyle(
                                 fontSize: 36,
                                 fontWeight: FontWeight.bold,
@@ -170,12 +172,12 @@ class _CompletionScreenState extends State<CompletionScreen>
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              "Let's get productive! 🚀",
+                              l10n.qfLetsGetProductive,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                                 color: isDark
-                                    ? Colors.white.withOpacity(0.8)
+                                    ? Colors.white.withValues(alpha: 0.8)
                                     : const Color(0xFF64748B),
                               ),
                               textAlign: TextAlign.center,
@@ -315,7 +317,7 @@ class _PulsingDotsState extends State<_PulsingDots>
                   width: 12,
                   height: 12,
                   decoration: BoxDecoration(
-                    color: widget.color.withOpacity(0.5 + scale * 0.5),
+                    color: widget.color.withValues(alpha: 0.5 + scale * 0.5),
                     shape: BoxShape.circle,
                   ),
                 ),

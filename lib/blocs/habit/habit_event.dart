@@ -39,3 +39,12 @@ class ToggleHabitCompletionEvent extends HabitEvent {
   @override
   List<Object?> get props => [habitId, dateKey];
 }
+
+class SearchHabits extends HabitEvent {
+  final String query;
+
+  const SearchHabits(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

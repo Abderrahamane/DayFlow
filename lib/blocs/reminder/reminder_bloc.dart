@@ -2,13 +2,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_event.dart';
 import 'package:dayflow/blocs/reminder/reminder_state.dart';
 import 'package:dayflow/data/repositories/reminder_repository.dart';
+import 'package:dayflow/data/repositories/notification_repository.dart';
 import 'package:dayflow/models/reminder_model.dart';
 import 'package:dayflow/utils/reminder_notification_helper.dart';
 
 class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   final ReminderRepository repository;
+  final NotificationRepository? notificationRepository;
 
-  ReminderBloc(this.repository) : super(ReminderInitial()) {
+  ReminderBloc(this.repository, {this.notificationRepository}) : super(ReminderInitial()) {
     on<LoadReminders>(_onLoadReminders);
     on<RefreshReminders>(_onRefreshReminders);
     on<AddReminder>(_onAddReminder);
@@ -28,6 +30,7 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       // Reschedule all active reminders when loading
       await ReminderNotificationHelper.rescheduleAllReminders(
         reminders.where((r) => r.id != null).toList(),
+        notificationRepository: notificationRepository,
       );
       
       emit(_groupRemindersByDate(reminders));
@@ -60,7 +63,10 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       final reminderWithId = event.reminder.copyWith(id: newId);
       
       // Schedule notification for the new reminder
-      await ReminderNotificationHelper.scheduleReminderNotification(reminderWithId);
+      await ReminderNotificationHelper.scheduleReminderNotification(
+        reminderWithId,
+        notificationRepository: notificationRepository,
+      );
 
       // Fetch all reminders and emit updated state
       final reminders = await repository.getAllReminders();
@@ -82,7 +88,10 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
         await ReminderNotificationHelper.cancelReminderNotification(event.reminder.id!);
         
         if (event.reminder.isActive) {
-          await ReminderNotificationHelper.scheduleReminderNotification(event.reminder);
+          await ReminderNotificationHelper.scheduleReminderNotification(
+            event.reminder,
+            notificationRepository: notificationRepository,
+          );
         }
       }
 
@@ -124,7 +133,10 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       // Schedule or cancel notification based on active state
       if (updatedReminder.id != null) {
         if (updatedReminder.isActive) {
-          await ReminderNotificationHelper.scheduleReminderNotification(updatedReminder);
+          await ReminderNotificationHelper.scheduleReminderNotification(
+            updatedReminder,
+            notificationRepository: notificationRepository,
+          );
         } else {
           await ReminderNotificationHelper.cancelReminderNotification(updatedReminder.id!);
         }

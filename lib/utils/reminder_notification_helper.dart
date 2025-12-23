@@ -1,13 +1,16 @@
 import 'package:dayflow/models/reminder_model.dart';
 import 'package:dayflow/services/notification_servise.dart';
 import 'package:flutter/material.dart';
+import 'package:dayflow/data/repositories/notification_repository.dart';
+import 'package:dayflow/models/notification_model.dart';
+import 'package:uuid/uuid.dart';
 
 class ReminderNotificationHelper {
   static final NotificationService _notificationService = NotificationService();
 
   /// Schedule a notification for a reminder
   static Future<void> scheduleReminderNotification(
-      ReminderModel reminder) async {
+      ReminderModel reminder, {NotificationRepository? notificationRepository}) async {
     debugPrint('📅 Attempting to schedule notification for: ${reminder.title}');
     
     // For task-based reminders (id == null), we need a unique notification ID
@@ -52,6 +55,16 @@ class ReminderNotificationHelper {
       );
 
       debugPrint('✅ Notification scheduled for ${reminder.title} at $scheduledDateTime');
+
+      // Save to notification history if repository is provided
+      if (notificationRepository != null) {
+        await notificationRepository.saveNotification(AppNotification(
+          id: 'reminder_history_$notificationId',
+          title: reminder.title,
+          body: reminder.description ?? 'Time for your reminder!',
+          timestamp: scheduledDateTime,
+        ));
+      }
     } catch (e) {
       debugPrint('❌ Error scheduling notification: $e');
     }
@@ -129,13 +142,13 @@ class ReminderNotificationHelper {
 
   /// Reschedule all active reminders (useful after app restart)
   static Future<void> rescheduleAllReminders(
-      List<ReminderModel> reminders) async {
+      List<ReminderModel> reminders, {NotificationRepository? notificationRepository}) async {
     debugPrint('🔄 Rescheduling ${reminders.length} reminders...');
     
     int scheduled = 0;
     for (final reminder in reminders) {
       if (shouldScheduleReminder(reminder)) {
-        await scheduleReminderNotification(reminder);
+        await scheduleReminderNotification(reminder, notificationRepository: notificationRepository);
         scheduled++;
       }
     }

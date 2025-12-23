@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:dayflow/utils/app_localizations.dart';
+import 'package:dayflow/utils/welcome_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'onboarding/onboarding_page.dart';
 import 'package:dayflow/utils/routes.dart';
 
@@ -124,7 +125,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = WelcomeLocalizations.of(context);
 
     return Scaffold(
       body: AnimatedBuilder(
@@ -206,7 +207,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                 l10n.yourSmartDailyPlanner,
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.w300,
                 ),
               ),
@@ -250,13 +251,22 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                   height: 56,
                   child: _PulsingButton(
                     text: l10n.getStarted,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OnboardingPage(),
-                        ),
-                      );
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final hasCompleted = prefs.getBool('hasCompletedQuestionFlow') ?? false;
+
+                      if (!context.mounted) return;
+
+                      if (hasCompleted) {
+                        Navigator.pushNamed(context, Routes.signup);
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const OnboardingPage(),
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),
@@ -357,11 +367,11 @@ class _AnimatedLogoState extends State<_AnimatedLogo> with SingleTickerProviderS
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   blurRadius: 20 * _pulseAnimation.value,
                   spreadRadius: 5 * _pulseAnimation.value,
                 ),
@@ -441,7 +451,7 @@ class _AnimatedFeatureItemState extends State<_AnimatedFeatureItem> with SingleT
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -522,7 +532,7 @@ class _PulsingButtonState extends State<_PulsingButton> with SingleTickerProvide
                   borderRadius: BorderRadius.circular(16),
                 ),
                 elevation: _isPressed ? 2 : 8,
-                shadowColor: Colors.black.withOpacity(0.3),
+                shadowColor: Colors.black.withValues(alpha: 0.3),
               ),
               child: Text(
                 widget.text,

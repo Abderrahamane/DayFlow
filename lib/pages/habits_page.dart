@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/habit/habit_bloc.dart';
 import '../models/habit_model.dart' as habit_model;
 import '../widgets/habit_card.dart';
+import '../utils/routes.dart';
+import '../utils/habit_localizations.dart';
 
 class HabitsPage extends StatefulWidget {
   const HabitsPage({super.key});
@@ -31,6 +33,7 @@ class _HabitsPageState extends State<HabitsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final habitL10n = HabitLocalizations.of(context);
 
     return Scaffold(
       body: BlocBuilder<HabitBloc, HabitState>(
@@ -48,7 +51,7 @@ class _HabitsPageState extends State<HabitsPage> {
           final habits = state.habits;
 
           if (habits.isEmpty) {
-            return _EmptyState(theme: theme, onCreate: _openHabitSheet);
+            return _EmptyState(theme: theme);
           }
 
           return CustomScrollView(
@@ -59,11 +62,21 @@ class _HabitsPageState extends State<HabitsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Today's Progress",
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            habitL10n.todaysProgress,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton.icon(
+                            onPressed: () => Routes.navigateToHabitStats(context),
+                            icon: const Icon(Icons.bar_chart, size: 18),
+                            label: Text(habitL10n.stats),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -72,7 +85,7 @@ class _HabitsPageState extends State<HabitsPage> {
                             child: _StatCard(
                               icon: Icons.check_circle_outline,
                               value: '${state.completedToday}',
-                              label: 'Completed',
+                              label: habitL10n.completed,
                               color: Colors.green,
                             ),
                           ),
@@ -81,7 +94,7 @@ class _HabitsPageState extends State<HabitsPage> {
                             child: _StatCard(
                               icon: Icons.local_fire_department_outlined,
                               value: '${state.activeStreaks}',
-                              label: 'Streaks',
+                              label: habitL10n.streaks,
                               color: Colors.orange,
                             ),
                           ),
@@ -90,7 +103,7 @@ class _HabitsPageState extends State<HabitsPage> {
                             child: _StatCard(
                               icon: Icons.trending_up,
                               value: '${state.todayCompletionPercentage.toInt()}%',
-                              label: 'Rate',
+                              label: habitL10n.rate,
                               color: theme.colorScheme.primary,
                             ),
                           ),
@@ -208,9 +221,10 @@ class _HabitEditorState extends State<_HabitEditor> {
     context.read<HabitBloc>().add(AddOrUpdateHabit(habit));
     Navigator.pop(context);
 
+    final habitL10n = HabitLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(widget.habit == null ? 'Habit added' : 'Habit updated'),
+        content: Text(widget.habit == null ? habitL10n.habitAdded : habitL10n.habitUpdated),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -219,6 +233,8 @@ class _HabitEditorState extends State<_HabitEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final habitL10n = HabitLocalizations.of(context);
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -240,7 +256,7 @@ class _HabitEditorState extends State<_HabitEditor> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.habit == null ? 'Create Habit' : 'Edit Habit',
+                      widget.habit == null ? habitL10n.createHabit : habitL10n.editHabit,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -254,36 +270,36 @@ class _HabitEditorState extends State<_HabitEditor> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Habit name',
-                    prefixIcon: Icon(Icons.stars_outlined),
+                  decoration: InputDecoration(
+                    labelText: habitL10n.habitName,
+                    prefixIcon: const Icon(Icons.stars_outlined),
                   ),
                   validator: (value) =>
-                      value == null || value.trim().isEmpty ? 'Required' : null,
+                      value == null || value.trim().isEmpty ? habitL10n.required : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _descriptionController,
                   maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
+                  decoration: InputDecoration(
+                    labelText: habitL10n.description,
                     alignLabelWithHint: true,
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _iconController,
-                  decoration: const InputDecoration(
-                    labelText: 'Emoji / Icon',
-                    prefixIcon: Icon(Icons.emoji_emotions_outlined),
+                  decoration: InputDecoration(
+                    labelText: habitL10n.emojiIcon,
+                    prefixIcon: const Icon(Icons.emoji_emotions_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _tagsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Linked task tags',
-                    prefixIcon: Icon(Icons.sell_outlined),
+                  decoration: InputDecoration(
+                    labelText: habitL10n.linkedTaskTags,
+                    prefixIcon: const Icon(Icons.sell_outlined),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -291,9 +307,9 @@ class _HabitEditorState extends State<_HabitEditor> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<habit_model.HabitFrequency>(
-                        value: _frequency,
-                        decoration: const InputDecoration(
-                          labelText: 'Frequency',
+                        initialValue: _frequency,
+                        decoration: InputDecoration(
+                          labelText: habitL10n.frequency,
                         ),
                         items: habit_model.HabitFrequency.values
                             .map(
@@ -313,8 +329,8 @@ class _HabitEditorState extends State<_HabitEditor> {
                       child: TextFormField(
                         initialValue: '$_goalCount',
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Weekly goal',
+                        decoration: InputDecoration(
+                          labelText: habitL10n.weeklyGoal,
                         ),
                         onChanged: (value) {
                           final parsed = int.tryParse(value);
@@ -327,7 +343,7 @@ class _HabitEditorState extends State<_HabitEditor> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Text('Color'),
+                    Text(habitL10n.color),
                     const SizedBox(width: 12),
                     Wrap(
                       spacing: 8,
@@ -367,7 +383,7 @@ class _HabitEditorState extends State<_HabitEditor> {
                   child: ElevatedButton(
                     onPressed: _saveHabit,
                     child:
-                        Text(widget.habit == null ? 'Add Habit' : 'Update Habit'),
+                        Text(widget.habit == null ? habitL10n.addHabit : habitL10n.updateHabit),
                   ),
                 ),
               ],
@@ -422,7 +438,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -434,12 +450,12 @@ class _StatCard extends StatelessWidget {
 
 class _EmptyState extends StatelessWidget {
   final ThemeData theme;
-  final void Function({habit_model.Habit? habit}) onCreate;
 
-  const _EmptyState({required this.theme, required this.onCreate});
+  const _EmptyState({required this.theme});
 
   @override
   Widget build(BuildContext context) {
+    final habitL10n = HabitLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -450,35 +466,29 @@ class _EmptyState extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.stars_outlined,
                 size: 60,
-                color: theme.colorScheme.primary.withOpacity(0.5),
+                color: theme.colorScheme.primary.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              'No habits yet',
+              habitL10n.noHabitsYet,
               style: theme.textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Create your first habit to start\nbuilding better routines',
+              habitL10n.createFirstHabit,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: onCreate,
-              icon: const Icon(Icons.add),
-              label: const Text('Add habit'),
             ),
           ],
         ),

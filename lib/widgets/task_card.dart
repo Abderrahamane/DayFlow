@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../models/task_model.dart';
+import '../utils/app_localizations.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -18,13 +19,14 @@ class TaskCard extends StatelessWidget {
   });
 
   String _dueDateLabel(BuildContext context) {
-    if (task.dueDate == null) return 'No due date';
+    final l10n = AppLocalizations.of(context);
+    if (task.dueDate == null) return l10n.noDueDate;
     final formatted = DateFormat('MMM d • h:mm a').format(task.dueDate!);
     if (task.isOverdue) {
-      return 'Overdue • $formatted';
+      return '${l10n.overduePrefix}$formatted';
     }
     if (task.isDueToday) {
-      return 'Due today • ${DateFormat('h:mm a').format(task.dueDate!)}';
+      return '${l10n.dueTodayPrefix}${DateFormat('h:mm a').format(task.dueDate!)}';
     }
     return formatted;
   }
@@ -65,7 +67,7 @@ class TaskCard extends StatelessWidget {
                         : Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.12),
+                            .withValues(alpha: 0.12),
                   ),
                 ),
                 child: task.isCompleted
@@ -88,12 +90,21 @@ class TaskCard extends StatelessWidget {
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none,
                             color: task.isCompleted
-                                ? theme.textTheme.bodySmall?.color?.withOpacity(0.6)
+                                ? theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6)
                                 : null,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
+                      if (task.isRecurring)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Icon(
+                            Icons.repeat,
+                            size: 16,
+                            color: theme.colorScheme.secondary,
+                          ),
+                        ),
                       if (task.tags != null && task.tags!.isNotEmpty)
                         Icon(
                           Icons.sell_outlined,
@@ -106,7 +117,7 @@ class TaskCard extends StatelessWidget {
                   Text(
                     _dueDateLabel(context),
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.textTheme.bodySmall?.color?.withOpacity(0.6),
+                      color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                     ),
                   ),
                 ],

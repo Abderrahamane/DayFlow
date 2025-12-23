@@ -13,6 +13,10 @@ import '../pages/auth/email_verification_page.dart';
 import '../pages/privacy_backup_page.dart';
 import '../pages/help_support_page.dart';
 import '../pages/terms_privacy_page.dart';
+import '../pages/calendar_page.dart';
+import '../pages/habit_stats_page.dart';
+import '../pages/templates_page.dart';
+import '../pages/pomodoro_page.dart';
 
 class Routes {
   static const String welcome = '/welcome';
@@ -22,6 +26,10 @@ class Routes {
   static const String reminders = '/reminders';
   static const String habits = '/habits';
   static const String settings = '/settings';
+  static const String calendar = '/calendar';
+  static const String habitStats = '/habit-stats';
+  static const String templates = '/templates';
+  static const String pomodoro = '/pomodoro';
   static const String login = '/login';
   static const String signup = '/signup';
   static const String forgotPassword = '/forgot-password';
@@ -37,6 +45,10 @@ class Routes {
     reminders: (context) => const RemindersPage(),
     habits: (context) => const HabitsPage(),
     settings: (context) => const SettingsPage(),
+    calendar: (context) => const CalendarPage(),
+    habitStats: (context) => const HabitStatsPage(),
+    templates: (context) => const TemplatesPage(),
+    pomodoro: (context) => const PomodoroPage(),
     login: (context) => const LoginPage(),
     signup: (context) => const SignupPage(),
     forgotPassword: (context) => const ForgotPasswordPage(),
@@ -81,5 +93,21 @@ class Routes {
 
   static void navigateToTermsPrivacy(BuildContext context) {
     Navigator.pushNamed(context, termsPrivacy);
+  }
+
+  static void navigateToCalendar(BuildContext context) {
+    Navigator.pushNamed(context, calendar);
+  }
+
+  static void navigateToHabitStats(BuildContext context) {
+    Navigator.pushNamed(context, habitStats);
+  }
+
+  static void navigateToTemplates(BuildContext context) {
+    Navigator.pushNamed(context, templates);
+  }
+
+  static void navigateToPomodoro(BuildContext context) {
+    Navigator.pushNamed(context, pomodoro);
   }
 }

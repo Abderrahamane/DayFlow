@@ -8,6 +8,7 @@ class TaskState extends Equatable {
   final TaskSort sort;
   final TaskStatus status;
   final String? errorMessage;
+  final String searchQuery;
 
   const TaskState({
     required this.tasks,
@@ -15,6 +16,7 @@ class TaskState extends Equatable {
     required this.sort,
     required this.status,
     this.errorMessage,
+    this.searchQuery = '',
   });
 
   factory TaskState.initial() => const TaskState(
@@ -22,6 +24,7 @@ class TaskState extends Equatable {
         filter: TaskFilter.all,
         sort: TaskSort.dateCreated,
         status: TaskStatus.initial,
+        searchQuery: '',
       );
 
   List<Task> get visibleTasks => _applyFilterAndSort(tasks);
@@ -36,6 +39,7 @@ class TaskState extends Equatable {
     TaskSort? sort,
     TaskStatus? status,
     String? errorMessage,
+    String? searchQuery,
   }) {
     return TaskState(
       tasks: tasks ?? this.tasks,
@@ -43,14 +47,23 @@ class TaskState extends Equatable {
       sort: sort ?? this.sort,
       status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 
   @override
-  List<Object?> get props => [tasks, filter, sort, status, errorMessage];
+  List<Object?> get props => [tasks, filter, sort, status, errorMessage, searchQuery];
 
   List<Task> _applyFilterAndSort(List<Task> tasks) {
     var filtered = List<Task>.from(tasks);
+
+    if (searchQuery.isNotEmpty) {
+      final query = searchQuery.toLowerCase();
+      filtered = filtered.where((t) {
+        return t.title.toLowerCase().contains(query) ||
+            (t.description?.toLowerCase().contains(query) ?? false);
+      }).toList();
+    }
 
     switch (filter) {
       case TaskFilter.completed:

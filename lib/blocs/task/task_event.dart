@@ -66,3 +66,12 @@ class ChangeTaskSort extends TaskEvent {
   @override
   List<Object?> get props => [sort];
 }
+
+class SearchTasks extends TaskEvent {
+  final String query;
+
+  const SearchTasks(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

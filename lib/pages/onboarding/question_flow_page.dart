@@ -2,8 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../utils/routes.dart';
-import '../../utils/app_localizations.dart';
+import '../../utils/question_flow_localizations.dart';
 import 'question_flow_widgets/robot_character.dart';
 import 'question_flow_widgets/speech_bubble.dart';
 import 'question_flow_widgets/answer_button.dart';
@@ -30,70 +29,70 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
 
-  List<QuestionData> _getQuestions(AppLocalizations l10n) {
+  List<QuestionData> _getQuestions(QuestionFlowLocalizations l10n) {
     return [
       QuestionData(
-        question: l10n.translate('qf_biggest_challenge'),
+        question: l10n.qfBiggestChallenge,
         answers: [
-          l10n.translate('qf_too_many_tasks'),
-          l10n.translate('qf_staying_focused'),
-          l10n.translate('qf_time_management'),
-          l10n.translate('qf_remembering_everything'),
+          l10n.qfTooManyTasks,
+          l10n.qfStayingFocused,
+          l10n.qfTimeManagement,
+          l10n.qfRememberingEverything,
         ],
         allowMultiple: true,
         responses: [
-          l10n.translate('qf_response_1'),
-          l10n.translate('qf_response_2'),
-          l10n.translate('qf_response_3'),
-          l10n.translate('qf_response_4'),
+          l10n.qfResponse1,
+          l10n.qfResponse2,
+          l10n.qfResponse3,
+          l10n.qfResponse4,
         ],
       ),
       QuestionData(
-        question: l10n.translate('qf_when_work_best'),
+        question: l10n.qfWhenWorkBest,
         answers: [
-          l10n.translate('qf_early_morning'),
-          l10n.translate('qf_afternoon'),
-          l10n.translate('qf_evening'),
-          l10n.translate('qf_late_night'),
+          l10n.qfEarlyMorning,
+          l10n.qfAfternoon,
+          l10n.qfEvening,
+          l10n.qfLateNight,
         ],
         allowMultiple: true,
         responses: [
-          l10n.translate('qf_response_5'),
-          l10n.translate('qf_response_6'),
-          l10n.translate('qf_response_7'),
-          l10n.translate('qf_response_8'),
+          l10n.qfResponse5,
+          l10n.qfResponse6,
+          l10n.qfResponse7,
+          l10n.qfResponse8,
         ],
       ),
       QuestionData(
-        question: l10n.translate('qf_main_goal'),
+        question: l10n.qfMainGoal,
         answers: [
-          l10n.translate('qf_get_organized'),
-          l10n.translate('qf_build_habits'),
-          l10n.translate('qf_track_tasks'),
-          l10n.translate('qf_remember_all'),
+          l10n.qfGetOrganized,
+          l10n.qfBuildHabits,
+          l10n.qfTrackTasks,
+          l10n.qfRememberAll,
         ],
         allowMultiple: true,
         responses: [
-          l10n.translate('qf_response_9'),
-          l10n.translate('qf_response_10'),
-          l10n.translate('qf_response_11'),
-          l10n.translate('qf_response_12'),
+          l10n.qfResponse9,
+          l10n.qfResponse10,
+          l10n.qfResponse11,
+          l10n.qfResponse12,
         ],
       ),
       QuestionData(
-        question: l10n.translate('qf_prefer_plan'),
+        question: l10n.qfPreferPlan,
         answers: [
-          l10n.translate('qf_day_by_day'),
-          l10n.translate('qf_week_ahead'),
-          l10n.translate('qf_monthly_view'),
-          l10n.translate('qf_go_with_flow'),
+          l10n.qfDayByDay,
+          l10n.qfWeekAhead,
+          l10n.qfMonthlyView,
+          l10n.qfGoWithFlow,
         ],
         allowMultiple: true,
         responses: [
-          l10n.translate('qf_response_13'),
-          l10n.translate('qf_response_14'),
-          l10n.translate('qf_response_15'),
-          l10n.translate('qf_response_16'),
+          l10n.qfResponse13,
+          l10n.qfResponse14,
+          l10n.qfResponse15,
+          l10n.qfResponse16,
         ],
       ),
     ];
@@ -128,9 +127,9 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
     // Initial greeting
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted) {
-        final l10n = AppLocalizations.of(context);
+        final l10n = QuestionFlowLocalizations.of(context);
         setState(() {
-          _robotMessage = l10n.translate('qf_greeting');
+          _robotMessage = l10n.qfGreeting;
           _robotGesture = RobotGesture.wave;
         });
       }
@@ -197,10 +196,10 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
       // Robot greets new question
       Future.delayed(const Duration(milliseconds: 300), () {
         if (mounted) {
-          final l10n = AppLocalizations.of(context);
+          final l10n = QuestionFlowLocalizations.of(context);
           setState(() {
             _robotGesture = RobotGesture.wave;
-            _robotMessage = l10n.translate('qf_next_question');
+            _robotMessage = l10n.qfNextQuestion;
           });
         }
       });
@@ -210,10 +209,10 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
   }
 
   Future<void> _completeQuestionFlow() async {
-    final l10n = AppLocalizations.of(context);
+    final l10n = QuestionFlowLocalizations.of(context);
     setState(() {
       _robotGesture = RobotGesture.celebrate;
-      _robotMessage = l10n.translate('qf_completion');
+      _robotMessage = l10n.qfCompletion;
     });
 
     await Future.delayed(const Duration(milliseconds: 800));
@@ -246,10 +245,11 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = QuestionFlowLocalizations.of(context);
     final questions = _getQuestions(l10n);
-    final question = questions[_currentQuestionIndex];
+    final currentQuestion = questions[_currentQuestionIndex];
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final hasSelection = _selectedAnswers[_currentQuestionIndex].isNotEmpty;
 
     return Scaffold(
@@ -308,7 +308,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
                             child: FadeTransition(
                               opacity: _fadeAnimation,
                               child: _AnimatedQuestionText(
-                                text: question.question,
+                                text: currentQuestion.question,
                               ),
                             ),
                           ),
@@ -321,7 +321,7 @@ class _QuestionFlowPageState extends State<QuestionFlowPage>
                             child: FadeTransition(
                               opacity: _fadeAnimation,
                               child: Column(
-                                children: question.answers.asMap().entries.map((entry) {
+                                children: currentQuestion.answers.asMap().entries.map((entry) {
                                   final index = entry.key;
                                   final answer = entry.value;
                                   final isSelected = _selectedAnswers[_currentQuestionIndex]
@@ -469,7 +469,7 @@ class _NextButtonState extends State<_NextButton>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final l10n = QuestionFlowLocalizations.of(context);
 
     return ScaleTransition(
       scale: _scaleAnimation,
@@ -485,7 +485,7 @@ class _NextButtonState extends State<_NextButton>
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: theme.colorScheme.primary.withOpacity(0.4),
+              color: theme.colorScheme.primary.withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
@@ -501,7 +501,7 @@ class _NextButtonState extends State<_NextButton>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    widget.isLastQuestion ? l10n.translate('qf_finish') : l10n.next,
+                    widget.isLastQuestion ? l10n.qfFinish : l10n.qfNext,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -523,7 +523,6 @@ class _NextButtonState extends State<_NextButton>
   }
 }
 
-// Question data model
 class QuestionData {
   final String question;
   final List<String> answers;
@@ -537,3 +536,4 @@ class QuestionData {
     required this.responses,
   });
 }
+

@@ -1,6 +1,6 @@
 // lib/pages/onboarding/onboarding_model.dart (LOCALIZED)
 import 'package:flutter/material.dart';
-import 'package:dayflow/utils/app_localizations.dart';
+import 'package:dayflow/utils/onboarding_localizations.dart';
 
 class OnboardingSlide {
   final String Function(BuildContext) title;
@@ -22,8 +22,8 @@ class OnboardingData {
   static List<OnboardingSlide> getSlides() {
     return [
       OnboardingSlide(
-        title: (context) => AppLocalizations.of(context).organizeYourTasks,
-        description: (context) => AppLocalizations.of(context).organizeTasksDesc,
+        title: (context) => OnboardingLocalizations.of(context).organizeYourTasks,
+        description: (context) => OnboardingLocalizations.of(context).organizeTasksDesc,
         icon: Icons.check_circle,
         color: const Color(0xFF6366F1), // Indigo
         decorativeIcons: [
@@ -33,8 +33,8 @@ class OnboardingData {
         ],
       ),
       OnboardingSlide(
-        title: (context) => AppLocalizations.of(context).captureYourIdeas,
-        description: (context) => AppLocalizations.of(context).captureIdeasDesc,
+        title: (context) => OnboardingLocalizations.of(context).captureYourIdeas,
+        description: (context) => OnboardingLocalizations.of(context).captureIdeasDesc,
         icon: Icons.note_outlined,
         color: const Color(0xFF8B5CF6), // Purple
         decorativeIcons: [
@@ -44,8 +44,8 @@ class OnboardingData {
         ],
       ),
       OnboardingSlide(
-        title: (context) => AppLocalizations.of(context).setSmartReminders,
-        description: (context) => AppLocalizations.of(context).setRemindersDesc,
+        title: (context) => OnboardingLocalizations.of(context).setSmartReminders,
+        description: (context) => OnboardingLocalizations.of(context).setRemindersDesc,
         icon: Icons.alarm,
         color: const Color(0xFF06B6D4), // Cyan
         decorativeIcons: [
@@ -55,8 +55,8 @@ class OnboardingData {
         ],
       ),
       OnboardingSlide(
-        title: (context) => AppLocalizations.of(context).trackYourHabits,
-        description: (context) => AppLocalizations.of(context).trackHabitsDesc,
+        title: (context) => OnboardingLocalizations.of(context).trackYourHabits,
+        description: (context) => OnboardingLocalizations.of(context).trackHabitsDesc,
         icon: Icons.track_changes,
         color: const Color(0xFF10B981), // Green
         decorativeIcons: [

@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
 import 'package:dayflow/services/firebase_auth_service.dart';
-import 'package:dayflow/utils/app_localizations.dart';
+import 'package:dayflow/utils/auth_localizations.dart';
 import 'package:dayflow/utils/routes.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final authL10n = AuthLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 32),
 
                   Text(
-                    l10n.welcomeBack,
+                    authL10n.welcomeBack,
                     style: theme.textTheme.headlineLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -155,9 +155,9 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 8),
 
                   Text(
-                    l10n.signInToContinue,
+                    authL10n.signInToContinue,
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -165,17 +165,17 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 48),
 
                   CustomInput(
-                    label: l10n.email,
-                    hint: l10n.enterEmail,
+                    label: authL10n.email,
+                    hint: authL10n.enterEmail,
                     controller: _emailController,
                     type: InputType.email,
                     prefixIcon: Icons.email_outlined,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return l10n.pleaseEnterEmail;
+                        return authL10n.pleaseEnterEmail;
                       }
                       if (!value.contains('@')) {
-                        return l10n.pleaseEnterValidEmail;
+                        return authL10n.pleaseEnterValidEmail;
                       }
                       return null;
                     },
@@ -184,17 +184,17 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
 
                   CustomInput(
-                    label: l10n.password,
-                    hint: l10n.enterPassword,
+                    label: authL10n.password,
+                    hint: authL10n.enterPassword,
                     controller: _passwordController,
                     type: InputType.password,
                     prefixIcon: Icons.lock_outline,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return l10n.pleaseEnterPassword;
+                        return authL10n.pleaseEnterPassword;
                       }
                       if (value.length < 6) {
-                        return l10n.passwordTooShort;
+                        return authL10n.passwordTooShort;
                       }
                       return null;
                     },
@@ -209,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.pushNamed(context, Routes.forgotPassword);
                       },
                       child: Text(
-                        l10n.forgotPassword,
+                        authL10n.forgotPassword,
                         style: TextStyle(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
@@ -221,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 32),
 
                   CustomButton(
-                    text: l10n.login,
+                    text: authL10n.login,
                     type: ButtonType.primary,
                     size: ButtonSize.large,
                     icon: Icons.login,
@@ -233,17 +233,17 @@ class _LoginPageState extends State<LoginPage> {
 
                   Row(
                     children: [
-                      Expanded(child: Divider(color: theme.colorScheme.onSurface.withOpacity(0.2))),
+                      Expanded(child: Divider(color: theme.colorScheme.onSurface.withValues(alpha: 0.2))),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          l10n.or,
+                          authL10n.or,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.5),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                         ),
                       ),
-                      Expanded(child: Divider(color: theme.colorScheme.onSurface.withOpacity(0.2))),
+                      Expanded(child: Divider(color: theme.colorScheme.onSurface.withValues(alpha: 0.2))),
                     ],
                   ),
 
@@ -251,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   if (kIsWeb || Platform.isAndroid || Platform.isIOS)
                     CustomButton(
-                      text: l10n.continueWithGoogle,
+                      text: authL10n.continueWithGoogle,
                       type: ButtonType.outlined,
                       size: ButtonSize.large,
                       icon: Icons.g_mobiledata,
@@ -295,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        l10n.dontHaveAccount,
+                        authL10n.dontHaveAccount,
                         style: theme.textTheme.bodyMedium,
                       ),
                       TextButton(
@@ -308,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          l10n.signup,
+                          authL10n.signup,
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -329,3 +329,5 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+
