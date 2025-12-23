@@ -51,3 +51,7 @@ windows/runner/resources/
 
 # Linux
 linux/flutter/ephemeral/
+
+
+key.properties
+*.jks
