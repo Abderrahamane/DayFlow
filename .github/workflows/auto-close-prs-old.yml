@@ -1,0 +1,17 @@
+name: Lock All Existing Pull Requests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  lock-old:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lock existing PRs
+        uses: dessant/lock-threads@v5
+        with:
+          pr-inactive-days: 0      # lock all PRs immediately
+          skip-closed-prs: false   # lock both open & closed PRs
