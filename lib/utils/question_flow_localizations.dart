@@ -95,13 +95,13 @@ class QuestionFlowLocalizations {
       'qf_response_14': 'Regarder devant vous prépare au succès.',
       'qf_response_15': 'Planification globale !',
       'qf_response_16': 'Flexible et adaptable.',
-      'qf_greeting': 'مرحباً! أنا فلو، مساعدك الشخصي. دعنا نتعرف عليك بشكل أفضل!',
-      'qf_finish': 'إنهاء',
-      'qf_next_question': 'رائع! السؤال التالي...',
-      'qf_completion': 'تم كل شيء! جاري إعداد تجربتك...',
-      'qf_next': 'التالي',
-      'qf_you_are_all_set': 'أنت جاهز تماماً!',
-      'qf_lets_get_productive': 'دعنا نكون منتجين! 🚀',
+      'qf_greeting': 'Salut ! Je suis Flow, votre assistant personnel. Apprenons à mieux vous connaître !',
+      'qf_finish': 'Terminer',
+      'qf_next_question': 'Super ! Question suivante...',
+      'qf_completion': 'Tout est fait ! Configuration de votre expérience...',
+      'qf_next': 'Suivant',
+      'qf_you_are_all_set': 'Vous êtes prêt !',
+      'qf_lets_get_productive': 'Soyons productifs ! 🚀',
     },
     'ar': {
       'qf_biggest_challenge': 'ما هو أكبر تحدٍ تواجهه؟',
@@ -140,6 +140,13 @@ class QuestionFlowLocalizations {
       'qf_response_14': 'التطلع إلى الأمام يجهزك للنجاح.',
       'qf_response_15': 'تخطيط الصورة الكبيرة!',
       'qf_response_16': 'مرن وقابل للتكيف.',
+      'qf_greeting': 'مرحباً! أنا فلو، مساعدك الشخصي. دعنا نتعرف عليك بشكل أفضل!',
+      'qf_finish': 'إنهاء',
+      'qf_next_question': 'رائع! السؤال التالي...',
+      'qf_completion': 'تم كل شيء! جاري إعداد تجربتك...',
+      'qf_next': 'التالي',
+      'qf_you_are_all_set': 'أنت جاهز تماماً!',
+      'qf_lets_get_productive': 'دعنا نكون منتجين! 🚀',
     },
   };
 
