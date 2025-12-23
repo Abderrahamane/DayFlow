@@ -16,6 +16,7 @@ migrate_working_dir/
 *.iml
 *.ipr
 *.iws
+*.cmake
 .idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
@@ -43,3 +44,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Windows
+windows/flutter/ephemeral/
+windows/runner/resources/
+
+# Linux
+linux/flutter/ephemeral/
+
+
+key.properties
+*.jks
