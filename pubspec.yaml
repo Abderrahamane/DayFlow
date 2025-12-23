@@ -7,10 +7,10 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
+  fl_chart: ^0.66.0
   flutter_localizations:
     sdk: flutter
   intl: 0.20.2
-  provider: ^6.1.1
   shared_preferences: ^2.2.2
   country_flags: ^3.0.0
   url_launcher: ^6.2.0  # For email functionality
@@ -21,23 +21,58 @@ dependencies:
   cloud_firestore: ^5.4.4
   google_sign_in: ^6.2.1
 
+  # Analytics
+  mixpanel_flutter: ^2.4.4
+
   # State Management
+  flutter_bloc: ^9.0.0
+  equatable: ^2.0.5
+
+  # Local database (non-sqflite SQLite bindings)
+  drift: ^2.20.2
+  sqlite3_flutter_libs: ^0.5.24
+  sqlite3: ^2.4.0
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  uuid: ^4.5.1
 
   # UI Components
   cupertino_icons: ^1.0.6
+  permission_handler: ^12.0.1
+  timezone: ^0.10.1
+  flutter_local_notifications: ^19.5.0
+  table_calendar: ^3.2.0
+  image_picker: ^1.2.1
+  file_picker: ^10.3.7
+  firebase_storage: ^12.4.10
+  local_auth: ^2.3.0
+  pdf: ^3.11.3
+  printing: ^5.14.2
+  share_plus: ^12.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  drift_dev: ^2.20.2
+  build_runner: ^2.4.11
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  web:
+    generate: true
+    image_path: assets/logo/logo.png
+  image_path: assets/logo/logo.png
+  adaptive_icon_background: "#FFFFFF"  # set to your brand background
+  adaptive_icon_foreground: assets/logo/logo.png
 
 flutter:
   uses-material-design: true
-
-  # Uncomment to add assets
-  # assets:
-  #   - images/
-  #   - icons/
+  assets:
+    - assets/logo/logo.png
+    - assets/logo/logo.svg
 
   # Uncomment to add custom fonts
   # fonts:
