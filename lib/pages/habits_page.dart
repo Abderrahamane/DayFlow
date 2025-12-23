@@ -51,7 +51,7 @@ class _HabitsPageState extends State<HabitsPage> {
           final habits = state.habits;
 
           if (habits.isEmpty) {
-            return _EmptyState(theme: theme, onCreate: _openHabitSheet);
+            return _EmptyState(theme: theme);
           }
 
           return CustomScrollView(
@@ -307,7 +307,7 @@ class _HabitEditorState extends State<_HabitEditor> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField<habit_model.HabitFrequency>(
-                        value: _frequency,
+                        initialValue: _frequency,
                         decoration: InputDecoration(
                           labelText: habitL10n.frequency,
                         ),
@@ -438,7 +438,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -450,9 +450,8 @@ class _StatCard extends StatelessWidget {
 
 class _EmptyState extends StatelessWidget {
   final ThemeData theme;
-  final void Function({habit_model.Habit? habit}) onCreate;
 
-  const _EmptyState({required this.theme, required this.onCreate});
+  const _EmptyState({required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -467,13 +466,13 @@ class _EmptyState extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.stars_outlined,
                 size: 60,
-                color: theme.colorScheme.primary.withOpacity(0.5),
+                color: theme.colorScheme.primary.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 24),
@@ -487,15 +486,9 @@ class _EmptyState extends StatelessWidget {
             Text(
               habitL10n.createFirstHabit,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: onCreate,
-              icon: const Icon(Icons.add),
-              label: Text(habitL10n.addHabitButton),
             ),
           ],
         ),

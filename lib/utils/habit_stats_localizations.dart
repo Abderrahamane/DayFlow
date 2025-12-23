@@ -16,7 +16,9 @@ class HabitStatsLocalizations {
     'en': {
       'export_statistics': 'Export Statistics',
       'export_as_text': 'Export as Text',
+      'export_as_pdf': 'Export as PDF',
       'plain_text_summary': 'Plain text summary',
+      'pdf_report': 'PDF Report',
       'share_stats': 'Share Stats',
       'share_with_others': 'Share with others',
       'habit_statistics_report': '=== Habit Statistics Report ===',
@@ -86,7 +88,9 @@ class HabitStatsLocalizations {
     'fr': {
       'export_statistics': 'Exporter les statistiques',
       'export_as_text': 'Exporter en texte',
+      'export_as_pdf': 'Exporter en PDF',
       'plain_text_summary': 'Résumé en texte brut',
+      'pdf_report': 'Rapport PDF',
       'share_stats': 'Partager les stats',
       'share_with_others': 'Partager avec d\'autres',
       'habit_statistics_report': '=== Rapport de statistiques ===',
@@ -156,7 +160,9 @@ class HabitStatsLocalizations {
     'ar': {
       'export_statistics': 'تصدير الإحصائيات',
       'export_as_text': 'تصدير كنص',
+      'export_as_pdf': 'تصدير كملف PDF',
       'plain_text_summary': 'ملخص نصي عادي',
+      'pdf_report': 'تقرير PDF',
       'share_stats': 'مشاركة الإحصائيات',
       'share_with_others': 'مشاركة مع الآخرين',
       'habit_statistics_report': '=== تقرير إحصائيات العادات ===',
@@ -227,7 +233,9 @@ class HabitStatsLocalizations {
 
   String get exportStatistics => _localizedValues[locale.languageCode]!['export_statistics']!;
   String get exportAsText => _localizedValues[locale.languageCode]!['export_as_text']!;
+  String get exportAsPdf => _localizedValues[locale.languageCode]!['export_as_pdf']!;
   String get plainTextSummary => _localizedValues[locale.languageCode]!['plain_text_summary']!;
+  String get pdfReport => _localizedValues[locale.languageCode]!['pdf_report']!;
   String get shareStats => _localizedValues[locale.languageCode]!['share_stats']!;
   String get shareWithOthers => _localizedValues[locale.languageCode]!['share_with_others']!;
   String get habitStatisticsReport => _localizedValues[locale.languageCode]!['habit_statistics_report']!;

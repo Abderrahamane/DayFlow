@@ -386,10 +386,13 @@ class _NotesPageState extends State<NotesPage> {
                 title: Text(note.isLocked
                     ? l10n.removeLock
                     : l10n.lockNote),
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(ctx);
                   if (note.isLocked) {
-                    context.read<NoteBloc>().add(UnlockNoteEvent(note.id));
+                    final authenticated = await _authenticateNote(context, note);
+                    if (authenticated && context.mounted) {
+                      context.read<NoteBloc>().add(UnlockNoteEvent(note.id));
+                    }
                   } else {
                     _showLockOptions(context, note);
                   }

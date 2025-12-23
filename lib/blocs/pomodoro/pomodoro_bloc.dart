@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:uuid/uuid.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/repositories/pomodoro_repository.dart';
 import '../../data/repositories/notification_repository.dart';
@@ -303,6 +304,14 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
   }
 
   Future<void> _showSessionCompleteNotification(PomodoroSessionType type) async {
+    // Check if notifications are enabled globally
+    final prefs = await SharedPreferences.getInstance();
+    final notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
+
+    if (!notificationsEnabled) {
+      return;
+    }
+
     String title;
     String body;
 
