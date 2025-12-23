@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../blocs/note/note_bloc.dart';
 import '../models/note_model.dart';
@@ -638,13 +639,40 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
               title: Text(l10n.translate('share')),
               onTap: () {
                 Navigator.pop(ctx);
-                // TODO: Implement share
+                _shareNote();
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _shareNote() {
+    final title = _titleController.text.trim();
+    final content = _contentController.text.trim();
+    final buffer = StringBuffer();
+
+    if (title.isNotEmpty) {
+      buffer.writeln(title);
+      buffer.writeln('-' * title.length);
+      buffer.writeln();
+    }
+
+    if (_noteType == NoteType.checklist) {
+      for (final item in _checklistItems) {
+        buffer.writeln('${item.isChecked ? '[x]' : '[ ]'} ${item.text}');
+      }
+    } else {
+      buffer.writeln(content);
+    }
+
+    if (_tags.isNotEmpty) {
+      buffer.writeln();
+      buffer.writeln(_tags.map((t) => '#$t').join(' '));
+    }
+
+    Share.share(buffer.toString());
   }
 
   void _duplicateNote() {
