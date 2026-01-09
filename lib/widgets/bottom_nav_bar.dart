@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dayflow/utils/navigation_localizations.dart';
+import 'package:dayflow/widgets/sync_status_banner.dart';
 import '../blocs/navigation/navigation_cubit.dart';
 import '../pages/todo_page.dart';
 import '../pages/notes_page.dart';
@@ -81,9 +82,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                     icon: const Icon(Icons.search),
                     onPressed: () {
                       if (currentIndex == 0) {
-                        showSearch(context: context, delegate: TaskSearchDelegate());
+                        showSearch(
+                            context: context, delegate: TaskSearchDelegate());
                       } else if (currentIndex == 3) {
-                        showSearch(context: context, delegate: HabitSearchDelegate());
+                        showSearch(
+                            context: context, delegate: HabitSearchDelegate());
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -101,7 +104,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const NotificationsPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const NotificationsPage()),
                     );
                   },
                   tooltip: navL10n.notifications,
@@ -110,9 +114,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
             )
           : null,
       drawer: const AppDrawer(),
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        child: _pages[currentIndex],
+      body: SyncStatusBanner(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _pages[currentIndex],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,

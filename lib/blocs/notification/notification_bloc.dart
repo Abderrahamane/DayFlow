@@ -12,7 +12,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc(this._repository) : super(const NotificationState()) {
     on<LoadNotifications>(_onLoadNotifications);
     on<MarkNotificationAsRead>(_onMarkAsRead);
+    on<MarkAllNotificationsAsRead>(_onMarkAllAsRead);
+    on<DeleteNotification>(_onDeleteNotification);
     on<AddNotification>(_onAddNotification);
+    on<LoadUnreadCount>(_onLoadUnreadCount);
   }
 
   Future<void> _onLoadNotifications(
@@ -25,10 +28,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       if (state.status == NotificationStatus.initial || event.refresh) {
         emit(state.copyWith(status: NotificationStatus.loading));
         final notifications = await _repository.fetchNotifications();
+        final unreadCount = await _repository.getUnreadCount();
         emit(state.copyWith(
           status: NotificationStatus.success,
           notifications: notifications,
           hasReachedMax: notifications.length < 10,
+          unreadCount: unreadCount,
         ));
       } else {
         final notifications = await _repository.fetchNotifications(
@@ -38,7 +43,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
             ? state.copyWith(hasReachedMax: true)
             : state.copyWith(
                 status: NotificationStatus.success,
-                notifications: List.of(state.notifications)..addAll(notifications),
+                notifications: List.of(state.notifications)
+                  ..addAll(notifications),
                 hasReachedMax: notifications.length < 10,
               ));
       }
@@ -56,7 +62,51 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     final updatedNotifications = state.notifications.map((n) {
       return n.id == event.id ? n.copyWith(isRead: true) : n;
     }).toList();
-    emit(state.copyWith(notifications: updatedNotifications));
+    final newUnreadCount = state.unreadCount > 0 ? state.unreadCount - 1 : 0;
+    emit(state.copyWith(
+      notifications: updatedNotifications,
+      unreadCount: newUnreadCount,
+    ));
+  }
+
+  Future<void> _onMarkAllAsRead(
+    MarkAllNotificationsAsRead event,
+    Emitter<NotificationState> emit,
+  ) async {
+    await _repository.markAllAsRead();
+    final updatedNotifications =
+        state.notifications.map((n) => n.copyWith(isRead: true)).toList();
+    emit(state.copyWith(
+      notifications: updatedNotifications,
+      unreadCount: 0,
+    ));
+  }
+
+  Future<void> _onDeleteNotification(
+    DeleteNotification event,
+    Emitter<NotificationState> emit,
+  ) async {
+    final notification = state.notifications.firstWhere(
+      (n) => n.id == event.id,
+      orElse: () => AppNotification(
+        id: '',
+        title: '',
+        body: '',
+        timestamp: DateTime.now(),
+        isRead: true,
+      ),
+    );
+
+    await _repository.deleteNotification(event.id);
+    final updatedNotifications =
+        state.notifications.where((n) => n.id != event.id).toList();
+    final newUnreadCount = !notification.isRead && state.unreadCount > 0
+        ? state.unreadCount - 1
+        : state.unreadCount;
+    emit(state.copyWith(
+      notifications: updatedNotifications,
+      unreadCount: newUnreadCount,
+    ));
   }
 
   Future<void> _onAddNotification(
@@ -64,8 +114,23 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     await _repository.saveNotification(event.notification);
+    final newUnreadCount =
+        event.notification.isRead ? state.unreadCount : state.unreadCount + 1;
     emit(state.copyWith(
       notifications: [event.notification, ...state.notifications],
+      unreadCount: newUnreadCount,
     ));
+  }
+
+  Future<void> _onLoadUnreadCount(
+    LoadUnreadCount event,
+    Emitter<NotificationState> emit,
+  ) async {
+    try {
+      final count = await _repository.getUnreadCount();
+      emit(state.copyWith(unreadCount: count));
+    } catch (e) {
+      print('❌ Error loading unread count: $e');
+    }
   }
 }

@@ -89,15 +89,35 @@ class AppNotification {
     };
   }
 
-  factory AppNotification.fromFirestore(Map<String, dynamic> data, String docId) {
+  factory AppNotification.fromFirestore(
+      Map<String, dynamic> data, String docId) {
+    // Handle payload - could be String or Map
+    String? payloadStr;
+    final payloadData = data['payload'];
+    if (payloadData is String) {
+      payloadStr = payloadData;
+    } else if (payloadData is Map) {
+      payloadStr = payloadData.toString();
+    }
+
+    DateTime timestamp;
+    final ts = data['timestamp'];
+    if (ts is String) {
+      timestamp = DateTime.parse(ts);
+    } else if (ts != null && ts.toDate != null) {
+      // Firestore Timestamp
+      timestamp = ts.toDate();
+    } else {
+      timestamp = DateTime.now();
+    }
+
     return AppNotification(
       id: docId,
-      title: data['title'] ?? '',
-      body: data['body'] ?? '',
-      timestamp: DateTime.parse(data['timestamp']),
-      isRead: data['isRead'] ?? false,
-      payload: data['payload'],
+      title: data['title']?.toString() ?? '',
+      body: data['body']?.toString() ?? '',
+      timestamp: timestamp,
+      isRead: data['isRead'] == true,
+      payload: payloadStr,
     );
   }
 }
-

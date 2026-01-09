@@ -1,4 +1,3 @@
-// lib/pages/privacy_backup_page.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dayflow/widgets/ui_kit.dart';
@@ -55,7 +54,6 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
       _isLoading = true;
     });
 
-    // Simulate backup process
     await Future.delayed(const Duration(seconds: 2));
 
     final prefs = await SharedPreferences.getInstance();
@@ -108,7 +106,6 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
       _isLoading = true;
     });
 
-    // Simulate restore process
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
@@ -162,229 +159,235 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
       ),
       body: _isLoading
           ? Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              color: theme.colorScheme.primary,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.processing,
-              style: theme.textTheme.bodyLarge,
-            ),
-          ],
-        ),
-      )
-          : SingleChildScrollView(
-        child: Column(
-          children: [
-            // Backup Status Card
-            CustomCard(
-              margin: const EdgeInsets.all(16),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.cloud_done,
-                    size: 64,
-                    color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                  CircularProgressIndicator(
+                    color: theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    l10n.backupStatus,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _lastBackup != null
-                        ? l10n.lastBackup + ': ${_formatDate(_lastBackup!)}'
-                        : l10n.noBackupsYet,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
+                    l10n.processing,
+                    style: theme.textTheme.bodyLarge,
                   ),
                 ],
               ),
-            ),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Backup Status Card
+                  CustomCard(
+                    margin: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.cloud_done,
+                          size: 64,
+                          color:
+                              theme.colorScheme.primary.withValues(alpha: 0.7),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.backupStatus,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _lastBackup != null
+                              ? l10n.lastBackup +
+                                  ': ${_formatDate(_lastBackup!)}'
+                              : l10n.noBackupsYet,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
-            // Quick Actions
-            _buildSection(
-              context,
-              title: l10n.quickActions,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
+                  // Quick Actions
+                  _buildSection(
+                    context,
+                    title: l10n.quickActions,
                     children: [
-                      CustomButton(
-                        text: l10n.backupNow,
-                        type: ButtonType.primary,
-                        icon: Icons.backup,
-                        width: double.infinity,
-                        onPressed: _performBackup,
-                      ),
-                      const SizedBox(height: 12),
-                      CustomButton(
-                        text: l10n.restoreBackup,
-                        type: ButtonType.outlined,
-                        icon: Icons.restore,
-                        width: double.infinity,
-                        onPressed: _restoreBackup,
-                      ),
-                      const SizedBox(height: 12),
-                      CustomButton(
-                        text: l10n.syncWithCloud,
-                        type: ButtonType.outlined,
-                        icon: Icons.cloud_sync,
-                        width: double.infinity,
-                        onPressed: _syncWithCloud,
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            CustomButton(
+                              text: l10n.backupNow,
+                              type: ButtonType.primary,
+                              icon: Icons.backup,
+                              width: double.infinity,
+                              onPressed: _performBackup,
+                            ),
+                            const SizedBox(height: 12),
+                            CustomButton(
+                              text: l10n.restoreBackup,
+                              type: ButtonType.outlined,
+                              icon: Icons.restore,
+                              width: double.infinity,
+                              onPressed: _restoreBackup,
+                            ),
+                            const SizedBox(height: 12),
+                            CustomButton(
+                              text: l10n.syncWithCloud,
+                              type: ButtonType.outlined,
+                              icon: Icons.cloud_sync,
+                              width: double.infinity,
+                              onPressed: _syncWithCloud,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 8),
+
+                  // Backup Settings
+                  _buildSection(
+                    context,
+                    title: l10n.backupSettings,
+                    children: [
+                      SwitchListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        secondary: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.autorenew,
+                            color: theme.colorScheme.primary,
+                            size: 22,
+                          ),
+                        ),
+                        title: Text(l10n.autoBackup),
+                        subtitle: Text(l10n.autoBackupDaily),
+                        value: _autoBackup,
+                        onChanged: (value) {
+                          setState(() {
+                            _autoBackup = value;
+                          });
+                          _saveSettings();
+                        },
+                      ),
+                      const Divider(height: 1, indent: 72),
+                      SwitchListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        secondary: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.cloud_upload,
+                            color: theme.colorScheme.primary,
+                            size: 22,
+                          ),
+                        ),
+                        title: Text(l10n.cloudSync),
+                        subtitle: Text(l10n.syncAcrossDevices),
+                        value: _cloudSync,
+                        onChanged: (value) {
+                          setState(() {
+                            _cloudSync = value;
+                          });
+                          _saveSettings();
+                        },
+                      ),
+                      const Divider(height: 1, indent: 72),
+                      SwitchListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        secondary: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.lock,
+                            color: theme.colorScheme.primary,
+                            size: 22,
+                          ),
+                        ),
+                        title: Text(l10n.encryptData),
+                        subtitle: Text(l10n.secureBackups),
+                        value: _encryptData,
+                        onChanged: (value) {
+                          setState(() {
+                            _encryptData = value;
+                          });
+                          _saveSettings();
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Privacy Settings
+                  _buildSection(
+                    context,
+                    title: l10n.privacy,
+                    children: [
+                      _buildListItem(
+                        context,
+                        icon: Icons.delete_outline,
+                        title: l10n.clearCache,
+                        subtitle: l10n.freeUpStorage,
+                        onTap: () {
+                          _showClearCacheDialog(context);
+                        },
+                      ),
+                      const Divider(height: 1, indent: 72),
+                      _buildListItem(
+                        context,
+                        icon: Icons.delete_forever,
+                        title: l10n.deleteAllData,
+                        subtitle: l10n.permanentlyRemove,
+                        isDangerous: true,
+                        onTap: () {
+                          _showDeleteDataDialog(context);
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
-
-            const SizedBox(height: 8),
-
-            // Backup Settings
-            _buildSection(
-              context,
-              title: l10n.backupSettings,
-              children: [
-                SwitchListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 8,
-                  ),
-                  secondary: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.autorenew,
-                      color: theme.colorScheme.primary,
-                      size: 22,
-                    ),
-                  ),
-                  title: Text(l10n.autoBackup),
-                  subtitle: Text(l10n.autoBackupDaily),
-                  value: _autoBackup,
-                  onChanged: (value) {
-                    setState(() {
-                      _autoBackup = value;
-                    });
-                    _saveSettings();
-                  },
-                ),
-                const Divider(height: 1, indent: 72),
-                SwitchListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 8,
-                  ),
-                  secondary: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.cloud_upload,
-                      color: theme.colorScheme.primary,
-                      size: 22,
-                    ),
-                  ),
-                  title: Text(l10n.cloudSync),
-                  subtitle: Text(l10n.syncAcrossDevices),
-                  value: _cloudSync,
-                  onChanged: (value) {
-                    setState(() {
-                      _cloudSync = value;
-                    });
-                    _saveSettings();
-                  },
-                ),
-                const Divider(height: 1, indent: 72),
-                SwitchListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 8,
-                  ),
-                  secondary: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.lock,
-                      color: theme.colorScheme.primary,
-                      size: 22,
-                    ),
-                  ),
-                  title: Text(l10n.encryptData),
-                  subtitle: Text(l10n.secureBackups),
-                  value: _encryptData,
-                  onChanged: (value) {
-                    setState(() {
-                      _encryptData = value;
-                    });
-                    _saveSettings();
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Privacy Settings
-            _buildSection(
-              context,
-              title: l10n.privacy,
-              children: [
-                _buildListItem(
-                  context,
-                  icon: Icons.delete_outline,
-                  title: l10n.clearCache,
-                  subtitle: l10n.freeUpStorage,
-                  onTap: () {
-                    _showClearCacheDialog(context);
-                  },
-                ),
-                const Divider(height: 1, indent: 72),
-                _buildListItem(
-                  context,
-                  icon: Icons.delete_forever,
-                  title: l10n.deleteAllData,
-                  subtitle: l10n.permanentlyRemove,
-                  isDangerous: true,
-                  onTap: () {
-                    _showDeleteDataDialog(context);
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
     );
   }
 
   Widget _buildSection(
-      BuildContext context, {
-        required String title,
-        required List<Widget> children,
-      }) {
+    BuildContext context, {
+    required String title,
+    required List<Widget> children,
+  }) {
     final theme = Theme.of(context);
 
     return Column(
@@ -412,13 +415,13 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
   }
 
   Widget _buildListItem(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required String subtitle,
-        bool isDangerous = false,
-        VoidCallback? onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    bool isDangerous = false,
+    VoidCallback? onTap,
+  }) {
     final theme = Theme.of(context);
     final color = isDangerous ? Colors.red : theme.colorScheme.primary;
 
@@ -515,6 +518,57 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
 
   Future<void> _deleteAllData() async {
     try {
+      // Get current user before deletion
+      final authService = FirebaseAuthService();
+      final userId = authService.currentUser?.uid;
+
+      // Delete all user data from Firestore FIRST (before account deletion)
+      if (userId != null) {
+        try {
+          final firestore = FirebaseFirestore.instance;
+          final userRef = firestore.collection('users').doc(userId);
+
+          // Delete all tasks
+          final tasksSnapshot = await userRef.collection('tasks').get();
+          for (final doc in tasksSnapshot.docs) {
+            await doc.reference.delete();
+          }
+          debugPrint(
+              '✅ Deleted ${tasksSnapshot.docs.length} tasks from Firestore');
+
+          // Delete all habits
+          final habitsSnapshot = await userRef.collection('habits').get();
+          for (final doc in habitsSnapshot.docs) {
+            await doc.reference.delete();
+          }
+          debugPrint(
+              '✅ Deleted ${habitsSnapshot.docs.length} habits from Firestore');
+
+          // Delete all notes
+          final notesSnapshot = await userRef.collection('notes').get();
+          for (final doc in notesSnapshot.docs) {
+            await doc.reference.delete();
+          }
+          debugPrint(
+              '✅ Deleted ${notesSnapshot.docs.length} notes from Firestore');
+
+          // Delete FCM settings
+          try {
+            await userRef.collection('settings').doc('fcm').delete();
+            debugPrint('✅ Deleted FCM settings from Firestore');
+          } catch (e) {
+            debugPrint('⚠️ No FCM settings to delete');
+          }
+
+          // Delete the user document itself
+          await userRef.delete();
+          debugPrint('✅ Deleted user document from Firestore');
+        } catch (e) {
+          debugPrint('⚠️ Error deleting Firestore data: $e');
+          // Continue with local deletion even if Firestore fails
+        }
+      }
+
       // Clear local database
       final taskRepository = context.read<TaskRepository>();
       taskRepository.localDb.clearAllData();
@@ -532,7 +586,6 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
       }
 
       // Delete account and sign out if logged in
-      final authService = FirebaseAuthService();
       if (authService.isLoggedIn()) {
         try {
           await authService.currentUser?.delete();
@@ -551,7 +604,6 @@ class _PrivacyBackupPageState extends State<PrivacyBackupPage> {
           ),
         );
 
-        // Navigate to welcome screen
         Navigator.pushNamedAndRemoveUntil(
           context,
           Routes.welcome,

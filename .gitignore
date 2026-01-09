@@ -55,3 +55,13 @@ linux/flutter/ephemeral/
 
 key.properties
 *.jks
+
+#backend
+backend/node_modules/
+backend/.env
+backend/dist/
+backend/build/
+backend/serviceAccountKey.json
+
+backend/npm-debug.log*
+backend/yarn-error.log*

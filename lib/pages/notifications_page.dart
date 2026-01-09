@@ -19,7 +19,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    context.read<NotificationBloc>().add(const LoadNotifications());
+    context
+        .read<NotificationBloc>()
+        .add(const LoadNotifications(refresh: true));
   }
 
   @override
@@ -52,7 +54,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
       ),
       body: BlocBuilder<NotificationBloc, NotificationState>(
         builder: (context, state) {
-          if (state.status == NotificationStatus.loading && state.notifications.isEmpty) {
+          if (state.status == NotificationStatus.loading &&
+              state.notifications.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -80,7 +83,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
           return RefreshIndicator(
             onRefresh: () async {
-              context.read<NotificationBloc>().add(const LoadNotifications(refresh: true));
+              context
+                  .read<NotificationBloc>()
+                  .add(const LoadNotifications(refresh: true));
             },
             child: ListView.builder(
               controller: _scrollController,
@@ -127,7 +132,9 @@ class _NotificationItem extends StatelessWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (direction) {
-        // Implement delete notification if needed
+        context
+            .read<NotificationBloc>()
+            .add(DeleteNotification(notification.id));
       },
       child: ListTile(
         leading: CircleAvatar(
@@ -144,7 +151,8 @@ class _NotificationItem extends StatelessWidget {
         title: Text(
           notification.title,
           style: TextStyle(
-            fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+            fontWeight:
+                notification.isRead ? FontWeight.normal : FontWeight.bold,
           ),
         ),
         subtitle: Column(
@@ -160,9 +168,10 @@ class _NotificationItem extends StatelessWidget {
         ),
         onTap: () {
           if (!notification.isRead) {
-            context.read<NotificationBloc>().add(MarkNotificationAsRead(notification.id));
+            context
+                .read<NotificationBloc>()
+                .add(MarkNotificationAsRead(notification.id));
           }
-          // Handle navigation based on payload if needed
         },
       ),
     );

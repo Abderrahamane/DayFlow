@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
 
-
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -179,7 +178,8 @@ class FirebaseAuthService {
       // Get user data from Firestore
       Map<String, dynamic>? userData;
       try {
-        final userDoc = await _firestore.collection('users').doc(user.uid).get();
+        final userDoc =
+            await _firestore.collection('users').doc(user.uid).get();
         userData = userDoc.data();
       } catch (e) {
         print('Warning: Could not fetch user data from Firestore: $e');
@@ -235,20 +235,34 @@ class FirebaseAuthService {
   // sign in with google
   Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email', 'profile'],
+      );
+
+      // Sign out first to ensure fresh sign-in (fixes some issues)
+      await googleSignIn.signOut();
 
       // Trigger Google Sign-In flow
+      print('🔐 Starting Google Sign-In flow...');
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
+        print('🔐 Google Sign-In cancelled by user');
         return {
           'success': false,
           'message': 'Sign-in cancelled',
         };
       }
 
+      print('🔐 Google user obtained: ${googleUser.email}');
+
       // Get auth details
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      print('🔐 Getting authentication tokens...');
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      print(
+          '🔐 Got tokens - accessToken: ${googleAuth.accessToken != null}, idToken: ${googleAuth.idToken != null}');
 
       // Create credential
       final credential = GoogleAuthProvider.credential(
@@ -257,15 +271,20 @@ class FirebaseAuthService {
       );
 
       // Sign in to Firebase
-      final UserCredential result = await _auth.signInWithCredential(credential);
+      print('🔐 Signing in to Firebase...');
+      final UserCredential result =
+          await _auth.signInWithCredential(credential);
       final user = result.user;
 
       if (user == null) {
+        print('🔐 Firebase sign-in returned null user');
         return {
           'success': false,
           'message': 'Google sign-in failed',
         };
       }
+
+      print('🔐 Firebase sign-in successful: ${user.uid}');
 
       // Create/update user in Firestore
       try {
@@ -276,8 +295,9 @@ class FirebaseAuthService {
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
+        print('🔐 Firestore user document updated');
       } catch (e) {
-        print('Firestore update failed: $e');
+        print('⚠️ Firestore update failed (non-critical): $e');
       }
 
       return {
@@ -289,11 +309,35 @@ class FirebaseAuthService {
           'email': user.email,
         },
       };
-    } catch (e) {
-      print('Google Sign In Error Details: $e');
+    } on FirebaseAuthException catch (e) {
+      print('🔐 FirebaseAuthException: ${e.code} - ${e.message}');
       return {
         'success': false,
-        'message': 'Google sign-in error: $e',
+        'message': 'Firebase error: ${e.message}',
+      };
+    } catch (e) {
+      print('🔐 Google Sign In Error Details: $e');
+      String errorMessage = 'Google sign-in error';
+
+      // Parse common errors
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('network')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (errorStr.contains('apiexception: 10')) {
+        errorMessage =
+            'Developer error: SHA-1 fingerprint not configured in Firebase Console.';
+      } else if (errorStr.contains('apiexception: 12500')) {
+        errorMessage =
+            'Google Play Services error. Please update Google Play Services.';
+      } else if (errorStr.contains('apiexception: 7')) {
+        errorMessage = 'Network error. Please check your connection.';
+      } else {
+        errorMessage = 'Sign-in failed: ${e.toString().split('\\n').first}';
+      }
+
+      return {
+        'success': false,
+        'message': errorMessage,
       };
     }
   }
@@ -432,7 +476,8 @@ class FirebaseAuthService {
       );
 
       try {
-        await user.reauthenticateWithCredential(credential)
+        await user
+            .reauthenticateWithCredential(credential)
             .timeout(const Duration(seconds: 10));
       } on TimeoutException {
         return {
@@ -453,7 +498,8 @@ class FirebaseAuthService {
       }
 
       // Update password (with timeout)
-      await user.updatePassword(newPassword)
+      await user
+          .updatePassword(newPassword)
           .timeout(const Duration(seconds: 10));
 
       return {

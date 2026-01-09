@@ -1,11 +1,13 @@
 import 'package:dayflow/blocs/reminder/reminder_bloc.dart';
 import 'package:dayflow/blocs/reminder/reminder_event.dart';
 import 'package:dayflow/firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'blocs/habit/habit_bloc.dart';
 import 'blocs/language/language_cubit.dart';
@@ -33,28 +35,90 @@ import 'utils/habit_stats_localizations.dart';
 import 'utils/navigation_localizations.dart';
 import 'utils/routes.dart';
 import 'package:dayflow/services/notification_servise.dart';
+import 'package:dayflow/services/push_notification_service.dart';
 
 import 'package:dayflow/services/mixpanel_service.dart';
 import 'blocs/navigation/navigation_cubit.dart';
 import 'package:dayflow/services/firestore_service.dart';
+import 'services/backend_api_service.dart';
 import 'utils/auth_localizations.dart';
 import 'utils/settings_localizations.dart';
 import 'utils/welcome_localizations.dart';
 import 'utils/onboarding_localizations.dart';
 import 'utils/question_flow_localizations.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print('📬 Background FCM message received: ${message.messageId}');
+  print('   Notification: ${message.notification?.title} - ${message.notification?.body}');
+  print('   Data: ${message.data}');
+
+  String? title;
+  String? body;
+
+  if (message.notification != null) {
+    title = message.notification!.title;
+    body = message.notification!.body;
+  } else if (message.data.isNotEmpty) {
+    title = message.data['title'];
+    body = message.data['body'] ?? message.data['message'];
+  }
+
+  if (title == null && body == null) {
+    print('⚠️ FCM message has no title or body, skipping');
+    return;
+  }
+
+  // Some phones (Oppo, Xiaomi, Vivo) don't auto-display FCM notifications
+  try {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    // Initialize (required for background handler)
+    const initSettings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: DarwinInitializationSettings(),
+    );
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
+
+    // Show notification with max priority for Oppo/Vivo
+    await flutterLocalNotificationsPlugin.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
+      title ?? 'DayFlow',
+      body ?? '',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'push_notifications',
+          'Push Notifications',
+          channelDescription: 'Server-sent notifications',
+          importance: Importance.max,
+          priority: Priority.max,
+          playSound: true,
+          enableVibration: true,
+          visibility: NotificationVisibility.public,
+          fullScreenIntent: true,
+          category: AndroidNotificationCategory.message,
+        ),
+      ),
+    );
+    print('✅ Background FCM notification shown: $title');
+  } catch (e) {
+    print('❌ Failed to show background notification: $e');
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  //initialize mix panel
   await MixpanelService.init("03771de9ce682b349440c8df1886944e");
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Initialize notification service
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await NotificationService.initNotification();
 
   // Initialize language cubit
@@ -65,13 +129,41 @@ void main() async {
   final database = AppDatabase();
   await database.init();
   final firestoreService = FirestoreService();
-  final taskRepository = TaskRepository(database, firestoreService);
-  final habitRepository = HabitRepository(database, firestoreService);
+
+  final backendApi = await BackendApiService.create();
+  if (backendApi == null) {
+    print('⚠️ Backend API unavailable - app will work offline with local data');
+  }
+
+  await PushNotificationService().initialize(api: backendApi);
+
+  final taskRepository =
+      TaskRepository(database, firestoreService, api: backendApi);
+  final habitRepository =
+      HabitRepository(database, firestoreService, api: backendApi);
   final reminderRepository = ReminderRepository(database);
-  final noteRepository = NoteRepository(database, firestoreService);
+  final noteRepository =
+      NoteRepository(database, firestoreService, api: backendApi);
   final templateRepository = TaskTemplateRepository(database);
   final pomodoroRepository = PomodoroRepository(database, firestoreService);
-  final notificationRepository = NotificationRepository(database, firestoreService);
+  final notificationRepository =
+      NotificationRepository(database, firestoreService, api: backendApi);
+
+  PushNotificationService().setNotificationRepository(notificationRepository);
+
+  if (firestoreService.currentUserId != null) {
+    print('🔄 User logged in - syncing local data to Firestore...');
+    Future.wait([
+      taskRepository.syncLocalDataToFirestore(),
+      habitRepository.syncLocalDataToFirestore(),
+      noteRepository.syncLocalDataToFirestore(),
+      notificationRepository.syncLocalDataToFirestore(),
+    ]).then((_) {
+      print('✅ Initial Firestore sync complete');
+    }).catchError((e) {
+      print('⚠️ Initial Firestore sync error: $e');
+    });
+  }
 
   runApp(
     MultiRepositoryProvider(
@@ -94,7 +186,10 @@ void main() async {
           ),
           BlocProvider<LanguageCubit>(create: (_) => languageCubit),
           BlocProvider(
-            create: (_) => TaskBloc(taskRepository)..add(LoadTasks()),
+            create: (_) => TaskBloc(
+              taskRepository,
+              notificationRepository: notificationRepository,
+            )..add(LoadTasks()),
           ),
           BlocProvider(
             create: (_) => HabitBloc(habitRepository)..add(LoadHabits()),
@@ -115,13 +210,16 @@ void main() async {
             )..add(LoadCalendarData()),
           ),
           BlocProvider(
-            create: (_) => TemplateBloc(templateRepository)..add(LoadTemplates()),
+            create: (_) =>
+                TemplateBloc(templateRepository)..add(LoadTemplates()),
           ),
           BlocProvider(
-            create: (_) => HabitStatsBloc(habitRepository)..add(LoadHabitStats()),
+            create: (_) =>
+                HabitStatsBloc(habitRepository)..add(LoadHabitStats()),
           ),
           BlocProvider(
-            create: (_) => PomodoroBloc(pomodoroRepository, notificationRepository),
+            create: (_) =>
+                PomodoroBloc(pomodoroRepository, notificationRepository),
           ),
           BlocProvider(
             create: (_) => NotificationBloc(notificationRepository),
@@ -207,7 +305,8 @@ class _AuthCheckerState extends State<AuthChecker> {
     final prefs = await SharedPreferences.getInstance();
     if (mounted) {
       setState(() {
-        _hasCompletedOnboarding = prefs.getBool('hasCompletedQuestionFlow') ?? false;
+        _hasCompletedOnboarding =
+            prefs.getBool('hasCompletedQuestionFlow') ?? false;
         _isLoading = false;
       });
     }

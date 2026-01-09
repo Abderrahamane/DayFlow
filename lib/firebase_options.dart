@@ -23,15 +23,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
@@ -47,28 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCw4lDaC7Ffg7H1RQ7Vq4dsN7tCQ0VdBLQ',
-    appId: '1:618409045853:web:39535debe3d0a6675902b4',
-    messagingSenderId: '618409045853',
-    projectId: 'dayflowbabo',
-    authDomain: 'dayflowbabo.firebaseapp.com',
-    storageBucket: 'dayflowbabo.firebasestorage.app',
+    apiKey: 'AIzaSyBbOT5fLimABiq0Xz7LP1Bk-Q8UDQE3Ve0',
+    appId: '1:1041768699980:web:bd384fe0d3429e12e3bce9',
+    messagingSenderId: '1041768699980',
+    projectId: 'dayflow-10f7b',
+    authDomain: 'dayflow-10f7b.firebaseapp.com',
+    storageBucket: 'dayflow-10f7b.firebasestorage.app',
+    measurementId: 'G-0M1JBQ23FT',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBeDx7Upk85BCcKNrlG2zBRzU49-8V9wMM',
-    appId: '1:618409045853:android:f33de66b95e09c125902b4',
-    messagingSenderId: '618409045853',
-    projectId: 'dayflowbabo',
-    storageBucket: 'dayflowbabo.firebasestorage.app',
+    apiKey: 'AIzaSyB6-wrMzH7YUIgSci8eAKBnbNIaC2x67js',
+    appId: '1:1041768699980:android:e002e34d7587b510e3bce9',
+    messagingSenderId: '1041768699980',
+    projectId: 'dayflow-10f7b',
+    storageBucket: 'dayflow-10f7b.firebasestorage.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCw4lDaC7Ffg7H1RQ7Vq4dsN7tCQ0VdBLQ',
-    appId: '1:618409045853:web:0cfe1e627ba3287a5902b4',
-    messagingSenderId: '618409045853',
-    projectId: 'dayflowbabo',
-    authDomain: 'dayflowbabo.firebaseapp.com',
-    storageBucket: 'dayflowbabo.firebasestorage.app',
+    apiKey: 'AIzaSyBbOT5fLimABiq0Xz7LP1Bk-Q8UDQE3Ve0',
+    appId: '1:1041768699980:web:bd384fe0d3429e12e3bce9',
+    messagingSenderId: '1041768699980',
+    projectId: 'dayflow-10f7b',
+    authDomain: 'dayflow-10f7b.firebaseapp.com',
+    storageBucket: 'dayflow-10f7b.firebasestorage.app',
+    measurementId: 'G-0M1JBQ23FT',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDygIXys3EmD3m32ZSUr4zDEvxYpjKaFWM',
+    appId: '1:1041768699980:ios:deb72b9dbb917865e3bce9',
+    messagingSenderId: '1041768699980',
+    projectId: 'dayflow-10f7b',
+    storageBucket: 'dayflow-10f7b.firebasestorage.app',
+    iosBundleId: 'com.example.dayflow',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDygIXys3EmD3m32ZSUr4zDEvxYpjKaFWM',
+    appId: '1:1041768699980:ios:deb72b9dbb917865e3bce9',
+    messagingSenderId: '1041768699980',
+    projectId: 'dayflow-10f7b',
+    storageBucket: 'dayflow-10f7b.firebasestorage.app',
+    iosBundleId: 'com.example.dayflow',
+  );
+
 }

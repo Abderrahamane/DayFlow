@@ -1,42 +1,49 @@
 {
   "project_info": {
-    "project_number": "618409045853",
-    "project_id": "dayflowbabo",
-    "storage_bucket": "dayflowbabo.firebasestorage.app"
+    "project_number": "1041768699980",
+    "project_id": "dayflow-10f7b",
+    "storage_bucket": "dayflow-10f7b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:618409045853:android:f33de66b95e09c125902b4",
+        "mobilesdk_app_id": "1:1041768699980:android:e002e34d7587b510e3bce9",
         "android_client_info": {
           "package_name": "com.example.dayflow"
         }
       },
       "oauth_client": [
         {
-          "client_id": "618409045853-0obhr5li5smsehscvv4kcsos4p5n79qh.apps.googleusercontent.com",
+          "client_id": "1041768699980-f0pgoskj3qu543tgskn6cg9r677o642u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.dayflow",
-            "certificate_hash": "7c7aa29daec52c8ff75f888286e50eb7cabc62c1"
+            "certificate_hash": "d3910f3964774f89b2ee68b3fc9a358f8b638a76"
           }
         },
         {
-          "client_id": "618409045853-an9pivvj8b4mh0crph4enk34jl2325ua.apps.googleusercontent.com",
+          "client_id": "1041768699980-brpc0dueghkkdtim9sqnoak8ko79qh0l.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBeDx7Upk85BCcKNrlG2zBRzU49-8V9wMM"
+          "current_key": "AIzaSyB6-wrMzH7YUIgSci8eAKBnbNIaC2x67js"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "618409045853-an9pivvj8b4mh0crph4enk34jl2325ua.apps.googleusercontent.com",
+              "client_id": "1041768699980-brpc0dueghkkdtim9sqnoak8ko79qh0l.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1041768699980-2lk5oma3d8efijp137n44gvrkhsapg3c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.dayflow"
+              }
             }
           ]
         }
