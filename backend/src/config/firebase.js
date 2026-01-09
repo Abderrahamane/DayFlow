@@ -7,6 +7,7 @@ const serviceAccount = require(
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
+    storageBucket: `${serviceAccount.project_id}.firebasestorage.app`,
 });
 
 module.exports = admin;
