@@ -21,11 +21,14 @@ class PomodoroRepository {
 
     if (_isRemote) {
       try {
-        final doc = await _firestoreService.users.doc(_firestoreService.currentUserId).get();
+        final doc = await _firestoreService.users
+            .doc(_firestoreService.currentUserId)
+            .get();
         if (doc.exists && doc.data() != null) {
           final data = doc.data() as Map<String, dynamic>;
           if (data.containsKey('pomodoroSettings')) {
-            final settings = PomodoroSettings.fromJson(data['pomodoroSettings']);
+            final settings =
+                PomodoroSettings.fromJson(data['pomodoroSettings']);
             // Update local cache
             await prefs.setString(_settingsKey, jsonEncode(settings.toJson()));
             return settings;
@@ -65,115 +68,151 @@ class PomodoroRepository {
 
   Future<List<PomodoroSession>> fetchSessions() async {
     if (_isRemote) {
-      final collection = _firestoreService.pomodoroSessions;
-      if (collection == null) return [];
+      try {
+        final collection = _firestoreService.pomodoroSessions;
+        if (collection == null) throw Exception('No collection');
 
-      final snapshot = await collection.orderBy('startTime', descending: true).get();
-      return snapshot.docs.map((doc) {
-        return PomodoroSession.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
-    } else {
-      await _ensureDb();
-      final result = _localDb.rawDb.select(
-        'SELECT * FROM pomodoro_sessions ORDER BY startTime DESC',
-      );
-      return result.map((row) => PomodoroSession.fromDatabase(row)).toList();
+        final snapshot =
+            await collection.orderBy('startTime', descending: true).get();
+        final sessions = snapshot.docs.map((doc) {
+          return PomodoroSession.fromFirestore(
+              doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
+
+        // Cache to local DB
+        for (final session in sessions) {
+          await _saveSessionLocal(session);
+        }
+        return sessions;
+      } catch (e) {
+        print('⚠️ Firestore fetch failed, using local: $e');
+        // Fallback to local on permission error
+      }
     }
+
+    await _ensureDb();
+    final result = _localDb.rawDb.select(
+      'SELECT * FROM pomodoro_sessions ORDER BY startTime DESC',
+    );
+    return result.map((row) => PomodoroSession.fromDatabase(row)).toList();
   }
 
   Future<List<PomodoroSession>> fetchTodaySessions() async {
+    final today = DateTime.now();
+    final startOfDay = DateTime(today.year, today.month, today.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
     if (_isRemote) {
-      final collection = _firestoreService.pomodoroSessions;
-      if (collection == null) return [];
+      try {
+        final collection = _firestoreService.pomodoroSessions;
+        if (collection == null) throw Exception('No collection');
 
-      final today = DateTime.now();
-      final startOfDay = DateTime(today.year, today.month, today.day);
-      final endOfDay = startOfDay.add(const Duration(days: 1));
+        final snapshot = await collection
+            .where('startTime',
+                isGreaterThanOrEqualTo: startOfDay.toIso8601String())
+            .where('startTime', isLessThan: endOfDay.toIso8601String())
+            .orderBy('startTime', descending: true)
+            .get();
 
-      final snapshot = await collection
-          .where('startTime', isGreaterThanOrEqualTo: startOfDay.toIso8601String())
-          .where('startTime', isLessThan: endOfDay.toIso8601String())
-          .orderBy('startTime', descending: true)
-          .get();
-
-      return snapshot.docs.map((doc) {
-        return PomodoroSession.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
-    } else {
-      await _ensureDb();
-      final today = DateTime.now();
-      final startOfDay = DateTime(today.year, today.month, today.day);
-      final endOfDay = startOfDay.add(const Duration(days: 1));
-
-      final result = _localDb.rawDb.select(
-        'SELECT * FROM pomodoro_sessions WHERE startTime >= ? AND startTime < ? ORDER BY startTime DESC',
-        [startOfDay.millisecondsSinceEpoch, endOfDay.millisecondsSinceEpoch],
-      );
-      return result.map((row) => PomodoroSession.fromDatabase(row)).toList();
+        return snapshot.docs.map((doc) {
+          return PomodoroSession.fromFirestore(
+              doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
+      } catch (e) {
+        print('⚠️ Firestore fetchTodaySessions failed, using local: $e');
+        // Fallback to local on permission error
+      }
     }
+
+    await _ensureDb();
+    final result = _localDb.rawDb.select(
+      'SELECT * FROM pomodoro_sessions WHERE startTime >= ? AND startTime < ? ORDER BY startTime DESC',
+      [startOfDay.millisecondsSinceEpoch, endOfDay.millisecondsSinceEpoch],
+    );
+    return result.map((row) => PomodoroSession.fromDatabase(row)).toList();
   }
 
   Future<List<PomodoroSession>> fetchSessionsForTask(String taskId) async {
     if (_isRemote) {
-      final collection = _firestoreService.pomodoroSessions;
-      if (collection == null) return [];
+      try {
+        final collection = _firestoreService.pomodoroSessions;
+        if (collection == null) throw Exception('No collection');
 
-      final snapshot = await collection
-          .where('linkedTaskId', isEqualTo: taskId)
-          .get();
+        final snapshot =
+            await collection.where('linkedTaskId', isEqualTo: taskId).get();
 
-      final sessions = snapshot.docs.map((doc) {
-        return PomodoroSession.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
+        final sessions = snapshot.docs.map((doc) {
+          return PomodoroSession.fromFirestore(
+              doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
 
-      sessions.sort((a, b) => b.startTime.compareTo(a.startTime));
-      return sessions;
-    } else {
-      await _ensureDb();
-      final result = _localDb.rawDb.select(
-        'SELECT * FROM pomodoro_sessions WHERE linkedTaskId = ? ORDER BY startTime DESC',
-        [taskId],
-      );
-      return result.map((row) => PomodoroSession.fromDatabase(row)).toList();
+        sessions.sort((a, b) => b.startTime.compareTo(a.startTime));
+        return sessions;
+      } catch (e) {
+        print('⚠️ Firestore fetchSessionsForTask failed, using local: $e');
+      }
     }
+
+    await _ensureDb();
+    final result = _localDb.rawDb.select(
+      'SELECT * FROM pomodoro_sessions WHERE linkedTaskId = ? ORDER BY startTime DESC',
+      [taskId],
+    );
+    return result.map((row) => PomodoroSession.fromDatabase(row)).toList();
+  }
+
+  Future<void> _saveSessionLocal(PomodoroSession session) async {
+    await _ensureDb();
+    final data = session.toDatabase();
+    _localDb.rawDb.execute(
+      '''INSERT OR REPLACE INTO pomodoro_sessions 
+        (id, type, startTime, endTime, durationMinutes, completed, linkedTaskId, linkedTaskTitle) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+      [
+        data['id'],
+        data['type'],
+        data['startTime'],
+        data['endTime'],
+        data['durationMinutes'],
+        data['completed'],
+        data['linkedTaskId'],
+        data['linkedTaskTitle'],
+      ],
+    );
   }
 
   Future<void> saveSession(PomodoroSession session) async {
-    if (_isRemote) {
-      final collection = _firestoreService.pomodoroSessions;
-      if (collection == null) return;
+    // Always save locally first
+    await _saveSessionLocal(session);
 
-      await collection.doc(session.id).set(session.toFirestore());
-    } else {
-      await _ensureDb();
-      final data = session.toDatabase();
-      _localDb.rawDb.execute(
-        '''INSERT OR REPLACE INTO pomodoro_sessions 
-          (id, type, startTime, endTime, durationMinutes, completed, linkedTaskId, linkedTaskTitle) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-        [
-          data['id'],
-          data['type'],
-          data['startTime'],
-          data['endTime'],
-          data['durationMinutes'],
-          data['completed'],
-          data['linkedTaskId'],
-          data['linkedTaskTitle'],
-        ],
-      );
+    // Then try to save remotely (don't block on errors)
+    if (_isRemote) {
+      try {
+        final collection = _firestoreService.pomodoroSessions;
+        if (collection != null) {
+          await collection.doc(session.id).set(session.toFirestore());
+        }
+      } catch (e) {
+        print('⚠️ Firestore saveSession failed (saved locally): $e');
+      }
     }
   }
 
   Future<void> deleteSession(String id) async {
-    if (_isRemote) {
-      final collection = _firestoreService.pomodoroSessions;
-      if (collection == null) return;
+    // Always delete locally first
+    await _ensureDb();
+    _localDb.rawDb.execute('DELETE FROM pomodoro_sessions WHERE id = ?', [id]);
 
-      await collection.doc(id).delete();
-    } else {
-      await _ensureDb();
-      _localDb.rawDb.execute('DELETE FROM pomodoro_sessions WHERE id = ?', [id]);
+    // Then try remotely
+    if (_isRemote) {
+      try {
+        final collection = _firestoreService.pomodoroSessions;
+        if (collection != null) {
+          await collection.doc(id).delete();
+        }
+      } catch (e) {
+        print('⚠️ Firestore deleteSession failed: $e');
+      }
     }
   }
 
@@ -181,24 +220,37 @@ class PomodoroRepository {
     List<PomodoroSession> allSessions;
 
     if (_isRemote) {
-      final collection = _firestoreService.pomodoroSessions;
-      if (collection == null) return const PomodoroStats();
+      try {
+        final collection = _firestoreService.pomodoroSessions;
+        if (collection == null) throw Exception('No collection');
 
-      final snapshot = await collection
-          .where('type', isEqualTo: PomodoroSessionType.work.name)
-          .get();
+        final snapshot = await collection
+            .where('type', isEqualTo: PomodoroSessionType.work.name)
+            .get();
 
-      allSessions = snapshot.docs.map((doc) {
-        return PomodoroSession.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
-      }).toList();
+        allSessions = snapshot.docs.map((doc) {
+          return PomodoroSession.fromFirestore(
+              doc.data() as Map<String, dynamic>, doc.id);
+        }).toList();
 
-      allSessions.sort((a, b) => b.startTime.compareTo(a.startTime));
+        allSessions.sort((a, b) => b.startTime.compareTo(a.startTime));
+      } catch (e) {
+        print('⚠️ Firestore calculateStats failed, using local: $e');
+        // Fallback to local
+        await _ensureDb();
+        final result = _localDb.rawDb.select(
+          'SELECT * FROM pomodoro_sessions WHERE type = 0 ORDER BY startTime DESC',
+        );
+        allSessions =
+            result.map((row) => PomodoroSession.fromDatabase(row)).toList();
+      }
     } else {
       await _ensureDb();
       final result = _localDb.rawDb.select(
         'SELECT * FROM pomodoro_sessions WHERE type = 0 ORDER BY startTime DESC',
       );
-      allSessions = result.map((row) => PomodoroSession.fromDatabase(row)).toList();
+      allSessions =
+          result.map((row) => PomodoroSession.fromDatabase(row)).toList();
     }
 
     if (allSessions.isEmpty) {

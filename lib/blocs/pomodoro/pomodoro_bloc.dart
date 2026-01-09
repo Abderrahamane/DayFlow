@@ -19,7 +19,8 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
   final _uuid = const Uuid();
   Timer? _timer;
 
-  PomodoroBloc(this._repository, this._notificationRepository) : super(const PomodoroState()) {
+  PomodoroBloc(this._repository, this._notificationRepository)
+      : super(const PomodoroState()) {
     on<LoadPomodoroData>(_onLoadData);
     on<StartSession>(_onStartSession);
     on<PauseSession>(_onPauseSession);
@@ -44,7 +45,6 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     LoadPomodoroData event,
     Emitter<PomodoroState> emit,
   ) async {
-    // Don't change status if timer is running
     final isTimerActive = state.isRunning || state.isPaused;
     if (!isTimerActive) {
       emit(state.copyWith(status: PomodoroStatus.loading));
@@ -60,7 +60,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         status: isTimerActive ? state.status : PomodoroStatus.idle,
         todaySessions: sessions,
         stats: stats,
-        sessionHistory: history.take(50).toList(), // Last 50 sessions
+        sessionHistory: history.take(50).toList(),
         settings: settings,
       ));
     } catch (e) {
@@ -90,16 +90,124 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     ));
 
     _startTimer();
+
+    // Schedule a notification for when the session should end
+    _scheduleSessionEndNotification(sessionType, duration);
+  }
+
+  /// Schedule a notification for when the Pomodoro session ends
+  Future<void> _scheduleSessionEndNotification(
+      PomodoroSessionType type, int durationMinutes) async {
+    final notificationService = NotificationService();
+    final scheduledTime =
+        DateTime.now().add(Duration(minutes: durationMinutes));
+
+    String title;
+    String body;
+
+    switch (type) {
+      case PomodoroSessionType.work:
+        title = 'Work Session Complete! 🎉';
+        body = 'Great job! Time for a break.';
+        break;
+      case PomodoroSessionType.shortBreak:
+        title = 'Break Over ☕';
+        body = 'Ready to get back to work?';
+        break;
+      case PomodoroSessionType.longBreak:
+        title = 'Long Break Over 🌴';
+        body = "You're refreshed! Let's continue.";
+        break;
+    }
+
+    try {
+      const pomodoroNotificationId = 999999;
+      await notificationService.scheduleNotification(
+        id: pomodoroNotificationId,
+        title: title,
+        body: body,
+        scheduledDate: scheduledTime,
+        payload: 'pomodoro_session',
+        usePomodoroChannel:
+            true,
+      );
+      print('✅ Pomodoro notification scheduled for $scheduledTime');
+    } catch (e) {
+      print('❌ Failed to schedule Pomodoro notification: $e');
+    }
+  }
+
+  /// Cancel the scheduled Pomodoro notification
+  Future<void> _cancelScheduledPomodoroNotification() async {
+    final notificationService = NotificationService();
+    const pomodoroNotificationId = 999999;
+    await notificationService.cancelNotification(pomodoroNotificationId);
+    print('🚫 Scheduled Pomodoro notification cancelled');
   }
 
   void _onPauseSession(PauseSession event, Emitter<PomodoroState> emit) {
     _timer?.cancel();
+    _cancelScheduledPomodoroNotification(); // Cancel the scheduled notification when paused
     emit(state.copyWith(status: PomodoroStatus.paused));
   }
 
   void _onResumeSession(ResumeSession event, Emitter<PomodoroState> emit) {
     emit(state.copyWith(status: PomodoroStatus.running));
     _startTimer();
+
+    // Reschedule notification for the remaining time
+    if (state.currentSession != null && state.remainingSeconds > 0) {
+      _rescheduleNotificationForRemainingTime(
+        state.currentSession!.type,
+        state.remainingSeconds,
+      );
+    }
+  }
+
+  /// Reschedule notification for remaining seconds when resuming
+  Future<void> _rescheduleNotificationForRemainingTime(
+    PomodoroSessionType type,
+    int remainingSeconds,
+  ) async {
+    final notificationService = NotificationService();
+    final scheduledTime =
+        DateTime.now().add(Duration(seconds: remainingSeconds));
+
+    String title;
+    String body;
+
+    switch (type) {
+      case PomodoroSessionType.work:
+        title = 'Work Session Complete! 🎉';
+        body = 'Great job! Time for a break.';
+        break;
+      case PomodoroSessionType.shortBreak:
+        title = 'Break Over ☕';
+        body = 'Ready to get back to work?';
+        break;
+      case PomodoroSessionType.longBreak:
+        title = 'Long Break Over 🌴';
+        body = "You're refreshed! Let's continue.";
+        break;
+    }
+
+    try {
+      const pomodoroNotificationId = 999999;
+
+      await notificationService.scheduleNotification(
+        id: pomodoroNotificationId,
+        title: title,
+        body: body,
+        scheduledDate: scheduledTime,
+        payload: 'pomodoro_session',
+        usePomodoroChannel:
+            true,
+      );
+      print(
+          '✅ Pomodoro notification rescheduled for $scheduledTime (${remainingSeconds}s remaining)');
+    } catch (e) {
+      print('❌ Failed to reschedule Pomodoro notification: $e');
+    }
   }
 
   Future<void> _onStopSession(
@@ -107,6 +215,7 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     Emitter<PomodoroState> emit,
   ) async {
     _timer?.cancel();
+    _cancelScheduledPomodoroNotification(); // Cancel scheduled notification when stopped
 
     // Save incomplete session if it was a work session
     if (state.currentSession != null &&
@@ -151,11 +260,6 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
       print('Failed to save session: $e');
     }
 
-    // Notification is already shown when timer ends (ringing state)
-    // But if we auto-complete (e.g. skip ringing), we might want to show it?
-    // For now, let's assume notification was shown at ringing state.
-    // _showSessionCompleteNotification(completedSession.type);
-
     // Update completed sessions count
     final newCompletedCount = completedSession.type == PomodoroSessionType.work
         ? state.completedWorkSessions + 1
@@ -166,14 +270,18 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
 
     // Update stats locally
     final newStats = state.stats.copyWith(
-      totalWorkSessions: state.stats.totalWorkSessions + (completedSession.type == PomodoroSessionType.work ? 1 : 0),
-      totalWorkMinutes: state.stats.totalWorkMinutes + (completedSession.type == PomodoroSessionType.work ? completedSession.durationMinutes : 0),
-      completedToday: state.stats.completedToday + (completedSession.type == PomodoroSessionType.work ? 1 : 0),
-      // Streak calculation is complex to do locally without full history, so we keep it as is or wait for reload
+      totalWorkSessions: state.stats.totalWorkSessions +
+          (completedSession.type == PomodoroSessionType.work ? 1 : 0),
+      totalWorkMinutes: state.stats.totalWorkMinutes +
+          (completedSession.type == PomodoroSessionType.work
+              ? completedSession.durationMinutes
+              : 0),
+      completedToday: state.stats.completedToday +
+          (completedSession.type == PomodoroSessionType.work ? 1 : 0),
     );
 
-    // Determine next session type before clearing current session
-    final nextType = _getNextSessionTypeAfterComplete(completedSession.type, newCompletedCount);
+    final nextType = _getNextSessionTypeAfterComplete(
+        completedSession.type, newCompletedCount);
 
     emit(state.copyWith(
       status: PomodoroStatus.completed,
@@ -190,11 +298,10 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         state.settings.autoStartBreaks) {
       add(StartSession(type: nextType));
     } else if (completedSession.type != PomodoroSessionType.work &&
-               state.settings.autoStartWork) {
+        state.settings.autoStartWork) {
       add(StartSession(type: PomodoroSessionType.work));
     }
 
-    // Reload stats to update UI
     add(LoadPomodoroData());
   }
 
@@ -207,17 +314,20 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     ));
   }
 
-  Future<void> _onTimerTick(TimerTick event, Emitter<PomodoroState> emit) async {
+  Future<void> _onTimerTick(
+      TimerTick event, Emitter<PomodoroState> emit) async {
     if (state.remainingSeconds <= 1) {
       _timer?.cancel();
 
-      // Show notification
-      await _showSessionCompleteNotification(state.currentSession?.type ?? PomodoroSessionType.work);
+      _cancelScheduledPomodoroNotification();
 
       emit(state.copyWith(
         status: PomodoroStatus.ringing,
         remainingSeconds: 0,
       ));
+
+      _showSessionCompleteNotification(
+          state.currentSession?.type ?? PomodoroSessionType.work);
     } else {
       emit(state.copyWith(remainingSeconds: state.remainingSeconds - 1));
     }
@@ -270,25 +380,24 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
 
   PomodoroSessionType _getNextSessionType() {
     if (state.currentSession?.type == PomodoroSessionType.work) {
-      // After work, take a break
-      if ((state.completedWorkSessions + 1) % state.settings.sessionsBeforeLongBreak == 0) {
+      if ((state.completedWorkSessions + 1) %
+              state.settings.sessionsBeforeLongBreak ==
+          0) {
         return PomodoroSessionType.longBreak;
       }
       return PomodoroSessionType.shortBreak;
     }
-    // After break, work
     return PomodoroSessionType.work;
   }
 
-  PomodoroSessionType _getNextSessionTypeAfterComplete(PomodoroSessionType completedType, int newCompletedCount) {
+  PomodoroSessionType _getNextSessionTypeAfterComplete(
+      PomodoroSessionType completedType, int newCompletedCount) {
     if (completedType == PomodoroSessionType.work) {
-      // After work, take a break
       if (newCompletedCount % state.settings.sessionsBeforeLongBreak == 0) {
         return PomodoroSessionType.longBreak;
       }
       return PomodoroSessionType.shortBreak;
     }
-    // After break, work
     return PomodoroSessionType.work;
   }
 
@@ -303,12 +412,15 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
     }
   }
 
-  Future<void> _showSessionCompleteNotification(PomodoroSessionType type) async {
-    // Check if notifications are enabled globally
+  Future<void> _showSessionCompleteNotification(
+      PomodoroSessionType type) async {
+    print('🍅 _showSessionCompleteNotification called for type: $type');
+
     final prefs = await SharedPreferences.getInstance();
     final notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
 
     if (!notificationsEnabled) {
+      print('⚠️ Notifications disabled by user');
       return;
     }
 
@@ -330,23 +442,31 @@ class PomodoroBloc extends Bloc<PomodoroEvent, PomodoroState> {
         break;
     }
 
-    // Show system notification
-    NotificationService().showNotification(
-      title: title,
-      body: body,
-    );
-
-    // Save to in-app notification history
+    print('🔔 Attempting to show Pomodoro notification...');
     try {
-      await _notificationRepository.saveNotification(AppNotification(
-        id: _uuid.v4(),
+      final notificationService = NotificationService();
+      print(
+          '   NotificationService initialized: ${notificationService.isInitialized}');
+
+      await notificationService.showPomodoroNotification(
         title: title,
         body: body,
-        timestamp: DateTime.now(),
-      ));
-    } catch (e) {
-      print('❌ Error in _showSessionCompleteNotification: $e');
+      );
+      print('✅ Pomodoro notification shown: $title');
+    } catch (e, stack) {
+      print('❌ Error showing Pomodoro notification: $e');
+      print('   Stack: $stack');
     }
+
+    _notificationRepository
+        .saveNotification(AppNotification(
+      id: _uuid.v4(),
+      title: title,
+      body: body,
+      timestamp: DateTime.now(),
+    ))
+        .catchError((e) {
+      print('❌ Error saving notification to history: $e');
+    });
   }
 }
-

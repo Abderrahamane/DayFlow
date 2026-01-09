@@ -23,6 +23,18 @@ class MarkNotificationAsRead extends NotificationEvent {
   List<Object?> get props => [id];
 }
 
+class MarkAllNotificationsAsRead extends NotificationEvent {
+  const MarkAllNotificationsAsRead();
+}
+
+class DeleteNotification extends NotificationEvent {
+  final String id;
+  const DeleteNotification(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}
+
 class AddNotification extends NotificationEvent {
   final AppNotification notification;
   const AddNotification(this.notification);
@@ -31,3 +43,6 @@ class AddNotification extends NotificationEvent {
   List<Object?> get props => [notification];
 }
 
+class LoadUnreadCount extends NotificationEvent {
+  const LoadUnreadCount();
+}
