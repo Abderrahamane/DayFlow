@@ -64,6 +64,16 @@ Manage your tasks, build habits, take notes, and track your progress — with cl
 - Progress visualization
 - Productivity metrics
 
+### Crash Reporting & Stability
+- **Firebase Crashlytics**: Automatic crash reporting and analysis
+- Real-time crash alerts
+- Stack trace analysis
+
+### Testing
+- **Unit Tests**: Model and Bloc testing with mocking
+- **Integration Tests**: End-to-end testing of primary workflows
+- **Widget Tests**: UI component testing
+
 ---
 
 ## Quick Start
@@ -164,11 +174,52 @@ For detailed explanation, see [File Structure Documentation](docs/FILE_STRUCTURE
 - **Firebase Authentication** - User management
 - **Cloud Firestore** - NoSQL cloud database
 - **Firebase Cloud Messaging** - Push notifications
+- **Firebase Crashlytics** - Crash reporting and analytics
 - **Google Sign-In** - OAuth authentication
 - **Mixpanel** - Analytics and user tracking
 
 ### Development Tools
 - **Git** - Version control
+
+---
+
+## Testing
+
+### Running Unit Tests
+
+```bash
+# Run all unit tests
+flutter test
+
+# Run specific test file
+flutter test test/models/task_model_test.dart
+
+# Run with coverage
+flutter test --coverage
+```
+
+### Running Integration Tests
+
+```bash
+# Run integration tests on a device or emulator
+flutter test integration_test/app_test.dart
+```
+
+### Test Structure
+
+```
+test/
+├── models/
+│   ├── task_model_test.dart      # Task model unit tests
+│   └── habit_model_test.dart     # Habit model unit tests
+├── blocs/
+│   ├── task_bloc_test.dart       # TaskBloc unit tests
+│   └── habit_bloc_test.dart      # HabitBloc unit tests
+└── widget_test.dart              # Basic widget tests
+
+integration_test/
+└── app_test.dart                 # Integration tests for primary workflows
+```
 - **VS Code / Android Studio** - IDEs
 - **Flutter DevTools** - Debugging
 - **Firebase Console** - Backend management

@@ -56,6 +56,9 @@ dependencies:
   # Push Notifications (FCM)
   firebase_messaging: ^15.1.5
 
+  # Crash Reporting
+  firebase_crashlytics: ^4.3.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -63,6 +66,10 @@ dev_dependencies:
   drift_dev: ^2.20.2
   build_runner: ^2.4.11
   flutter_launcher_icons: ^0.13.1
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.4
+  integration_test:
+    sdk: flutter
 
 flutter_launcher_icons:
   android: true
